@@ -61,12 +61,11 @@ class PreferenceKeys {
   static String loginActivityId = 'loginActivityId';
 
   //User
-  static String userID = 'userID';
-  static String userFirstName = 'userFirstName';
-  static String userLastName = 'userLastName';
-  static String userEmailID = 'userEmailID';
-  static String userAddress = 'userAddress';
-  static String userMobileNumber = 'userMobileNumber';
+  static String adminID = 'adminID';
+  static String adminFirstName = 'adminFirstName';
+  static String adminLastName = 'adminLastName';
+  static String adminEmailID = 'adminEmailID';
+  static String adminMobileNumber = 'adminMobileNumber';
 
   //count
   static String wishListCount = 'wishListCount';

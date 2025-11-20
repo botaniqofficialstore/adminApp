@@ -1,30 +1,33 @@
 
+import 'package:botaniq_admin/Screens/Authentication/ChangePasswordScreen/ChangePasswordModel.dart';
+import 'package:botaniq_admin/Screens/Authentication/ChangePasswordScreen/ChangePasswordRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
+import '../../../CodeReusable/CommonWidgets.dart';
 import '../LoginScreen/LoginScreen.dart';
 
 
 class CreatePasswordState{
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
-  final String userID;
+  final String adminEmail;
 
   CreatePasswordState({
     required this.passwordController,
     required this.confirmPasswordController,
-    required this.userID
+    required this.adminEmail
   });
 
   CreatePasswordState copyWith ({
     TextEditingController? passwordController,
     TextEditingController? confirmPasswordController,
-    String? userID
+    String? adminEmail
   }){
     return CreatePasswordState(
         passwordController: passwordController ?? this.passwordController,
         confirmPasswordController: confirmPasswordController ?? this.confirmPasswordController,
-        userID: userID ?? this.userID
+        adminEmail: adminEmail ?? this.adminEmail
     );
   }
 }
@@ -34,9 +37,14 @@ class CreatePasswordScreenStateNotifier
   CreatePasswordScreenStateNotifier() : super(CreatePasswordState(
       passwordController: TextEditingController(),
       confirmPasswordController: TextEditingController(),
-      userID: ''
+      adminEmail: ''
   ));
 
+
+
+  void updateUserEmail(String email){
+    state = state.copyWith(adminEmail: email);
+  }
 
 
   ///This Method used to check login field validation and call API
@@ -57,15 +65,41 @@ class CreatePasswordScreenStateNotifier
     }
   }
 
-  void updateUserID(String userID){
-    state = state.copyWith(userID: userID);
-  }
-
 
   ///This method is used to call Create Password POST API
   void callCreatePasswordAPI(BuildContext context) {
     if (!context.mounted) return;
-    callNavigation(context);
+
+    CodeReusability().isConnectedToNetwork().then((isConnected) async {
+      if (isConnected) {
+
+        Map<String, dynamic> requestBody = {
+          'email': state.adminEmail,
+          'newPassword' : state.passwordController.text.trim(),
+          'confirmPassword' : state.confirmPasswordController.text.trim()
+        };
+
+        CommonWidgets().showLoadingBar(true, context);
+
+        ChangePasswordRepository().callChangePasswordApi(requestBody, (statusCode, responseBody) {
+          ChangePasswordResponse response = ChangePasswordResponse.fromJson(responseBody);
+
+          if (statusCode == 200) {
+
+            CommonWidgets().showLoadingBar(false, context);
+            //Call Navigation
+            callNavigation(context);
+
+          } else {
+            CommonWidgets().showLoadingBar(false, context);
+            CodeReusability().showAlert(context, response.message ?? 'something Went Wrong');
+          }
+        });
+
+      } else {
+        CodeReusability().showAlert(context, 'Please Check Your Internet Connection');
+      }
+    });
 
   }
 

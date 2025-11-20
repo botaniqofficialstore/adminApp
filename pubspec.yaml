@@ -63,6 +63,7 @@ dependencies:
   firebase_core: ^3.10.1
   firebase_messaging: ^15.2.1
   path_provider: ^2.1.5
+  local_auth: ^3.0.0
 
 
 dev_dependencies:
@@ -85,7 +86,8 @@ flutter:
   generate: true
   assets:
     - assets/splashscreen/
-
+    - assets/footer/
+    - assets/commonIcons/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

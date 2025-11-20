@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:botaniq_admin/Screens/Authentication/ChangePasswordScreen/CreatePasswordScreen.dart';
+import 'package:botaniq_admin/Screens/Authentication/OtpScreen/OtpModel.dart';
+import 'package:botaniq_admin/Screens/Authentication/OtpScreen/OtpRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
+import '../../../CodeReusable/CommonWidgets.dart';
 
 
 class OtpScreenGlobalState {
@@ -103,22 +106,84 @@ class OtpScreenGlobalStateNotifier
   }
 
 
-  ///This method used to call Login with password API
+  ///This method used to call Verify OTP API
   void callOTPVerifyAPI(BuildContext context, String otp) {
     if (!context.mounted) return;
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CreatePasswordScreen()),
-    );
+    CodeReusability().isConnectedToNetwork().then((isConnected) async {
+      if (isConnected) {
+
+        Map<String, dynamic> requestBody = {
+          'email': state.user,
+          'otp' : otp
+        };
+
+        CommonWidgets().showLoadingBar(true, context);
+
+        OtpRepository().callOtpVerifyApi(requestBody, (statusCode, responseBody) {
+          OtpResponse response = OtpResponse.fromJson(responseBody);
+
+          if (statusCode == 200) {
+
+              CommonWidgets().showLoadingBar(false, context);
+              //Call Navigation
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CreatePasswordScreen(userEmail: state.user)),);
+
+          } else {
+            CommonWidgets().showLoadingBar(false, context);
+            CodeReusability().showAlert(context, response.message ?? 'something Went Wrong');
+          }
+        });
+
+      } else {
+        CodeReusability().showAlert(context, 'Please Check Your Internet Connection');
+      }
+    });
+
+
   }
 
   ///This Method is used to call Resend OTP API
   Future<bool> callReSendOtpAPI(BuildContext context) async {
     if (!context.mounted) return false;
 
-    return true;
+    bool isConnected = await CodeReusability().isConnectedToNetwork();
+    if (!isConnected) {
+      CodeReusability().showAlert(context, 'Please Check Your Internet Connection');
+      return false;
+    }
+
+    Map<String, dynamic> requestBody = {
+      'emailOrMobile': state.user,
+    };
+
+    CommonWidgets().showLoadingBar(true, context); // Loading bar enabled
+
+    try {
+      final completer = Completer<bool>();
+
+      OtpRepository().callResendOTPApi(requestBody, (statusCode, responseBody) {
+        CommonWidgets().showLoadingBar(false, context); // Hide loading bar
+
+        OtpResponse response = OtpResponse.fromJson(responseBody);
+
+        if (statusCode == 200) {
+          completer.complete(true);
+        } else {
+          CodeReusability().showAlert(context, response.message ?? "Something went wrong");
+          completer.complete(false);
+        }
+      });
+
+      return await completer.future;
+    } catch (e) {
+      CommonWidgets().showLoadingBar(false, context);
+      CodeReusability().showAlert(context, 'An unexpected error occurred: $e');
+      return false;
+    }
   }
 
 

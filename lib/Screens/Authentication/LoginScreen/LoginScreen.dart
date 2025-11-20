@@ -132,7 +132,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               child: objCommonWidgets.customText(
                 context,
                 'Admin Login',
-                30,
+                28,
                 objConstantColor.navyBlue,
                 objConstantFonts.montserratBold,
               ),
@@ -195,12 +195,12 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                       objConstantFonts.montserratSemiBold
                   ),
                   onPressed: (){
-                loginNotifier.callForgotPasswordAPI(context);
+                    showForgotPasswordSheet(context, loginState, loginNotifier);
                   }),
             ],
           ),
 
-          SizedBox(height: 35.dp),
+          SizedBox(height: 20.dp),
 
           // Login Button
           SizedBox(
@@ -223,17 +223,132 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           ),
 
           SizedBox(height: 25.dp),
-
-
-          SizedBox(height: 25.dp),
-
-
-
-
         ],
       ),
     );
   }
+
+
+
+
+  void showForgotPasswordSheet(BuildContext context, LoginScreenGlobalState loginState, LoginScreenGlobalStateNotifier loginNotifier) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery
+                .of(context)
+                .viewInsets
+                .bottom,
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 25.dp),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.dp),
+                topRight: Radius.circular(30.dp),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                // ------------------ Top Handle ------------------
+                Center(
+                  child: Container(
+                    width: 50.dp,
+                    height: 5.dp,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10.dp),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20.dp),
+
+                // ------------------ Title ------------------
+                Center(
+                  child: objCommonWidgets.customText(
+                    context,
+                    "Get OTP",
+                    20,
+                    objConstantColor.navyBlue,
+                    objConstantFonts.montserratBold,
+                  ),
+                ),
+
+                SizedBox(height: 15.dp),
+
+                Center(
+                  child: objCommonWidgets.customText(
+                    context,
+                    "Enter your registered email to get OTP",
+                    15,
+                    objConstantColor.navyBlue,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+                ),
+
+                SizedBox(height: 15.dp),
+
+                objCommonWidgets.customText(
+                  context,
+                  'Email',
+                  15,
+                  objConstantColor.navyBlue,
+                  objConstantFonts.montserratSemiBold,
+                ),
+
+                SizedBox(height: 2.dp),
+
+                CommonTextField(
+                  controller: loginState.emailController,
+                  placeholder: "Enter your Email",
+                  textSize: 13,
+                  fontFamily: objConstantFonts.montserratMedium,
+                  textColor: objConstantColor.navyBlue,
+                  isNumber: false,
+                  onChanged: (value) {},
+                ),
+
+                SizedBox(height: 25.dp),
+
+                // ------------------ OTP Button ------------------
+                SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.symmetric(vertical: 15.dp),
+                    color: objConstantColor.orange,
+                    borderRadius: BorderRadius.circular(12.dp),
+                    onPressed: () {
+
+                      loginNotifier.callForgotPasswordAPI(context);
+                    },
+                    child: objCommonWidgets.customText(
+                      context,
+                      "Send OTP",
+                      17,
+                      Colors.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 30.dp),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
 
 }

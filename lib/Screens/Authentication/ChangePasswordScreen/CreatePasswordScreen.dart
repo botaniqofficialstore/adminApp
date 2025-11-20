@@ -14,8 +14,10 @@ import '../LoginScreen/LoginScreen.dart';
 import 'CreatePasswordState.dart';
 
 class CreatePasswordScreen extends ConsumerStatefulWidget {
+  final String userEmail;
 
   const CreatePasswordScreen({
+    required this.userEmail,
     super.key,
   });
 
@@ -31,6 +33,12 @@ class CreatePasswordState extends ConsumerState<CreatePasswordScreen> {
   @override
   void initState() {
     super.initState();
+
+    Future.microtask(() {
+      final otpScreenNotifier = ref.read(CreatePasswordScreenStateProvider.notifier);
+      otpScreenNotifier.updateUserEmail(widget.userEmail);
+
+    });
 
     _passwordFocusNode = FocusNode();
     _passwordFocusNode.addListener(() {
@@ -154,7 +162,7 @@ class CreatePasswordState extends ConsumerState<CreatePasswordScreen> {
                   padding: EdgeInsets.symmetric(vertical: 20.dp),
                   child: Center(
                     child: objCommonWidgets.customText(
-                        context, 'Update Password', 30,
+                        context, 'Update Password', 28,
                         objConstantColor.navyBlue,
                         objConstantFonts.montserratBold),
                   ),

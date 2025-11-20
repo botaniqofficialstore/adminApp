@@ -41,7 +41,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
         completionHandler(response.statusCode, jsonDecode(response.body));
       } else {
         final retryResponse = await http.post(Uri.parse(url),
@@ -52,7 +52,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+         // CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -68,7 +68,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+         // CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -109,7 +109,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
         completionHandler(response.statusCode, jsonDecode(response.body));
       } else {
         final retryResponse = await http.post(Uri.parse(url),
@@ -120,7 +120,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+          //CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -136,7 +136,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+          //CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -174,7 +174,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
       } else {
         completionHandler(response.statusCode, jsonDecode(response.body));
       }
@@ -211,7 +211,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
         completionHandler(response.statusCode, jsonDecode(response.body));
       } else {
         final retryResponse = await http.put(Uri.parse(url),
@@ -222,7 +222,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+          //CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -238,7 +238,7 @@ class APIService {
           final responseData = jsonDecode(retryResponse.body);
           completionHandler(200, responseData);
         } else if (retryResponse.statusCode == 401) {
-          CommonAPI().callRefreshTokenAPI();
+          //CommonAPI().callRefreshTokenAPI();
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
         } else {
           completionHandler(retryResponse.statusCode, jsonDecode(retryResponse.body));
@@ -277,7 +277,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
         completionHandler(response.statusCode, jsonDecode(response.body));
       } else {
         final errorData = jsonDecode(response.body);
@@ -317,7 +317,7 @@ class APIService {
         final responseData = jsonDecode(response.body);
         completionHandler(200, responseData);
       } else if (response.statusCode == 401) {
-        CommonAPI().callRefreshTokenAPI();
+        //CommonAPI().callRefreshTokenAPI();
         completionHandler(response.statusCode, jsonDecode(response.body));
       } else {
         final errorData = jsonDecode(response.body);

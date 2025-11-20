@@ -171,7 +171,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 20.dp),
                 child: Center(
                   child: objCommonWidgets.customText(
-                      context, 'Verify OTP', 30,
+                      context, 'Verify OTP', 28,
                       objConstantColor.navyBlue,
                       objConstantFonts.montserratBold),
                 ),
@@ -187,7 +187,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                   objConstantFonts.montserratSemiBold,
                   textAlign: TextAlign.center
               ),
-              SizedBox(height: 35.dp),
+              SizedBox(height: 20.dp),
 
               //OTP Field
               Padding(
@@ -263,7 +263,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                 ),
               ),
 
-              SizedBox(height: 45.dp,),
+              SizedBox(height: 20.dp,),
 
               Row(
                 children: [

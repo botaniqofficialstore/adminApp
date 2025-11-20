@@ -3,8 +3,14 @@ import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../Constants/ConstantColors.dart';
+import '../../Utility/Logger.dart';
 import '../../Utility/PreferencesManager.dart';
+import '../InnerScreens/MainScreen/MainScreen.dart';
 import 'LoginScreen/LoginScreen.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart' show LocalAuthException;
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,26 +25,25 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Offset> _qMoveAnimation;
   late Animation<Offset> _botaniSlideAnimation;
 
+  final LocalAuthentication _auth = LocalAuthentication();
+  bool _authTriggered = false;
+
+
   @override
   void initState() {
     super.initState();
 
+    // Play your animation
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-
-    // ✅ Add listener for animation completion
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        // Navigate when animation is done
-        _callNavigation();
-      }
-    });
-
-    // Start animation
     _controller.forward();
+
+    // Trigger navigation only once
+    Future.delayed(const Duration(seconds: 1), _callNavigation);
   }
+
 
   @override
   void dispose() {
@@ -46,16 +51,34 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  _callNavigation() {
+  _callNavigation() async {
+    if (_authTriggered) return;
+    _authTriggered = true;
+    Logger().log('Called:  _callNavigation');
+    /*Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+    );*/
+
     PreferencesManager.getInstance().then((pref) async {
       bool isLoggedIn = pref.getBooleanValue(PreferenceKeys.isUserLogged);
 
+      if (isLoggedIn) {
+        bool passed = await authenticateUser();
 
-      if (isLoggedIn){
-        /*Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );*/
+        if (!mounted) return;
+
+        if (passed) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
       } else {
         Navigator.pushReplacement(
           context,
@@ -63,8 +86,37 @@ class _SplashScreenState extends State<SplashScreen>
         );
       }
     });
-
   }
+
+
+  Future<bool> authenticateUser() async {
+    try {
+      final bool canCheckBiometrics = await _auth.canCheckBiometrics;
+      final bool isDeviceSupported = await _auth.isDeviceSupported();
+
+      if (!canCheckBiometrics && !isDeviceSupported) {
+        return true;
+      }
+
+      final bool didAuthenticate = await _auth.authenticate(
+        localizedReason: 'Please authenticate to access Botaniq Admin',
+        biometricOnly: false,
+        // FIX: THIS PREVENTS MULTIPLE PROMPTS
+        persistAcrossBackgrounding: false,
+      );
+
+      return didAuthenticate;
+
+    } on PlatformException catch (e) {
+      print("PlatformException: ${e.code}");
+      return false;
+    } catch (e) {
+      print("Error: $e");
+      return false;
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
