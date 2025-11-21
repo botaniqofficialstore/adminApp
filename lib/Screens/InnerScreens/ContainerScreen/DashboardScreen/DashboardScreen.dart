@@ -52,6 +52,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                       objConstantColor.white,
                       objConstantFonts.montserratSemiBold,
                     ),
+
                     Spacer(),
 
                     CupertinoButton(padding: EdgeInsets.zero, child: Image.asset(

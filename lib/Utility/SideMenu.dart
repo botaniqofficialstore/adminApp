@@ -24,9 +24,10 @@ class SideMenu extends StatelessWidget {
             bottomRight: Radius.circular(25.dp),
           ),
 
-          border: Border.all(
-            color: Colors.white,
-            width: 1.dp,
+          border: Border(
+            top: BorderSide(color: Colors.white, width: 1.dp),
+            right: BorderSide(color: Colors.white, width: 1.dp),
+            bottom: BorderSide(color: Colors.white, width: 1.dp),
           ),
         ),
         child: SafeArea(
@@ -58,11 +59,32 @@ class SideMenu extends StatelessWidget {
                 SizedBox(height: 20.dp),
 
                 // MENU OPTIONS
-                menuCard(context, objConstantAssest.addAdmin, 'New Admin', ScreenNames.home),
-                menuCard(context, objConstantAssest.addDeliveryPartner, 'New Delivery Partner', ScreenNames.home),
-                menuCard(context, objConstantAssest.reels, 'New Reels', ScreenNames.home),
-                menuCard(context, objConstantAssest.adv, 'New Advertisment', ScreenNames.home),
+                menuCard(context, objConstantAssest.addAdmin, 'Contracts', ScreenNames.home),
+                menuCard(context, objConstantAssest.addProduct, 'Products', ScreenNames.home),
+                menuCard(context, objConstantAssest.reels, 'Reels', ScreenNames.home),
+                menuCard(context, objConstantAssest.addDeliveryPartner, 'Delivery Partner', ScreenNames.home),
+                menuCard(context, objConstantAssest.adv, 'New Advertisement', ScreenNames.home),
+                menuCard(context, objConstantAssest.changePassword, 'Change Password', ScreenNames.home),
                 menuCard(context, objConstantAssest.logout, 'Logout', ScreenNames.home),
+
+                Spacer(),
+
+                Center(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        objConstantAssest.logo,
+                        height: 60.dp,
+                      ),
+                      objCommonWidgets.customText(context,
+                          'Since 2025', 6.5,
+                          objConstantColor.white,
+                          objConstantFonts.montserratMedium),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 20.dp),
 
               ],
             ),

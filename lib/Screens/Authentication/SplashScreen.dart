@@ -55,12 +55,12 @@ class _SplashScreenState extends State<SplashScreen>
     if (_authTriggered) return;
     _authTriggered = true;
     Logger().log('Called:  _callNavigation');
-    /*Navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MainScreen()),
-    );*/
+    );
 
-    PreferencesManager.getInstance().then((pref) async {
+    /*PreferencesManager.getInstance().then((pref) async {
       bool isLoggedIn = pref.getBooleanValue(PreferenceKeys.isUserLogged);
 
       if (isLoggedIn) {
@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
           MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       }
-    });
+    });*/
   }
 
 

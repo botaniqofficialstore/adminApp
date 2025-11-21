@@ -28,7 +28,8 @@ class CommonTextField extends StatefulWidget {
   final Color textColor;
   final TextEditingController controller;
   final bool isNumber;
-  final bool isPassword; // NEW
+  final bool isPassword;
+  final bool isDarkView;
   final ValueChanged<String>? onChanged;
   final FocusNode? focusNode;
 
@@ -40,7 +41,8 @@ class CommonTextField extends StatefulWidget {
     required this.textColor,
     required this.controller,
     this.isNumber = false,
-    this.isPassword = false, // NEW
+    this.isPassword = false,
+    this.isDarkView = false,
     this.onChanged,
     this.focusNode,
   });
@@ -57,16 +59,19 @@ class _CommonTextFieldState extends State<CommonTextField> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        color: widget.isDarkView ? Colors.white.withOpacity(0.15) : Colors.white, // frosted glass effect
+        borderRadius: BorderRadius.circular(7.dp),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: widget.isDarkView ? Colors.black.withOpacity(0.1) : Colors.white,
             blurRadius: 5,
             offset: const Offset(0, 1),
           ),
         ],
-        border: Border.all(color: Colors.grey, width: 1),
+        border: Border.all(
+          color: widget.isDarkView ? Colors.white.withOpacity(0.75) : Colors.grey,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -88,7 +93,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               placeholderStyle: TextStyle(
                 fontSize: widget.textSize.dp,
                 fontFamily: widget.fontFamily,
-                color: widget.textColor.withOpacity(0.5),
+                color: widget.textColor.withOpacity(0.7),
               ),
               inputFormatters: widget.isNumber
                   ? [
