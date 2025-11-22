@@ -121,18 +121,18 @@ class MainScreenState extends ConsumerState<MainScreen> {
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 5.dp : -120.dp,
-                  left: 20.dp,
-                  right: 20.dp,
+                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
+                  left: 35.dp,
+                  right: 35.dp,
                   child: const _BlurFooterContainer(),
                 ),
 
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 5.dp : -120.dp,
-                  left: 20.dp,
-                  right: 20.dp,
+                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
+                  left: 25.dp,
+                  right: 25.dp,
                   child: UserFooterView(
                     currentModule: userScreenState.currentModule,
                     notificationCount: userScreenState.notificationCount,
@@ -164,11 +164,11 @@ class _BlurFooterContainer extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(35.dp),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
         child: Container(
-          height: 75.dp,
+          height: 65.dp,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15), // frosted glass effect
+            color: Colors.white.withOpacity(0.10), // frosted glass effect
             borderRadius: BorderRadius.circular(35.dp),
             border: Border.all(
               color: Colors.white.withOpacity(0.25),
@@ -224,12 +224,13 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
 
   @override
   Widget build(BuildContext context) {
+
     return IgnorePointer(
       ignoring: false,
       child: SizedBox(
-        height: 75.dp,
+        height: 65.dp,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.dp),
+          padding: EdgeInsets.symmetric(horizontal: 25.dp),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -248,7 +249,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                               padding: EdgeInsets.zero,
                               child: Image.asset(
                                 isSelected ? activeIcons[index] : inactiveIcons[index],
-                                height: 25.dp,
+                                width: 20.dp,
                                 color: isSelected ? Colors.white : Colors.white70,
                                 colorBlendMode: BlendMode.srcIn,
                               ),
@@ -256,7 +257,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                             objCommonWidgets.customText(
                               context,
                               moduleTitle[index],
-                              12,
+                              10,
                               isSelected ? Colors.white : Colors.white70,
                               isSelected ? objConstantFonts.montserratSemiBold : objConstantFonts.montserratMedium,
                             ),
@@ -266,7 +267,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                         //Badge for Cart
                         if (index == 1 && widget.notificationCount <= 0)
                           Positioned(
-                            left: 40.dp,
+                            left: 33.dp,
                             top: 1.dp,
                             child: Container(
                               padding: EdgeInsets.symmetric(

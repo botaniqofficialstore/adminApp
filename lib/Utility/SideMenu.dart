@@ -13,91 +13,100 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.transparent,
-      width: 260.dp,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-    child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05), // frosted glass effect
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(25.dp),
-            bottomRight: Radius.circular(25.dp),
-          ),
+        backgroundColor: Colors.transparent,
+        width: 260.dp,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(25.dp),
+                bottomRight: Radius.circular(25.dp),
+              ),
 
-          border: Border(
-            top: BorderSide(color: Colors.white, width: 1.dp),
-            right: BorderSide(color: Colors.white, width: 1.dp),
-            bottom: BorderSide(color: Colors.white, width: 1.dp),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 15.dp),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              border: Border(
+                top: BorderSide(color: Colors.white, width: 1.dp),
+                right: BorderSide(color: Colors.white, width: 1.dp),
+                bottom: BorderSide(color: Colors.white, width: 1.dp),
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 15.dp, horizontal: 15.dp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                // HEADER
-                Container(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      objCommonWidgets.customText(context,
-                          'Vikas C', 25,
-                          objConstantColor.white,
-                          objConstantFonts.montserratSemiBold),
-                      SizedBox(height: 5.dp),
-                      objCommonWidgets.customText(context,
-                          'botaniqofficialstore@gmail.com', 12.5,
-                          objConstantColor.white,
-                          objConstantFonts.montserratMedium),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 20.dp),
-
-                // MENU OPTIONS
-                menuCard(context, objConstantAssest.addAdmin, 'Contracts', ScreenName.contracts),
-                menuCard(context, objConstantAssest.addProduct, 'Products', ScreenName.products),
-                menuCard(context, objConstantAssest.reels, 'Reels', ScreenName.reels),
-                menuCard(context, objConstantAssest.addDeliveryPartner, 'Delivery Partner', ScreenName.deliveryPartner),
-                menuCard(context, objConstantAssest.adv, 'New Advertisement', ScreenName.advertisement),
-                menuCard(context, objConstantAssest.changePassword, 'Change Password', ScreenName.changePassword),
-                menuCard(context, objConstantAssest.logout, 'Logout', ScreenName.logout),
-
-                Spacer(),
-
-                Center(
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        objConstantAssest.logo,
-                        height: 60.dp,
+                    // HEADER
+                    Container(
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          objCommonWidgets.customText(context,
+                              'Vikas C', 25,
+                              objConstantColor.white,
+                              objConstantFonts.montserratSemiBold),
+                          SizedBox(height: 5.dp),
+                          objCommonWidgets.customText(context,
+                              'botaniqofficialstore@gmail.com', 12.5,
+                              objConstantColor.white,
+                              objConstantFonts.montserratMedium),
+                        ],
                       ),
-                      objCommonWidgets.customText(context,
-                          'Since 2025', 6.5,
-                          objConstantColor.white,
-                          objConstantFonts.montserratMedium),
-                    ],
-                  ),
+                    ),
+
+                    SizedBox(height: 20.dp),
+
+                    // MENU OPTIONS
+                    menuCard(context, objConstantAssest.addAdmin, 'Contracts',
+                        ScreenName.contracts),
+                    menuCard(context, objConstantAssest.addProduct, 'Products',
+                        ScreenName.products),
+                    menuCard(context, objConstantAssest.reels, 'Reels',
+                        ScreenName.reels),
+                    menuCard(context, objConstantAssest.addDeliveryPartner,
+                        'Delivery Partner', ScreenName.deliveryPartner),
+                    menuCard(
+                        context, objConstantAssest.adv, 'New Advertisement',
+                        ScreenName.advertisement),
+                    menuCard(context, objConstantAssest.changePassword,
+                        'Change Password', ScreenName.changePassword),
+                    menuCard(context, objConstantAssest.logout, 'Logout',
+                        ScreenName.logout),
+
+                    Spacer(),
+
+                    Center(
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            objConstantAssest.logo,
+                            height: 60.dp,
+                          ),
+                          objCommonWidgets.customText(context,
+                              'Since 2025', 6.5,
+                              objConstantColor.white,
+                              objConstantFonts.montserratMedium),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 25.dp),
+
+                  ],
                 ),
-
-                SizedBox(height: 20.dp),
-
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      )
+        )
 
     );
   }
 
-  Widget menuCard(BuildContext context, String icon, String title, ScreenName module){
+  Widget menuCard(BuildContext context, String icon, String title,
+      ScreenName module) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 5.dp),
       child: CupertinoButton(
