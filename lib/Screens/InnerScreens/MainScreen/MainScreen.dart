@@ -83,7 +83,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
             onMenuClick: (module) {
               // HANDLE MENU SELECTION
               var notifier = ref.read(MainScreenGlobalStateProvider.notifier);
-              notifier.handleMenuSelection(context, module);
+              notifier.callNavigation(module);
 
               // Close drawer after selection
               mainScaffoldKey.currentState?.closeDrawer();
@@ -121,7 +121,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
+                  bottom: userScreenState.isFooterVisible ? 5.dp : -120.dp,
                   left: 20.dp,
                   right: 20.dp,
                   child: const _BlurFooterContainer(),
@@ -130,7 +130,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
+                  bottom: userScreenState.isFooterVisible ? 5.dp : -120.dp,
                   left: 20.dp,
                   right: 20.dp,
                   child: UserFooterView(
@@ -219,7 +219,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
     if (widget.currentModule == ScreenName.notification) return 1;
     if (widget.currentModule == ScreenName.revenue) return 2;
     if (widget.currentModule == ScreenName.profile) return 3;
-    return 0;
+    return 4;
   }
 
   @override
@@ -249,7 +249,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                               child: Image.asset(
                                 isSelected ? activeIcons[index] : inactiveIcons[index],
                                 height: 25.dp,
-                                color: Colors.white,
+                                color: isSelected ? Colors.white : Colors.white70,
                                 colorBlendMode: BlendMode.srcIn,
                               ),
                             ),
@@ -257,8 +257,8 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                               context,
                               moduleTitle[index],
                               12,
-                              Colors.white,
-                              objConstantFonts.montserratMedium,
+                              isSelected ? Colors.white : Colors.white70,
+                              isSelected ? objConstantFonts.montserratSemiBold : objConstantFonts.montserratMedium,
                             ),
                           ],
                         ),

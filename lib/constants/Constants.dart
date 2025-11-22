@@ -34,7 +34,14 @@ enum ScreenName {
   home,
   profile,
   notification,
-  revenue
+  revenue,
+  contracts,
+  products,
+  reels,
+  deliveryPartner,
+  advertisement,
+  changePassword,
+  logout
 }
 
 

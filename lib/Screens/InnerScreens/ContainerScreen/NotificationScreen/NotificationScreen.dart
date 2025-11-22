@@ -42,7 +42,7 @@ class NotificationScreenState extends ConsumerState<NotificationScreen> {
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 15.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
             child: Column(
               children: [
                 SizedBox(height: 5.dp,),
@@ -52,7 +52,7 @@ class NotificationScreenState extends ConsumerState<NotificationScreen> {
                     objCommonWidgets.customText(
                       context,
                       'Notification',
-                      30,
+                      23,
                       objConstantColor.white,
                       objConstantFonts.montserratSemiBold,
                     ),
@@ -183,7 +183,7 @@ class NotificationScreenState extends ConsumerState<NotificationScreen> {
                   Row(
                     children: [
                       objCommonWidgets.customText(context,
-                          'New Order', 18,
+                          'New Order', 15,
                           objConstantColor.white,
                           objConstantFonts.montserratSemiBold),
                       Spacer(),
@@ -197,8 +197,9 @@ class NotificationScreenState extends ConsumerState<NotificationScreen> {
                   SizedBox(height: 10.dp,),
 
                   objCommonWidgets.customText(context,
-                      'You have a new order for Rs.179/_ with OrderID: 87845124478 ', 13,
-                      objConstantColor.white,
+                      'You have a new order for Rs.179/_ with OrderID: 87845124478 ',
+                      12,
+                      Colors.white70,
                       objConstantFonts.montserratMedium),
 
                 ],

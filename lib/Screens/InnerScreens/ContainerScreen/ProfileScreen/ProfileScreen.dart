@@ -30,10 +30,6 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
     lastName.text = 'C';
     email.text = 'botaniqofficialstore@gmail.com';
     number.text = '7306045755';
-    Future.microtask((){
-      var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
-      userScreenNotifier.hideFooter();
-    });
   }
 
   @override
@@ -61,7 +57,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
 
                 Padding(
-                  padding: EdgeInsets.only(left: 5.dp, top: 20.dp),
+                  padding: EdgeInsets.only(left: 5.dp, top: 15.dp),
                   child: Row(
                     children: [
                       CupertinoButton(padding: EdgeInsets.zero, child: SizedBox(width: 25.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
@@ -73,7 +69,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                       objCommonWidgets.customText(
                         context,
                         'Profile',
-                        30,
+                        23,
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),

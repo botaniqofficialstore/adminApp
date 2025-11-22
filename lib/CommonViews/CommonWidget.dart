@@ -30,6 +30,7 @@ class CommonTextField extends StatefulWidget {
   final bool isNumber;
   final bool isPassword;
   final bool isDarkView;
+  final bool isShowIcon;
   final ValueChanged<String>? onChanged;
   final FocusNode? focusNode;
 
@@ -43,6 +44,7 @@ class CommonTextField extends StatefulWidget {
     this.isNumber = false,
     this.isPassword = false,
     this.isDarkView = false,
+    this.isShowIcon = false,
     this.onChanged,
     this.focusNode,
   });
@@ -52,14 +54,14 @@ class CommonTextField extends StatefulWidget {
 }
 
 class _CommonTextFieldState extends State<CommonTextField> {
-  bool _isObscured = true; // for password visibility toggle
+  bool _isObscured = true;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
-        color: widget.isDarkView ? Colors.white.withOpacity(0.15) : Colors.white, // frosted glass effect
+        color: widget.isDarkView ? Colors.white.withOpacity(0.15) : Colors.white,
         borderRadius: BorderRadius.circular(7.dp),
         boxShadow: [
           BoxShadow(
@@ -75,11 +77,27 @@ class _CommonTextFieldState extends State<CommonTextField> {
       ),
       child: Row(
         children: [
+
+          // ⭐ LEFT SEARCH ICON
+          if (widget.isShowIcon)
+            Padding(
+              padding: EdgeInsets.only(left: 12.dp),
+              child: Icon(
+                CupertinoIcons.search,
+                color: widget.isDarkView ? Colors.white70 : Colors.grey,
+                size: 18.dp,
+              ),
+            ),
+
+          // ⭐ TEXT FIELD
           Expanded(
             child: CupertinoTextField(
               focusNode: widget.focusNode,
               controller: widget.controller,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              padding: EdgeInsets.symmetric(
+                horizontal: widget.isShowIcon ? 8 : 14,   // adjust padding
+                vertical: 14,
+              ),
               obscureText: widget.isPassword ? _isObscured : false,
               keyboardType: widget.isNumber
                   ? TextInputType.number
@@ -106,7 +124,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
             ),
           ),
 
-          // ---- SHOW PASSWORD TOGGLE ONLY IF isPassword = true ----
+          // ⭐ PASSWORD EYE ICON
           if (widget.isPassword)
             GestureDetector(
               onTap: () => setState(() => _isObscured = !_isObscured),
@@ -116,7 +134,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                   _isObscured
                       ? CupertinoIcons.eye_slash_fill
                       : CupertinoIcons.eye_fill,
-                  color: objConstantColor.navyBlue,
+                  color: widget.isDarkView ? Colors.white : objConstantColor.navyBlue,
                   size: 20.dp,
                 ),
               ),
@@ -126,5 +144,6 @@ class _CommonTextFieldState extends State<CommonTextField> {
     );
   }
 }
+
 
 

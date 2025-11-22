@@ -36,11 +36,10 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
         body: SingleChildScrollView(
           padding: EdgeInsets.only(bottom: 45.dp),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 15.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 SizedBox(height: 5.dp,),
 
                 Row(
@@ -77,12 +76,8 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15), // frosted glass effect
-                        borderRadius: BorderRadius.circular(10.dp),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 1,
-                        ),
+                        color: Colors.white.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20.dp),
                       ),
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
@@ -180,9 +175,9 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15), // frosted glass effect
-                        borderRadius: BorderRadius.circular(10.dp),
+                        borderRadius: BorderRadius.circular(20.dp),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.30),
+                          color: Colors.white.withOpacity(0.15),
                           width: 1,
                         ),
                       ),
@@ -253,9 +248,9 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15), // frosted glass effect
-                        borderRadius: BorderRadius.circular(10.dp),
+                        borderRadius: BorderRadius.circular(20.dp),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.30),
+                          color: Colors.white.withOpacity(0.15),
                           width: 1,
                         ),
                       ),
@@ -327,9 +322,9 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                decoration: BoxDecoration(
                  color: Colors.white.withOpacity(0.15),
                  // frosted glass effect
-                 borderRadius: BorderRadius.circular(10.dp),
+                 borderRadius: BorderRadius.circular(20.dp),
                  border: Border.all(
-                   color: Colors.white.withOpacity(0.30),
+                   color: Colors.white.withOpacity(0.20),
                    width: 1,
                  ),
                ),
@@ -341,7 +336,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                      objCommonWidgets.customText(
                        context,
                        menuList[index],
-                       20,
+                       18,
                        objConstantColor.white,
                        objConstantFonts.montserratSemiBold,
                      ),
@@ -351,8 +346,8 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                      objCommonWidgets.customText(
                        context,
                        menuSubList[index],
-                       12.5,
-                       objConstantColor.white,
+                       11.5,
+                       Colors.white70,
                        objConstantFonts.montserratMedium,
                      ),
 

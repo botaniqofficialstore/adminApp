@@ -1,12 +1,18 @@
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Contract/ContractScreen/ContractScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ProfileScreen/ProfileScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/ReelsScreen/ReelsScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
 import '../../../Constants/ConstantVariables.dart';
 import '../../../Constants/Constants.dart';
+import '../ContainerScreen/AdvertisementScreen/AdvertisementScreen.dart';
 
 class MainScreenGlobalState {
   final ScreenName currentModule;
@@ -65,6 +71,18 @@ class MainScreenGlobalStateNotifier
       return const RevenueScreen();
     } else if (state.currentModule == ScreenName.profile) {
       return const ProfileScreen();
+    } else if (state.currentModule == ScreenName.contracts) {
+      return const ContractScreen();
+    } else if (state.currentModule == ScreenName.reels) {
+      return const ReelsScreen();
+    } else if (state.currentModule == ScreenName.products) {
+      return const ProductScreen();
+    } else if (state.currentModule == ScreenName.deliveryPartner) {
+      return const DeliveryPartnerScreen();
+    } else if (state.currentModule == ScreenName.changePassword) {
+      return const ChangePasswordScreen();
+    } else if (state.currentModule == ScreenName.advertisement) {
+      return const AdvertisementScreen();
     } else {
       return const DashboardScreen();
     }
@@ -99,16 +117,18 @@ class MainScreenGlobalStateNotifier
 
     if (module == ScreenName.profile ||
         module == ScreenName.notification ||
-        module == ScreenName.revenue ) {
+        module == ScreenName.revenue ||
+        module == ScreenName.advertisement ||
+        module == ScreenName.changePassword ||
+        module == ScreenName.products ||
+        module == ScreenName.contracts ||
+        module == ScreenName.reels) {
       onScreen = ScreenName.home;
     }
 
     state = state.copyWith(currentModule: onScreen);
   }
 
-  void handleMenuSelection(BuildContext context, ScreenNames module) {
-
-  }
 
 
   ///This method is used to GET Api for refresh token api response as success

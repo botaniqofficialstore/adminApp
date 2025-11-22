@@ -3,9 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../Constants/ConstantVariables.dart';
+import '../Constants/Constants.dart';
 
 class SideMenu extends StatelessWidget {
-  final Function(ScreenNames)? onMenuClick;
+  final Function(ScreenName)? onMenuClick;
 
   const SideMenu({super.key, this.onMenuClick});
 
@@ -59,13 +60,13 @@ class SideMenu extends StatelessWidget {
                 SizedBox(height: 20.dp),
 
                 // MENU OPTIONS
-                menuCard(context, objConstantAssest.addAdmin, 'Contracts', ScreenNames.home),
-                menuCard(context, objConstantAssest.addProduct, 'Products', ScreenNames.home),
-                menuCard(context, objConstantAssest.reels, 'Reels', ScreenNames.home),
-                menuCard(context, objConstantAssest.addDeliveryPartner, 'Delivery Partner', ScreenNames.home),
-                menuCard(context, objConstantAssest.adv, 'New Advertisement', ScreenNames.home),
-                menuCard(context, objConstantAssest.changePassword, 'Change Password', ScreenNames.home),
-                menuCard(context, objConstantAssest.logout, 'Logout', ScreenNames.home),
+                menuCard(context, objConstantAssest.addAdmin, 'Contracts', ScreenName.contracts),
+                menuCard(context, objConstantAssest.addProduct, 'Products', ScreenName.products),
+                menuCard(context, objConstantAssest.reels, 'Reels', ScreenName.reels),
+                menuCard(context, objConstantAssest.addDeliveryPartner, 'Delivery Partner', ScreenName.deliveryPartner),
+                menuCard(context, objConstantAssest.adv, 'New Advertisement', ScreenName.advertisement),
+                menuCard(context, objConstantAssest.changePassword, 'Change Password', ScreenName.changePassword),
+                menuCard(context, objConstantAssest.logout, 'Logout', ScreenName.logout),
 
                 Spacer(),
 
@@ -96,7 +97,7 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  Widget menuCard(BuildContext context, String icon, String title, ScreenNames module){
+  Widget menuCard(BuildContext context, String icon, String title, ScreenName module){
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 5.dp),
       child: CupertinoButton(

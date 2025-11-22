@@ -29,6 +29,9 @@ class ConstantAssests{
    String logout = '${commonIconsAssets}logout.png';
    String addProduct = '${commonIconsAssets}addProduct.png';
    String changePassword = '${commonIconsAssets}changePassword.png';
+   String editIcon = '${commonIconsAssets}edit.png';
+   String plusIcon = '${commonIconsAssets}plus.png';
+   String filterIcon = '${commonIconsAssets}filter.png';
 
 
 

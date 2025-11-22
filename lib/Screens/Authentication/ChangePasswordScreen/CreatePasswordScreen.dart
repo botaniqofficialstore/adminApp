@@ -313,6 +313,7 @@ class PasswordHintBubble extends StatelessWidget {
   final Color backgroundColor;
   final double arrowWidth;
   final double arrowHeight;
+  final bool isDarkView;
   final EdgeInsets contentPadding;
 
   const PasswordHintBubble({
@@ -324,6 +325,7 @@ class PasswordHintBubble extends StatelessWidget {
     this.backgroundColor = Colors.white,
     this.arrowWidth = 18.0,
     this.arrowHeight = 10.0,
+    this.isDarkView = false,
     this.contentPadding =
     const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
   });
@@ -361,8 +363,8 @@ class PasswordHintBubble extends StatelessWidget {
           child: CustomPaint(
             size: Size(arrowWidth, arrowHeight),
             painter: _UpTrianglePainter(
-              color: objConstantColor.navyBlue,
-              borderColor: borderColor, // ✅ same border color
+              color: isDarkView ? objConstantColor.white : objConstantColor.navyBlue,
+              borderColor: isDarkView ? objConstantColor.white : borderColor,
             ),
           ),
         ),

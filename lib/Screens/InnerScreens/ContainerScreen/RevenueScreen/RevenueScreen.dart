@@ -24,6 +24,15 @@ class RevenueScreenState extends ConsumerState<RevenueScreen> {
     {'title': 'Delivery Revenue', 'income': 1499.23},
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask((){
+      var notifier = ref.watch(RevenueScreenStateProvider.notifier);
+      notifier.changeRange('weekly');
+    });
+  }
+
 
 
   @override
@@ -38,7 +47,7 @@ class RevenueScreenState extends ConsumerState<RevenueScreen> {
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 15.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,7 +59,7 @@ class RevenueScreenState extends ConsumerState<RevenueScreen> {
                     objCommonWidgets.customText(
                       context,
                       'Revenue',
-                      30,
+                      23,
                       objConstantColor.white,
                       objConstantFonts.montserratSemiBold,
                     ),
@@ -68,7 +77,7 @@ class RevenueScreenState extends ConsumerState<RevenueScreen> {
                   ],
                 ),
 
-                SizedBox(height: 25.dp),
+                SizedBox(height: 10.dp),
 
                 Expanded(
                   child: SingleChildScrollView(
@@ -166,7 +175,7 @@ class RevenueScreenState extends ConsumerState<RevenueScreen> {
 
 
 
-                        SizedBox(height: 150.dp),
+                        SizedBox(height: 50.dp),
                       ],
                     ),
                   ),
