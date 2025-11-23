@@ -41,7 +41,9 @@ enum ScreenName {
   deliveryPartner,
   advertisement,
   changePassword,
-  logout
+  logout,
+  addContract,
+  addDeliveryPartner
 }
 
 

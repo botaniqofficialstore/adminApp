@@ -146,4 +146,44 @@ class _CommonTextFieldState extends State<CommonTextField> {
 }
 
 
+class FilledTriangle extends StatelessWidget {
+  final Color color;
+  final double size;
+
+  const FilledTriangle({
+    super.key,
+    this.color = Colors.black,
+    this.size = 24,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _TrianglePainter(color),
+    );
+  }
+}
+
+class _TrianglePainter extends CustomPainter {
+  final Color color;
+
+  _TrianglePainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+
+    final path = Path()
+      ..moveTo(size.width.dp / 2, 0) // top
+      ..lineTo(size.width.dp, size.height.dp) // bottom-right
+      ..lineTo(0, size.height.dp) // bottom-left
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
 

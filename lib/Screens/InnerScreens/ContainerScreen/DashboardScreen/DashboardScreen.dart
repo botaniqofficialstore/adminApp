@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:botaniq_admin/Constants/Constants.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreenState.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/MainScreen/MainScreen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,62 +70,60 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 SizedBox(height: 25.dp,),
 
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.dp),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20.dp),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10.dp),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.40),
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10.dp,),
+                        objCommonWidgets.customText(context,
+                            'Delivery', 23,
+                            objConstantColor.white,
+                            objConstantFonts.montserratSemiBold),
+                        objCommonWidgets.customText(context,
+                            'Monday, 10/12/2025', 15,
+                            objConstantColor.white,
+                            objConstantFonts.montserratSemiBold),
+                        SizedBox(height: 25.dp,),
+                        Row(
                           children: [
-                            SizedBox(height: 10.dp,),
                             objCommonWidgets.customText(context,
-                                'Delivery', 23,
+                                'Count :', 18,
                                 objConstantColor.white,
                                 objConstantFonts.montserratSemiBold),
+                            SizedBox(width: 5.dp,),
                             objCommonWidgets.customText(context,
-                                'Monday, 10/12/2025', 15,
-                                objConstantColor.white,
+                                '25', 25,
+                                objConstantColor.yellow,
                                 objConstantFonts.montserratSemiBold),
-                            SizedBox(height: 25.dp,),
-                            Row(
-                              children: [
-                                objCommonWidgets.customText(context,
-                                    'Count :', 18,
-                                    objConstantColor.white,
-                                    objConstantFonts.montserratSemiBold),
-                                SizedBox(width: 5.dp,),
-                                objCommonWidgets.customText(context,
-                                    '25', 25,
-                                    objConstantColor.yellow,
-                                    objConstantFonts.montserratSemiBold),
-                                Spacer(),
-                                CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15), // frosted glass effect
-                                  borderRadius: BorderRadius.circular(5.dp),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.15),
-                                    width: 1,
-                                  ),
-                                ),child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
-                                  child: objCommonWidgets.customText(context,
-                                      'View List', 12,
-                                      objConstantColor.white,
-                                      objConstantFonts.montserratSemiBold),
-                                ),), onPressed: (){})
-                              ],
-                            ),
+                            Spacer(),
+                            CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15), // frosted glass effect
+                              borderRadius: BorderRadius.circular(5.dp),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.15),
+                                width: 1,
+                              ),
+                            ),child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
+                              child: objCommonWidgets.customText(context,
+                                  'View List', 12,
+                                  objConstantColor.white,
+                                  objConstantFonts.montserratSemiBold),
+                            ),), onPressed: (){})
                           ],
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -159,7 +158,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 objCommonWidgets.customText(
                   context,
-                  'Delivery Partner',
+                  'Partners',
                   23,
                   objConstantColor.white,
                   objConstantFonts.montserratSemiBold,
@@ -167,64 +166,13 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 SizedBox(height: 5.dp,),
 
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.dp),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15), // frosted glass effect
-                        borderRadius: BorderRadius.circular(20.dp),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.15),
-                          width: 1,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10.dp,),
-                            objCommonWidgets.customText(context,
-                                'Delivery Boys', 20,
-                                objConstantColor.white,
-                                objConstantFonts.montserratSemiBold),
-                            SizedBox(height: 25.dp,),
-                            Row(
-                              children: [
-                                objCommonWidgets.customText(context,
-                                    'Count :', 18,
-                                    objConstantColor.white,
-                                    objConstantFonts.montserratSemiBold),
-                                SizedBox(width: 5.dp,),
-                                objCommonWidgets.customText(context,
-                                    '3', 25,
-                                    objConstantColor.yellow,
-                                    objConstantFonts.montserratSemiBold),
-                                Spacer(),
-                                CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15), // frosted glass effect
-                                  borderRadius: BorderRadius.circular(5.dp),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.15),
-                                    width: 1,
-                                  ),
-                                ),child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
-                                  child: objCommonWidgets.customText(context,
-                                      'View List', 12,
-                                      objConstantColor.white,
-                                      objConstantFonts.montserratSemiBold),
-                                ),), onPressed: (){})
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                Row(
+                  children: [
+                    partnerCard(context, 'Business Partners', '15', ScreenName.contracts),
+                    SizedBox(width: 15.dp),
+                    partnerCard(context, 'Delivery Partners', '8', ScreenName.deliveryPartner),
+
+                  ],
                 ),
 
 
@@ -242,65 +190,60 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.dp),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15), // frosted glass effect
-                        borderRadius: BorderRadius.circular(20.dp),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.15),
-                          width: 1,
-                        ),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15), // frosted glass effect
+                      borderRadius: BorderRadius.circular(20.dp),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.15),
+                        width: 1,
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10.dp,),
-                            objCommonWidgets.customText(context,
-                                'Total Customers', 20,
-                                objConstantColor.white,
-                                objConstantFonts.montserratSemiBold),
-                            SizedBox(height: 25.dp,),
-                            Row(
-                              children: [
-                                objCommonWidgets.customText(context,
-                                    'Count :', 18,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10.dp,),
+                          objCommonWidgets.customText(context,
+                              'Total Customers', 20,
+                              objConstantColor.white,
+                              objConstantFonts.montserratSemiBold),
+                          SizedBox(height: 25.dp,),
+                          Row(
+                            children: [
+                              objCommonWidgets.customText(context,
+                                  'Count :', 18,
+                                  objConstantColor.white,
+                                  objConstantFonts.montserratSemiBold),
+                              SizedBox(width: 5.dp,),
+                              objCommonWidgets.customText(context,
+                                  '178', 25,
+                                  objConstantColor.yellow,
+                                  objConstantFonts.montserratSemiBold),
+                              Spacer(),
+                              CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15), // frosted glass effect
+                                borderRadius: BorderRadius.circular(5.dp),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.15),
+                                  width: 1,
+                                ),
+                              ), child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
+                                child: objCommonWidgets.customText(context,
+                                    'View List', 12,
                                     objConstantColor.white,
                                     objConstantFonts.montserratSemiBold),
-                                SizedBox(width: 5.dp,),
-                                objCommonWidgets.customText(context,
-                                    '178', 25,
-                                    objConstantColor.yellow,
-                                    objConstantFonts.montserratSemiBold),
-                                Spacer(),
-                                CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15), // frosted glass effect
-                                  borderRadius: BorderRadius.circular(5.dp),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.15),
-                                    width: 1,
-                                  ),
-                                ), child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
-                                  child: objCommonWidgets.customText(context,
-                                      'View List', 12,
-                                      objConstantColor.white,
-                                      objConstantFonts.montserratSemiBold),
-                                ),), onPressed: (){})
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),), onPressed: (){})
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-
-
 
               ],
             ),
@@ -315,78 +258,130 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
  Widget buildMenuCard(BuildContext context, int index) {
    return ClipRRect(
        borderRadius: BorderRadius.circular(10.dp),
-       child: BackdropFilter(
-           filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-           child: Container(
-               width: double.infinity,
-               decoration: BoxDecoration(
-                 color: Colors.white.withOpacity(0.15),
-                 // frosted glass effect
-                 borderRadius: BorderRadius.circular(20.dp),
-                 border: Border.all(
-                   color: Colors.white.withOpacity(0.20),
-                   width: 1,
+       child: Container(
+           width: double.infinity,
+           decoration: BoxDecoration(
+             color: Colors.white.withOpacity(0.15),
+             // frosted glass effect
+             borderRadius: BorderRadius.circular(20.dp),
+             border: Border.all(
+               color: Colors.white.withOpacity(0.30),
+               width: 1,
+             ),
+           ),
+           child: Padding(
+             padding: EdgeInsets.only(left: 10.dp, top: 10.dp, right: 10.dp, bottom: 5.dp),
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 objCommonWidgets.customText(
+                   context,
+                   menuList[index],
+                   18,
+                   objConstantColor.white,
+                   objConstantFonts.montserratSemiBold,
                  ),
-               ),
-               child: Padding(
-                 padding: EdgeInsets.only(left: 10.dp, top: 10.dp, right: 10.dp, bottom: 5.dp),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
+
+                 SizedBox(height: 5.dp,),
+
+                 objCommonWidgets.customText(
+                   context,
+                   menuSubList[index],
+                   11.5,
+                   Colors.white70,
+                   objConstantFonts.montserratMedium,
+                 ),
+
+                 Spacer(),
+
+                 Row(
                    children: [
+
                      objCommonWidgets.customText(
                        context,
-                       menuList[index],
-                       18,
-                       objConstantColor.white,
+                       menuSubCount[index],
+                       25,
+                       objConstantColor.yellow,
                        objConstantFonts.montserratSemiBold,
                      ),
 
-                     SizedBox(height: 5.dp,),
-
-                     objCommonWidgets.customText(
-                       context,
-                       menuSubList[index],
-                       11.5,
-                       Colors.white70,
-                       objConstantFonts.montserratMedium,
-                     ),
-
                      Spacer(),
-
-                     Row(
-                       children: [
-
-                         objCommonWidgets.customText(
-                           context,
-                           menuSubCount[index],
-                           25,
-                           objConstantColor.yellow,
-                           objConstantFonts.montserratSemiBold,
-                         ),
-
-                         Spacer(),
-                         CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
-                           color: Colors.white.withOpacity(0.15), // frosted glass effect
-                           borderRadius: BorderRadius.circular(5.dp),
-                           border: Border.all(
-                             color: Colors.white.withOpacity(0.15),
-                             width: 1,
-                           ),
-                         ),child: Padding(
-                           padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
-                           child: objCommonWidgets.customText(context,
-                               'View List', 12,
-                               objConstantColor.white,
-                               objConstantFonts.montserratSemiBold),
-                         ),), onPressed: (){})
-                       ],
-                     )
+                     CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
+                       color: Colors.white.withOpacity(0.15), // frosted glass effect
+                       borderRadius: BorderRadius.circular(5.dp),
+                       border: Border.all(
+                         color: Colors.white.withOpacity(0.15),
+                         width: 1,
+                       ),
+                     ),child: Padding(
+                       padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
+                       child: objCommonWidgets.customText(context,
+                           'View List', 12,
+                           objConstantColor.white,
+                           objConstantFonts.montserratSemiBold),
+                     ),), onPressed: (){})
                    ],
-                 ),
-               )
+                 )
+               ],
+             ),
            )
        )
    );
+ }
+
+ Widget partnerCard(BuildContext context, String title, String count, ScreenName screen){
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15), // frosted glass effect
+          borderRadius: BorderRadius.circular(20.dp),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.15),
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10.dp,),
+              objCommonWidgets.customText(context,
+                  title, 18,
+                  objConstantColor.white,
+                  objConstantFonts.montserratSemiBold),
+              SizedBox(height: 25.dp,),
+              Row(
+                children: [
+                  objCommonWidgets.customText(context,
+                      count, 25,
+                      objConstantColor.yellow,
+                      objConstantFonts.montserratSemiBold),
+                  Spacer(),
+                  CupertinoButton(padding: EdgeInsets.zero, child: Container(decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15), // frosted glass effect
+                    borderRadius: BorderRadius.circular(5.dp),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.15),
+                      width: 1,
+                    ),
+                  ),child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 5.dp),
+                    child: objCommonWidgets.customText(context,
+                        'View List', 12,
+                        objConstantColor.white,
+                        objConstantFonts.montserratSemiBold),
+                  ),), onPressed: (){
+                    var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+                    userScreenNotifier.callNavigation(screen);
+                  })
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
  }
 
 

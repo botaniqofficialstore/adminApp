@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:botaniq_admin/Constants/Constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -7,6 +8,7 @@ import '../../../../../CommonViews/CommonDropdown.dart';
 import '../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../Constants/ConstantVariables.dart';
 import '../../../MainScreen/MainScreen.dart';
+import '../../../MainScreen/MainScreenState.dart';
 import 'ContractScreenState.dart';
 
 class ContractScreen extends ConsumerStatefulWidget {
@@ -16,7 +18,8 @@ class ContractScreen extends ConsumerStatefulWidget {
   ContractScreenState createState() => ContractScreenState();
 }
 
-class ContractScreenState extends ConsumerState<ContractScreen> {
+class ContractScreenState extends ConsumerState<ContractScreen>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Map<String, dynamic>> contractList = [
@@ -187,11 +190,26 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
     },
   ];
 
+  final GlobalKey filterKey = GlobalKey();
+  OverlayEntry? filterOverlay;
+  late AnimationController popupController;
+  late Animation<double> popupAnimation;
+
+
 
   @override
   void initState() {
     super.initState();
 
+    popupController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+
+    popupAnimation = CurvedAnimation(
+      parent: popupController,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -199,11 +217,131 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
     super.dispose();
   }
 
+  void showFilterPopup() {
+    if (filterOverlay != null) {
+      hideFilterPopup();
+      return;
+    }
+
+    final renderBox = filterKey.currentContext!.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    filterOverlay = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            // tap outside to close
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: hideFilterPopup,
+              ),
+            ),
+
+            Positioned(
+                left: position.dx - -45,
+                top: position.dy + size.height - 5,
+                child: FilledTriangle(color: Colors.white, size: 10)
+
+            ),
+
+            // popup with shutter animation
+            Positioned(
+              left: position.dx - 40.dp,
+              top: position.dy + size.height + 5,
+              child: AnimatedBuilder(
+                animation: popupAnimation,
+                builder: (context, child) {
+                  return Transform.scale(
+                    alignment: Alignment.topCenter,
+                    scaleY: popupAnimation.value,  // shutter-style vertical opening
+                    child: child,
+                  );
+                },
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: 100.dp,
+                    height: 120.dp,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF1E0033).withAlpha(475),
+                      borderRadius: BorderRadius.circular(5.dp),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 1,
+                        )
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        filterItem("All", () {}),
+                        Divider(color: objConstantColor.white.withAlpha(150), height: 0.1,),
+                        filterItem("Active", showIcon: true, color: Colors.greenAccent, () {}),
+                        Divider(color: objConstantColor.white.withAlpha(150), height: 0.5,),
+                        filterItem("Inactive", showIcon: true, color: Colors.red, () {}),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(filterOverlay!);
+
+    // start shutter opening
+    popupController.forward(from: 0);
+  }
+
+
+  void hideFilterPopup() {
+    filterOverlay?.remove();
+    filterOverlay = null;
+  }
+
+  Widget filterItem(String title, VoidCallback onTap, {bool showIcon = false, Color color = Colors.greenAccent}) {
+    return CupertinoButton(
+      onPressed: () {
+        hideFilterPopup();
+        onTap();
+      },
+      padding: EdgeInsets.zero,
+      child: SizedBox(
+        width: 100.dp,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 6.5.dp, horizontal: 10.dp),
+          child: Row(
+            children: [
+              if (showIcon)
+              CircleAvatar(
+                radius: 3.5.dp,
+                backgroundColor: color,
+              ),
+              SizedBox(width: 5.dp),
+              objCommonWidgets.customText(context,
+                  title,
+                  12,
+                  objConstantColor.white,
+                  objConstantFonts.montserratMedium
+              ),
+              Spacer()
+            ],
+          )
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var contractScreenState = ref.watch(ContractScreenStateProvider);
-    var contractScreenNotifier = ref.watch(
-        ContractScreenStateProvider.notifier);
+    var contractScreenNotifier = ref.watch(ContractScreenStateProvider.notifier);
 
     return GestureDetector(
       onTap: () {
@@ -228,6 +366,7 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),
+
                       Spacer(),
 
                       CupertinoButton(
@@ -244,7 +383,7 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
                     ],
                   ),
 
-                  SizedBox(height: 10.dp,),
+                  SizedBox(height: 15.dp,),
 
                   Row(
                     children: [
@@ -258,14 +397,57 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
                       Spacer(),
 
                       CupertinoButton(padding: EdgeInsets.zero,
-                          child: Image.asset(objConstantAssest.plusIcon,
-                            width: 15.dp, color: objConstantColor.white,),
-                          onPressed: (){}
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 7.dp),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(5.dp),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 0.5,
+                                )
+                            ),
+                            child: Row(
+                              children: [
+                                objCommonWidgets.customText(context, 'New Contract', 10, objConstantColor.white, objConstantFonts.montserratSemiBold),
+                                SizedBox(width: 5.dp,),
+                                Image.asset(objConstantAssest.plusIcon,
+                                  width: 12.dp, color: objConstantColor.white,),
+                              ],
+                            ),
+                          ),
+                          onPressed: (){
+                            var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+                            userScreenNotifier.callNavigation(ScreenName.addContract);
+                          }
                       ),
-                      CupertinoButton(padding: EdgeInsets.zero,
-                          child: Image.asset(objConstantAssest.filterIcon,
-                            width: 15.dp, color: objConstantColor.white,),
-                          onPressed: (){}
+
+                      SizedBox(width: 10.dp),
+
+                      CupertinoButton(key: filterKey,
+                          padding: EdgeInsets.zero,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 7.dp),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(5.dp),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 0.5,
+                                )
+                            ),
+                            child: Row(
+                              children: [
+                                objCommonWidgets.customText(context, 'Status', 10, objConstantColor.white, objConstantFonts.montserratSemiBold),
+                                SizedBox(width: 5.dp,),
+                                Image.asset(objConstantAssest.filterIcon,
+                                  width: 12.dp, color: objConstantColor.white,),
+                              ],
+                            ),
+                          ),
+                          onPressed: (){
+                            showFilterPopup();
+                          }
                       ),
                     ],
                   ),
@@ -290,44 +472,46 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
 
 
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: contractList.length,
-                      itemBuilder: (context, index) {
-                        final item = contractList[index];
-                        final company = item['company'];
-                        final owner = item['owner'];
-                        final licence = item['licenceNumber'];
-                        final email = item['email'];
-                        final mobile = item['mobileNumber'];
-                        final address = item['address'];
-                        final product = item['products'].toString();
-                        final date = item['signedDate'];
-                        final status = item['status'] ?? 0;
-
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 15.dp),
-                          child: cellView(
-                            context,
-                            company,
-                            owner,
-                            licence,
-                            email,
-                            mobile,
-                            address,
-                            product,
-                            date,
-                            status,
-                          ),
-                        );
-                      },
+                    child: SingleChildScrollView(
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: contractList.length,
+                        itemBuilder: (context, index) {
+                          final item = contractList[index];
+                          final company = item['company'];
+                          final owner = item['owner'];
+                          final licence = item['licenceNumber'];
+                          final email = item['email'];
+                          final mobile = item['mobileNumber'];
+                          final address = item['address'];
+                          final product = item['products'].toString();
+                          final date = item['signedDate'];
+                          final status = item['status'] ?? 0;
+                      
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 15.dp),
+                            child: cellView(
+                              context,
+                              company,
+                              owner,
+                              licence,
+                              email,
+                              mobile,
+                              address,
+                              product,
+                              date,
+                              status,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-
 
                 ],
               ),
             )
-
         ),
       ),
     );
@@ -342,8 +526,7 @@ class ContractScreenState extends ConsumerState<ContractScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(10.dp),
-
+        borderRadius: BorderRadius.circular(15.dp),
       ),
       child: Stack(
         children: [

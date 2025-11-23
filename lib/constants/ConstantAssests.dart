@@ -32,6 +32,9 @@ class ConstantAssests{
    String editIcon = '${commonIconsAssets}edit.png';
    String plusIcon = '${commonIconsAssets}plus.png';
    String filterIcon = '${commonIconsAssets}filter.png';
+   String profileImage = '${commonIconsAssets}profile.png';
+   String defaultProfileImage = '${commonIconsAssets}user.png';
+   String placeholderImage = '${commonIconsAssets}placeholderImage.png';
 
 
 

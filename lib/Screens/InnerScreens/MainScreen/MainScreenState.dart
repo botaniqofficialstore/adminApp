@@ -1,6 +1,8 @@
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Contract/AddContractScreen/AddContractScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Contract/ContractScreen/ContractScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
@@ -83,6 +85,10 @@ class MainScreenGlobalStateNotifier
       return const ChangePasswordScreen();
     } else if (state.currentModule == ScreenName.advertisement) {
       return const AdvertisementScreen();
+    } else if (state.currentModule == ScreenName.addContract) {
+      return const AddContractScreen();
+    } else if (state.currentModule == ScreenName.addDeliveryPartner) {
+      return const AddDeliveryPartnerScreen();
     } else {
       return const DashboardScreen();
     }
@@ -122,8 +128,13 @@ class MainScreenGlobalStateNotifier
         module == ScreenName.changePassword ||
         module == ScreenName.products ||
         module == ScreenName.contracts ||
-        module == ScreenName.reels) {
+        module == ScreenName.reels ||
+        module == ScreenName.deliveryPartner) {
       onScreen = ScreenName.home;
+    } else if (module == ScreenName.addContract){
+      onScreen = ScreenName.contracts;
+    } else if (module == ScreenName.addDeliveryPartner){
+      onScreen = ScreenName.deliveryPartner;
     }
 
     state = state.copyWith(currentModule: onScreen);
