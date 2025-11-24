@@ -254,6 +254,17 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
                         objConstantFonts.montserratSemiBold),
                     Spacer(),
 
+                    CupertinoButton(padding: EdgeInsets.zero, child: Image.asset(
+                      objConstantAssest.cardIcon,
+                      width: 28.dp,
+                      color: Colors.white,
+                      colorBlendMode: BlendMode.srcIn,
+                    ), onPressed: () {
+
+                    }),
+
+                    SizedBox(width: 5.dp),
+
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),

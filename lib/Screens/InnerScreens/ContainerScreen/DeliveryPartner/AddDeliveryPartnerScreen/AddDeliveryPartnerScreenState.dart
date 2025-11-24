@@ -16,6 +16,11 @@ class AddDeliveryPartnerScreenState {
   final TextEditingController mobileController;
   final TextEditingController pincodeController;
   final TextEditingController aadharController;
+  final String? profileImagePath;
+  final String? licenceFrontImagePath;
+  final String? licenceRearImagePath;
+  final String? dob;
+  final String? gender;
 
   AddDeliveryPartnerScreenState({
     this.currentModule = ScreenName.home,
@@ -30,6 +35,11 @@ class AddDeliveryPartnerScreenState {
     required this.mobileController,
     required this.pincodeController,
     required this.aadharController,
+    this.profileImagePath,
+    this.licenceFrontImagePath,
+    this.licenceRearImagePath,
+    this.dob,
+    this.gender,
   });
 
   AddDeliveryPartnerScreenState copyWith({
@@ -45,6 +55,11 @@ class AddDeliveryPartnerScreenState {
     TextEditingController? mobileController,
     TextEditingController? pincodeController,
     TextEditingController? aadharController,
+    String? profileImagePath,
+    String? licenceFrontImagePath,
+    String? licenceRearImagePath,
+    String? dob,
+    String? gender,
   }) {
     return AddDeliveryPartnerScreenState(
       currentModule: currentModule ?? this.currentModule,
@@ -59,6 +74,11 @@ class AddDeliveryPartnerScreenState {
       mobileController: mobileController ?? this.mobileController,
       pincodeController: pincodeController ?? this.pincodeController,
       aadharController: aadharController ?? this.aadharController,
+      profileImagePath: profileImagePath ?? this.profileImagePath,
+      licenceFrontImagePath: licenceFrontImagePath ?? this.licenceFrontImagePath,
+      licenceRearImagePath: licenceRearImagePath ?? this.licenceRearImagePath,
+      dob: dob ?? this.dob,
+      gender: gender ?? this.gender,
     );
   }
 }
@@ -81,8 +101,42 @@ class AddDeliveryPartnerScreenStateNotifier
 
   @override
   void dispose() {
+    // Dispose controllers to avoid leaks
+    state.firstNameController.dispose();
+    state.lastNameController.dispose();
+    state.licenceController.dispose();
+    state.emailController.dispose();
+    state.streetController.dispose();
+    state.cityController.dispose();
+    state.stateController.dispose();
+    state.countryController.dispose();
+    state.mobileController.dispose();
+    state.pincodeController.dispose();
+    state.aadharController.dispose();
     super.dispose();
   }
+
+  void setProfileImagePath(String path) {
+    state = state.copyWith(profileImagePath: path);
+  }
+
+  void setLicenceFrontImagePath(String path) {
+    state = state.copyWith(licenceFrontImagePath: path);
+  }
+
+  void setLicenceRearImagePath(String path) {
+    state = state.copyWith(licenceRearImagePath: path);
+  }
+
+  void updateDOB(String dob){
+    state = state.copyWith(dob: dob);
+  }
+
+  void updateGender(String gender){
+    state = state.copyWith(gender: gender);
+  }
+
+
 
 
 }

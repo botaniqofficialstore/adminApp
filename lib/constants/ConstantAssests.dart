@@ -35,6 +35,8 @@ class ConstantAssests{
    String profileImage = '${commonIconsAssets}profile.png';
    String defaultProfileImage = '${commonIconsAssets}user.png';
    String placeholderImage = '${commonIconsAssets}placeholderImage.png';
+   String cardIcon = '${commonIconsAssets}card.png';
+   String calendarIcon = '${commonIconsAssets}calendar.png';
 
 
 

@@ -8,9 +8,8 @@ class CommonDropdown extends StatelessWidget {
   final List<String> items;
   final String? selectedValue;
   final Function(String?) onChanged;
-  final bool isDarkView;          // matches your textfield theme
-  final Alignment alignment;      // ⭐ dynamic alignment
-  final bool isShowIcon;          // optional left icon
+  final bool isDarkView;
+  final Alignment alignment;
 
   const CommonDropdown({
     super.key,
@@ -20,7 +19,6 @@ class CommonDropdown extends StatelessWidget {
     required this.onChanged,
     this.isDarkView = false,
     this.alignment = Alignment.centerLeft,
-    this.isShowIcon = false,
   });
 
   @override
@@ -38,51 +36,47 @@ class CommonDropdown extends StatelessWidget {
       child: Row(
         children: [
 
-          // ⭐ OPTIONAL LEFT ICON
-          if (isShowIcon)
-            Icon(
-              CupertinoIcons.square_list,
-              color: isDarkView ? Colors.white : Colors.grey,
-              size: 20.dp,
-            ),
-
-          // ⭐ ACTUAL DROPDOWN
+          // ⭐ DROPDOWN
           Expanded(
-            child: Align(
-              alignment: alignment,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedValue,
-                  dropdownColor: isDarkView ? objConstantColor.black : Colors.white,
-                  icon: Icon(
-                    CupertinoIcons.chevron_down,
-                    color: isDarkView ? Colors.white : Colors.black87,
-                    size: 16.dp,
-                  ),
-                  hint: Text(
-                    placeholder,
-                    style: TextStyle(
-                      fontSize: 14.dp,
-                      color: isDarkView ? Colors.white70 : Colors.grey,
-                    ),
-                  ),
-                  items: items.map((value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: 15.dp,
-                          color: isDarkView ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: onChanged,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedValue,
+                icon: const SizedBox.shrink(),
+                dropdownColor: isDarkView ? objConstantColor.black : Colors.white,
+
+                hint: objCommonWidgets.customText(
+                  context,
+                  placeholder,
+                  14,
+                  isDarkView ? Colors.white70 : Colors.grey,
+                  objConstantFonts.montserratMedium,
                 ),
+
+                items: items.map((value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 15.dp,
+                        color: isDarkView ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList(),
+
+                onChanged: onChanged,
               ),
             ),
           ),
+
+          // ⭐ MANUAL ARROW ICON AT RIGHT END
+          Icon(
+            CupertinoIcons.chevron_down,
+            color: isDarkView ? Colors.white : Colors.black87,
+            size: 18.dp,
+          ),
+
         ],
       ),
     );

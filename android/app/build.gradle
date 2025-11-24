@@ -1,10 +1,11 @@
+// android/app/build.gradle
 plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-// 🔹 Load key.properties if present
+// Load key.properties if present
 def keystorePropertiesFile = file('key.properties')
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) {
@@ -19,6 +20,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -42,7 +44,6 @@ android {
             keyPassword "android"
         }
 
-        // 🔹 release config reads from key.properties
         release {
             if (keystorePropertiesFile.exists()) {
                 storeFile file(keystoreProperties['storeFile'])
@@ -53,24 +54,28 @@ android {
         }
     }
 
-    // 🔹 Make sure buildTypes comes after signingConfigs
+    // buildTypes after signingConfigs
     buildTypes {
         release {
             signingConfig signingConfigs.release
-                    minifyEnabled false
+            minifyEnabled false
             shrinkResources false
         }
     }
 }
 
 dependencies {
-    // ✅ Use Firebase BOM to manage all Firebase versions automatically
+    // Firebase BOM (optional, keep if you use Firebase)
     implementation platform('com.google.firebase:firebase-bom:33.2.0')
     implementation 'com.google.firebase:firebase-messaging'
 
-    // Optional: For analytics or crashlytics (can be added later)
-    // implementation 'com.google.firebase:firebase-analytics'
-    // implementation 'com.google.firebase:firebase-crashlytics'
+    // 🔥 FORCE activity dependencies to a version supported by AGP 8.5.2 + Flutter
+    implementation "androidx.activity:activity:1.8.2"
+    implementation "androidx.activity:activity-ktx:1.8.2"
+
+    // Flutter local notifications fix
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+
 }
 
 flutter {

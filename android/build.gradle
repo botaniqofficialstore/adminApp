@@ -1,10 +1,17 @@
+// android/build.gradle (project-level)
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // ✅ Google Services plugin for Firebase
+        // Android Gradle Plugin (use a stable version compatible with Flutter)
+        classpath 'com.android.tools.build:gradle:8.9.1'
+
+        // Kotlin Gradle plugin - keep in sync with Kotlin used by libraries
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
+
+        // Google services plugin (Firebase) - keep if you use Firebase
         classpath 'com.google.gms:google-services:4.4.4'
     }
 }
