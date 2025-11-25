@@ -15,7 +15,6 @@ import '../../../../Utility/PreferencesManager.dart';
 import '../../MainScreen/MainScreen.dart';
 import 'AdvertisementScreenState.dart';
 import 'package:path/path.dart' as p;
-import '../../../../../Utility/ImageCropScreen.dart';
 
 class AdvertisementScreen extends ConsumerStatefulWidget {
   const AdvertisementScreen({super.key});
@@ -360,7 +359,7 @@ class AdvertisementScreenState extends ConsumerState<AdvertisementScreen> {
   }
 
 
-  Future<void> _handlePick(ImageSource source,) async {
+  Future<void> _handlePick(ImageSource source) async {
     try {
       final hasPerm = await _checkAndRequestPermission(source);
       if (!hasPerm) return;
@@ -395,62 +394,72 @@ class AdvertisementScreenState extends ConsumerState<AdvertisementScreen> {
   }
 
   Future<bool> _checkAndRequestPermission(ImageSource source) async {
-    // For camera: camera permission
-    // For gallery: photos (iOS) or storage/read_media (Android)
     if (source == ImageSource.camera) {
       var status = await Permission.camera.status;
       if (status.isGranted) return true;
 
       if (status.isPermanentlyDenied) {
-        await _showOpenSettingsDialog('Camera permission is permanently denied. Please enable it from settings.');
+        await _showOpenSettingsDialog('Camera permission permanently denied.');
         return false;
       }
 
       final result = await Permission.camera.request();
       if (result.isGranted) return true;
+
       if (result.isPermanentlyDenied) {
-        await _showOpenSettingsDialog('Camera permission is permanently denied. Please enable it from settings.');
+        await _showOpenSettingsDialog('Camera permission permanently denied.');
       }
+
+      return false;
+    }
+
+    // ---------- GALLERY PERMISSION ----------
+    if (Platform.isAndroid) {
+      final sdkInt = (await _getAndroidSdkInt()) ?? 0;
+      Permission permission;
+
+      if (sdkInt >= 33) {
+        // ANDROID 13+ uses READ_MEDIA_IMAGES
+        permission = Permission.photos; // mapped to READ_MEDIA_IMAGES
+      } else {
+        permission = Permission.storage; // old READ_EXTERNAL_STORAGE
+      }
+
+      var status = await permission.status;
+
+      if (status.isGranted) return true;
+
+      if (status.isPermanentlyDenied) {
+        await _showOpenSettingsDialog('Storage permission permanently denied. Please enable it from settings.');
+        return false;
+      }
+
+      final result = await permission.request();
+      if (result.isGranted) return true;
+
+      if (result.isPermanentlyDenied) {
+        await _showOpenSettingsDialog('Storage permission permanently denied. Please enable it from settings.');
+      }
+
       return false;
     } else {
-      // gallery
-      if (Platform.isAndroid) {
-        // Android: handle READ_MEDIA_IMAGES (Android 13+) and READ_EXTERNAL_STORAGE older
-        Permission p = Permission.photos; // fallback
-        final sdkInt = (await _getAndroidSdkInt()) ?? 0;
-        if (sdkInt >= 33) {
-          p = Permission.photos; // permission_handler maps photos to READ_MEDIA_IMAGES
-        } else {
-          p = Permission.storage;
-        }
+      // ---------- iOS ----------
+      var status = await Permission.photos.status;
+      if (status.isGranted) return true;
 
-        var status = await p.status;
-        if (status.isGranted) return true;
-        if (status.isPermanentlyDenied) {
-          await _showOpenSettingsDialog('Storage permission is permanently denied. Please enable it from settings.');
-          return false;
-        }
-        final res = await p.request();
-        if (res.isGranted) return true;
-        if (res.isPermanentlyDenied) {
-          await _showOpenSettingsDialog('Storage permission is permanently denied. Please enable it from settings.');
-        }
-        return false;
-      } else {
-        // iOS
-        var status = await Permission.photos.status;
-        if (status.isGranted) return true;
-        if (status.isPermanentlyDenied) {
-          await _showOpenSettingsDialog('Photos permission is permanently denied. Please enable it from settings.');
-          return false;
-        }
-        final res = await Permission.photos.request();
-        if (res.isGranted) return true;
-        if (res.isPermanentlyDenied) {
-          await _showOpenSettingsDialog('Photos permission is permanently denied. Please enable it from settings.');
-        }
+      if (status.isPermanentlyDenied) {
+        await _showOpenSettingsDialog('Photos permission permanently denied. Please enable it from settings.');
         return false;
       }
+
+      final res = await Permission.photos.request();
+      if (res.isGranted) return true;
+
+      if (res.isPermanentlyDenied) {
+        await _showOpenSettingsDialog('Photos permission permanently denied. Please enable it from settings.');
+      }
+
+      return false;
     }
   }
 

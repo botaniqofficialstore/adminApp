@@ -7,6 +7,7 @@ import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartn
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ProfileScreen/ProfileScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/AddReelScreen/AddReelScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/ReelsScreen/ReelsScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:flutter/cupertino.dart';
@@ -89,7 +90,9 @@ class MainScreenGlobalStateNotifier
       return const AddContractScreen();
     } else if (state.currentModule == ScreenName.addDeliveryPartner) {
       return const AddDeliveryPartnerScreen();
-    } else {
+    } else if (state.currentModule == ScreenName.addReel) {
+      return const AddReelScreen();
+    }else {
       return const DashboardScreen();
     }
   }
@@ -135,6 +138,8 @@ class MainScreenGlobalStateNotifier
       onScreen = ScreenName.contracts;
     } else if (module == ScreenName.addDeliveryPartner){
       onScreen = ScreenName.deliveryPartner;
+    } else if (module == ScreenName.addReel){
+      onScreen = ScreenName.reels;
     }
 
     state = state.copyWith(currentModule: onScreen);

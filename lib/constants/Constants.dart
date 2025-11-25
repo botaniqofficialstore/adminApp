@@ -4,7 +4,7 @@
 import 'ConstantVariables.dart';
 
 class ConstantURLs {
-  static String baseUrl = 'http://192.168.43.216:5000'; //'https://app-1q5g.onrender.com'; //
+  static String baseUrl = 'https://app-1q5g.onrender.com'; //'http://192.168.43.216:5000'; // //
 
   ///Authentication API URL's
   static String loginUrl = '$baseUrl/api/admin/login';
@@ -17,6 +17,9 @@ class ConstantURLs {
   ///Notification API URL
   static String deviceRegisterUrl = "$baseUrl/api/notifications/register";
   static String deviceUnregisterUrl = "$baseUrl/api/notifications/unregister";
+
+  ///Reels API URL
+  static String reelListUrl = '$baseUrl/api/admin/reels/list';
 
 }
 
@@ -43,7 +46,8 @@ enum ScreenName {
   changePassword,
   logout,
   addContract,
-  addDeliveryPartner
+  addDeliveryPartner,
+  addReel
 }
 
 

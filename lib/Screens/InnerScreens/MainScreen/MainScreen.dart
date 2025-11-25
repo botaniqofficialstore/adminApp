@@ -118,6 +118,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
             ),
 
                 /// FOOTER
+                if (userScreenState.currentModule != ScreenName.reels)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
@@ -127,6 +128,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
                   child: const _BlurFooterContainer(),
                 ),
 
+                if (userScreenState.currentModule != ScreenName.reels)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
