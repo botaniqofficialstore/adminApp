@@ -118,7 +118,11 @@ class MainScreenState extends ConsumerState<MainScreen> {
             ),
 
                 /// FOOTER
-                if (userScreenState.currentModule != ScreenName.reels)
+                if (userScreenState.currentModule != ScreenName.reels &&
+                    userScreenState.currentModule != ScreenName.addProduct &&
+                    userScreenState.currentModule != ScreenName.advertisement &&
+                    userScreenState.currentModule != ScreenName.addContract &&
+                    userScreenState.currentModule != ScreenName.addDeliveryPartner)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
@@ -128,7 +132,11 @@ class MainScreenState extends ConsumerState<MainScreen> {
                   child: const _BlurFooterContainer(),
                 ),
 
-                if (userScreenState.currentModule != ScreenName.reels)
+                if (userScreenState.currentModule != ScreenName.reels &&
+                    userScreenState.currentModule != ScreenName.addProduct &&
+                    userScreenState.currentModule != ScreenName.advertisement &&
+                    userScreenState.currentModule != ScreenName.addContract &&
+                    userScreenState.currentModule != ScreenName.addDeliveryPartner)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,

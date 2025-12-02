@@ -47,7 +47,8 @@ enum ScreenName {
   logout,
   addContract,
   addDeliveryPartner,
-  addReel
+  addReel,
+  addProduct
 }
 
 

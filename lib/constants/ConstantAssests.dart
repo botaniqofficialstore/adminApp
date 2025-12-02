@@ -28,9 +28,11 @@ class ConstantAssests{
    String adv = '${commonIconsAssets}adv.png';
    String logout = '${commonIconsAssets}logout.png';
    String addProduct = '${commonIconsAssets}addProduct.png';
+   String addProduct2 = '${commonIconsAssets}addProduct2.png';
    String changePassword = '${commonIconsAssets}changePassword.png';
    String editIcon = '${commonIconsAssets}edit.png';
    String plusIcon = '${commonIconsAssets}plus.png';
+   String minusIcon = '${commonIconsAssets}minus.png';
    String filterIcon = '${commonIconsAssets}filter.png';
    String profileImage = '${commonIconsAssets}profile.png';
    String defaultProfileImage = '${commonIconsAssets}user.png';
@@ -38,6 +40,7 @@ class ConstantAssests{
    String cardIcon = '${commonIconsAssets}card.png';
    String calendarIcon = '${commonIconsAssets}calendar.png';
    String verifiedIcon = '${commonIconsAssets}verified.png';
+   String sampleProduct = '${commonIconsAssets}radhishPink_Micro.png';
 
 
 

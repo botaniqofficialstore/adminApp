@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../Constants/ConstantVariables.dart';
 import '../../../../../Constants/Constants.dart';
@@ -85,7 +84,8 @@ class AddReelScreenState extends ConsumerState<AddReelScreen> {
 
                             SizedBox(height: 20.dp,),
                         
-                            CupertinoButton(padding: EdgeInsets.zero,child: Container(
+                            CupertinoButton(padding: EdgeInsets.zero,
+                                child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: objConstantColor.yellow,//.withOpacity(0.15), // frosted glass effect

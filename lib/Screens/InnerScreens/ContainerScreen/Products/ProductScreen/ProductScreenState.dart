@@ -1,31 +1,40 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../Constants/Constants.dart';
-
 class ProductScreenState {
-  final ScreenName currentModule;
+  final TextEditingController searchController;
+  final int selectedIndex;
 
   ProductScreenState({
-    this.currentModule = ScreenName.home,
+    required this.searchController,
+    required this.selectedIndex,
   });
 
   ProductScreenState copyWith({
-    ScreenName? currentModule,
+    TextEditingController? searchController,
+    int? selectedIndex,
   }) {
     return ProductScreenState(
-      currentModule: currentModule ?? this.currentModule,
+      searchController: searchController ?? this.searchController,
+      selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
 }
 
+
 class ProductScreenStateNotifier
     extends StateNotifier<ProductScreenState> {
-  ProductScreenStateNotifier() : super(ProductScreenState());
+  ProductScreenStateNotifier() : super(ProductScreenState(
+      searchController: TextEditingController(),
+    selectedIndex: 0,));
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void updateSelectedIndex(int newIndex) {
+    state = state.copyWith(selectedIndex: newIndex);
   }
 
 

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../../Constants/ConstantVariables.dart';
+import '../../../../Utility/MultiColorProgressBar.dart';
 import '../../MainScreen/MainScreenState.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -146,7 +147,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 20,
                     crossAxisSpacing: 15,
-                    childAspectRatio: 0.89,
+                    childAspectRatio: 0.85,
                   ),
                   itemCount: menuList.length,
                   itemBuilder: (context, index) {
@@ -293,6 +294,16 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                  ),
 
                  Spacer(),
+
+                 MultiColorProgressBar(
+                   totalTasks: 100,
+                   completedTasks: 20*(index +1 ),
+                 ),
+
+                 SizedBox(height: 5.dp,),
+
+
+
 
                  Row(
                    children: [

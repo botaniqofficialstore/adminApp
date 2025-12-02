@@ -190,7 +190,7 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
                                     ),
                                   ),
 
-                                  SizedBox(height: 15.dp),
+                                  SizedBox(height: 10.dp),
 
                                   objCommonWidgets.customText(
                                     context,
@@ -209,7 +209,6 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
                                      deliveryPartnerScreenNotifier.updateGender(gender!);
                                     },
                                   ),
-                                  SizedBox(height: 15.dp),
 
 
 

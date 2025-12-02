@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../Constants/Constants.dart';
 
 class DashboardScreenState {
@@ -21,6 +20,7 @@ class DashboardScreenState {
 class DashboardScreenStateNotifier
     extends StateNotifier<DashboardScreenState> {
   DashboardScreenStateNotifier() : super(DashboardScreenState());
+
 
 }
 

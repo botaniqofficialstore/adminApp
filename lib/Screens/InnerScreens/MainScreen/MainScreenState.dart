@@ -5,6 +5,7 @@ import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DashboardScre
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/AddProductScreen/AddProductScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ProfileScreen/ProfileScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/AddReelScreen/AddReelScreen.dart';
@@ -92,7 +93,9 @@ class MainScreenGlobalStateNotifier
       return const AddDeliveryPartnerScreen();
     } else if (state.currentModule == ScreenName.addReel) {
       return const AddReelScreen();
-    }else {
+    } else if (state.currentModule == ScreenName.addProduct) {
+      return const AddProductScreen();
+    } else {
       return const DashboardScreen();
     }
   }
@@ -140,6 +143,8 @@ class MainScreenGlobalStateNotifier
       onScreen = ScreenName.deliveryPartner;
     } else if (module == ScreenName.addReel){
       onScreen = ScreenName.reels;
+    } else if (module == ScreenName.addProduct){
+      onScreen = ScreenName.products;
     }
 
     state = state.copyWith(currentModule: onScreen);
