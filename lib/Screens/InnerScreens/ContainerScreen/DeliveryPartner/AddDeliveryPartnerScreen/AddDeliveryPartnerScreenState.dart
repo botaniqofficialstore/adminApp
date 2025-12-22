@@ -16,9 +16,12 @@ class AddDeliveryPartnerScreenState {
   final TextEditingController mobileController;
   final TextEditingController pincodeController;
   final TextEditingController aadharController;
+  final TextEditingController vehicleController;
   final String? profileImagePath;
   final String? licenceFrontImagePath;
   final String? licenceRearImagePath;
+  final String? vehicleFrontImagePath;
+  final String? vehicleRearImagePath;
   final String? dob;
   final String? gender;
 
@@ -35,9 +38,12 @@ class AddDeliveryPartnerScreenState {
     required this.mobileController,
     required this.pincodeController,
     required this.aadharController,
+    required this.vehicleController,
     this.profileImagePath,
     this.licenceFrontImagePath,
     this.licenceRearImagePath,
+    this.vehicleFrontImagePath,
+    this.vehicleRearImagePath,
     this.dob,
     this.gender,
   });
@@ -55,9 +61,12 @@ class AddDeliveryPartnerScreenState {
     TextEditingController? mobileController,
     TextEditingController? pincodeController,
     TextEditingController? aadharController,
+    TextEditingController? vehicleController,
     String? profileImagePath,
     String? licenceFrontImagePath,
     String? licenceRearImagePath,
+    String? vehicleFrontImagePath,
+    String? vehicleRearImagePath,
     String? dob,
     String? gender,
   }) {
@@ -77,6 +86,7 @@ class AddDeliveryPartnerScreenState {
       profileImagePath: profileImagePath ?? this.profileImagePath,
       licenceFrontImagePath: licenceFrontImagePath ?? this.licenceFrontImagePath,
       licenceRearImagePath: licenceRearImagePath ?? this.licenceRearImagePath,
+      vehicleController: vehicleController ?? this.vehicleController,
       dob: dob ?? this.dob,
       gender: gender ?? this.gender,
     );
@@ -97,6 +107,7 @@ class AddDeliveryPartnerScreenStateNotifier
     mobileController: TextEditingController(),
     pincodeController: TextEditingController(),
     aadharController: TextEditingController(),
+    vehicleController: TextEditingController(),
   ));
 
   @override
@@ -113,6 +124,7 @@ class AddDeliveryPartnerScreenStateNotifier
     state.mobileController.dispose();
     state.pincodeController.dispose();
     state.aadharController.dispose();
+    state.vehicleController.dispose();
     super.dispose();
   }
 
@@ -125,6 +137,14 @@ class AddDeliveryPartnerScreenStateNotifier
   }
 
   void setLicenceRearImagePath(String path) {
+    state = state.copyWith(licenceRearImagePath: path);
+  }
+
+  void setVehicleFrontImagePath(String path) {
+    state = state.copyWith(licenceFrontImagePath: path);
+  }
+
+  void setVehicleRearImagePath(String path) {
     state = state.copyWith(licenceRearImagePath: path);
   }
 

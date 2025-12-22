@@ -104,7 +104,7 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
                 Expanded(
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 20.dp),
+                      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -328,6 +328,54 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
                                       final state = ref.watch(AddDeliveryPartnerScreenStateProvider);
                                       final imgPath = state.licenceRearImagePath;
                                       return licenceImageCard(context, 'Licence Rear Side', 'LicenceRearPage', imgPath);
+                                    },
+                                  ),
+
+
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 35.dp),
+
+
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20.dp),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 15.dp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  objCommonWidgets.customText(
+                                    context,
+                                    'Vehicle Details',
+                                    18,
+                                    objConstantColor.yellow,
+                                    objConstantFonts.montserratSemiBold,
+                                  ),
+                                  SizedBox(height: 15.dp),
+                                  textFieldCard(context, 'Vehicle Registration', 'Enter your vehicle reg.no', deliveryPartnerScreenState.pincodeController),
+
+
+                                  Consumer(
+                                    builder: (context, ref, _) {
+                                      final state = ref.watch(AddDeliveryPartnerScreenStateProvider);
+                                      final imgPath = state.licenceFrontImagePath;
+                                      return licenceImageCard(context, 'Vehicle Front View', 'VehicleFrontView', imgPath);
+                                    },
+                                  ),
+
+                                  SizedBox(height: 15.dp),
+
+                                  Consumer(
+                                    builder: (context, ref, _) {
+                                      final state = ref.watch(AddDeliveryPartnerScreenStateProvider);
+                                      final imgPath = state.licenceRearImagePath;
+                                      return licenceImageCard(context, 'Vehicle Rear View', 'VehicleRearView', imgPath);
                                     },
                                   ),
 
@@ -670,8 +718,12 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
         notifier.setProfileImagePath(compressedPath);
       } else if (imageFor == 'LicenceFrontPage'){
         notifier.setLicenceFrontImagePath(compressedPath);
-      } else {
+      } else if (imageFor == 'LicenceRearPage'){
         notifier.setLicenceRearImagePath(compressedPath);
+      } else if (imageFor == 'VehicleFrontView'){
+        notifier.setVehicleFrontImagePath(compressedPath);
+      } else if (imageFor == 'VehicleRearView'){
+        notifier.setVehicleRearImagePath(compressedPath);
       }
 
     } catch (e, st) {

@@ -61,7 +61,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 3),
+      margin: const EdgeInsets.symmetric(vertical: 1),
       decoration: BoxDecoration(
         color: widget.isDarkView ? Colors.white.withOpacity(0.15) : Colors.white,
         borderRadius: BorderRadius.circular(7.dp),

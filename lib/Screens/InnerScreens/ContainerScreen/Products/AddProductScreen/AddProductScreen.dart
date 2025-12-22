@@ -80,7 +80,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                         objCommonWidgets.customText(
                           context,
                           'Add Product',
-                          23,
+                          18,
                           objConstantColor.white,
                           objConstantFonts.montserratSemiBold,
                         ),

@@ -1,9 +1,13 @@
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/CompletedOrder/CompletedDeliveryScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ConfirmedOrder/ConfirmedOrderScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Contract/AddContractScreen/AddContractScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Contract/ContractScreen/ContractScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryPartnerScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/DeliveryScreen/DeliveryScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NewOrder/NewOrderScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/AddProductScreen/AddProductScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
@@ -11,12 +15,14 @@ import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ProfileScreen
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/AddReelScreen/AddReelScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/Reels/ReelsScreen/ReelsScreen.dart';
 import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
+import 'package:botaniq_admin/Screens/InnerScreens/ContainerScreen/ScheduledDelivery/ScheduledDeliveryScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
 import '../../../Constants/ConstantVariables.dart';
 import '../../../Constants/Constants.dart';
 import '../ContainerScreen/AdvertisementScreen/AdvertisementScreen.dart';
+import '../ContainerScreen/PackedOrder/PackedOrderScreen.dart';
 
 class MainScreenGlobalState {
   final ScreenName currentModule;
@@ -95,6 +101,18 @@ class MainScreenGlobalStateNotifier
       return const AddReelScreen();
     } else if (state.currentModule == ScreenName.addProduct) {
       return const AddProductScreen();
+    } else if (state.currentModule == ScreenName.delivery) {
+      return const DeliveryScreen();
+    } else if (state.currentModule == ScreenName.newOrder) {
+      return const NewOrderScreen();
+    } else if (state.currentModule == ScreenName.confirmOrder) {
+      return const ConfirmedOrderScreen();
+    } else if (state.currentModule == ScreenName.packedOrder) {
+      return const PackedOrderScreen();
+    } else if (state.currentModule == ScreenName.shceduledDelivery) {
+      return const ScheduledDeliveryScreen();
+    } else if (state.currentModule == ScreenName.completedDelivery) {
+      return const CompletedDeliveryScreen();
     } else {
       return const DashboardScreen();
     }

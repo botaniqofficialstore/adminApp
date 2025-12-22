@@ -63,7 +63,7 @@ class AddContractScreenState extends ConsumerState<AddContractScreen>
                       objCommonWidgets.customText(
                         context,
                         'New Contracts',
-                        23,
+                        18,
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),
@@ -90,7 +90,7 @@ class AddContractScreenState extends ConsumerState<AddContractScreen>
                 Expanded(
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 20.dp),
+                      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

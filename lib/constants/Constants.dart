@@ -48,8 +48,26 @@ enum ScreenName {
   addContract,
   addDeliveryPartner,
   addReel,
-  addProduct
+  addProduct,
+  delivery,
+  newOrder,
+  confirmOrder,
+  packedOrder,
+  cancelledOrder,
+  completedDelivery,
+  shceduledDelivery,
+  returnedOrder
 }
+
+
+enum DateFilterType {
+  today,
+  last7Days,
+  last6Months,
+  lastYear,
+  customRange
+}
+
 
 
 

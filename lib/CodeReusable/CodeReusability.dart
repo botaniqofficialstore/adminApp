@@ -9,6 +9,8 @@ import '../Utility/PreferencesManager.dart';
 import '../constants/ConstantVariables.dart';
 import 'package:intl/intl.dart';
 
+import '../constants/Constants.dart';
+
 class CodeReusability {
 
   ///This method used to hide keyboard
@@ -247,6 +249,49 @@ class CodeReusability {
       "lastName": lastName,
     };
   }
+
+
+
+
+  ///This method is used to start and end date for selected option
+  DateTimeRange getDateRange(DateFilterType type) {
+    final now = DateTime.now();
+
+    // Normalize "today" to start of day
+    final today = DateTime(now.year, now.month, now.day);
+
+    switch (type) {
+      case DateFilterType.today:
+        return DateTimeRange(
+          start: today,
+          end: today.add(const Duration(days: 1)).subtract(const Duration(seconds: 1)),
+        );
+
+      case DateFilterType.last7Days:
+        return DateTimeRange(
+          start: today.subtract(const Duration(days: 6)),
+          end: now,
+        );
+
+      case DateFilterType.last6Months:
+        return DateTimeRange(
+          start: DateTime(today.year, today.month - 6, today.day),
+          end: now,
+        );
+
+      case DateFilterType.lastYear:
+        return DateTimeRange(
+          start: DateTime(today.year - 1, today.month, today.day),
+          end: now,
+        );
+
+      case DateFilterType.customRange:
+        throw UnsupportedError(
+          'customRange is not supported in getDateRange()',
+        );
+    }
+  }
+
 
 
 

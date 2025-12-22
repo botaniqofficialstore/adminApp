@@ -42,6 +42,22 @@ class ConstantAssests{
    String verifiedIcon = '${commonIconsAssets}verified.png';
    String sampleProduct = '${commonIconsAssets}radhishPink_Micro.png';
 
+   //Dashboard
+   String newOrder = '${commonIconsAssets}new.png';
+   String confirmedOrder = '${commonIconsAssets}confirmed.png';
+   String packedOrder = '${commonIconsAssets}packed.png';
+   String completedOrder = '${commonIconsAssets}delivered.png';
+   String returnedOrder = '${commonIconsAssets}returned.png';
+   String cancelledOrder = '${commonIconsAssets}cancel.png';
+   String deliveryCar = '${commonIconsAssets}delivery-car.png';
+
+   String sellerPartner = '${commonIconsAssets}team-leader.png';
+   String deliveryBoy = '${commonIconsAssets}delivery-boy.png';
+   String motorbike = '${commonIconsAssets}motorbike.png';
+   String customer = '${commonIconsAssets}customer.png';
+
+   String distance = '${commonIconsAssets}distance.png';
+
 
 
    ///Fonts
