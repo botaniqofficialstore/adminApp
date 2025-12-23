@@ -5,7 +5,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../Constants/ConstantColors.dart';
 import '../../Utility/Logger.dart';
 import '../../Utility/PreferencesManager.dart';
-import '../InnerScreens/MainScreen/MainScreen.dart';
+import '../AdminScreens/InnerScreens/MainScreen/MainScreen.dart';
 import 'LoginScreen/LoginScreen.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';

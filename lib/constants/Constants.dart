@@ -1,6 +1,3 @@
-
-
-//MARK: - Class Declarations
 import 'ConstantVariables.dart';
 
 class ConstantURLs {
@@ -30,6 +27,13 @@ class NotificationCenterId {
   static String refreshFooterCount = 'refreshFooterCount';
 }
 
+
+///User Role
+UserRole currentUser = UserRole.admin;
+enum UserRole {
+  admin,
+  seller
+}
 
 
 ///MARK: - Enum

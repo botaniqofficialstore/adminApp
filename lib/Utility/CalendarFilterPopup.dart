@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
@@ -7,15 +8,30 @@ import '../Constants/ConstantVariables.dart';
 
 
 class CalendarFilterPopup extends StatefulWidget {
-  const CalendarFilterPopup({super.key});
+  final bool isCustomRange;
+
+  const CalendarFilterPopup({
+    super.key,
+    this.isCustomRange = false, // ✅ optional with default
+  });
 
   @override
   State<CalendarFilterPopup> createState() => CalendarFilterPopupState();
 }
 
+
 class CalendarFilterPopupState extends State<CalendarFilterPopup> {
   DateTime? start;
   DateTime? end;
+
+
+  DateTime get _firstAllowedDate {
+    if (widget.isCustomRange) {
+      return DateTime(1900, 1, 1); // 🔹 infinite past
+    }
+    return _today; // 🔹 current behavior
+  }
+
 
   /// Today (local – start of day)
   DateTime get _today {
@@ -30,15 +46,6 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
     return DateTime(nextMonth.year, nextMonth.month, nextMonth.day);
   }
 
-  bool _isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  bool _isInRange(DateTime day) {
-    if (start == null) return false;
-    if (end == null) return _isSameDay(day, start!);
-    return day.isAfter(start!.subtract(const Duration(days: 1))) &&
-        day.isBefore(end!.add(const Duration(days: 1)));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +82,9 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
 
               /// MODERN CALENDAR
               TableCalendar(
-                firstDay: _today,
-                lastDay: _lastAllowedDate,
+                firstDay: _firstAllowedDate,
+                lastDay: widget.isCustomRange ? _today : _lastAllowedDate,
                 focusedDay: start ?? _today,
-
                 rangeStartDay: start,
                 rangeEndDay: end,
                 rangeSelectionMode: RangeSelectionMode.toggledOn,
@@ -86,7 +92,7 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
                 availableGestures: AvailableGestures.horizontalSwipe,
 
                 /// ✅ Disable only past days
-                enabledDayPredicate: (day) => !day.isBefore(_today),
+                enabledDayPredicate: (day) => widget.isCustomRange ? !day.isAtSameMomentAs(_today) : !day.isBefore(_today),
 
                 onDaySelected: (selectedDay, focusedDay) {
                   setState(() {
@@ -211,6 +217,12 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
               ),
 
 
+              if (widget.isCustomRange)...{
+                SizedBox(height: 14.dp),
+                customRangeCard(context)
+              },
+
+
 
 
               SizedBox(height: 14.dp),
@@ -247,17 +259,8 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
                   Expanded(
                     child: CupertinoButton(
                       padding: EdgeInsets.zero,
-                      onPressed: start == null
-                          ? null
-                          : () {
-                        /// ✅ RETURN UTC DATES
-                        Navigator.pop(
-                          context,
-                          DateRangeResult(
-                            start!.toUtc(),
-                            end?.toUtc(),
-                          ),
-                        );
+                      onPressed:  () {
+                        checkButtonAction(context);
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.dp),
@@ -284,6 +287,61 @@ class CalendarFilterPopupState extends State<CalendarFilterPopup> {
         ),
       ),
     );
+  }
+
+
+
+  Widget customRangeCard(BuildContext context){
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            objCommonWidgets.customText(context, 'Start Date :', 12, objConstantColor.white, objConstantFonts.montserratMedium),
+            SizedBox(width: 2.5.dp),
+            objCommonWidgets.customText(context, start != null ? "${start?.day}/${start?.month}/${start?.year}" : '', 12, objConstantColor.yellow, objConstantFonts.montserratSemiBold),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            objCommonWidgets.customText(context, 'End Date :', 12, objConstantColor.white, objConstantFonts.montserratMedium),
+            SizedBox(width: 2.5.dp),
+            objCommonWidgets.customText(context, end != null ? "${end?.day}/${end?.month}/${end?.year}" : '', 12, objConstantColor.yellow, objConstantFonts.montserratSemiBold),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void checkButtonAction(BuildContext context){
+    if (widget.isCustomRange){
+      if (start == null){
+        CodeReusability().showAlert(context, 'Please select start date');
+      } else if (end == null){
+        CodeReusability().showAlert(context, 'Please select end date');
+      } else {
+        Navigator.pop(
+          context,
+          DateRangeResult(
+            start!.toUtc(),
+            end?.toUtc(),
+          ),
+        );
+      }
+    }else{
+      if (start == null){
+        CodeReusability().showAlert(context, 'Please Select a day');
+      } else {
+        Navigator.pop(
+          context,
+          DateRangeResult(
+            start!.toUtc(),
+            end?.toUtc(),
+          ),
+        );
+      }
+    }
   }
 }
 

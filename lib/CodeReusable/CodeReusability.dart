@@ -250,6 +250,14 @@ class CodeReusability {
     };
   }
 
+///This method is used to find the start date is lesser than end date
+  bool isValidDateRange(DateTime? start, DateTime? end) {
+    if (start == null || end == null) return false;
+
+    // allow same day range
+    return start.isBefore(end);
+  }
+
 
 
 

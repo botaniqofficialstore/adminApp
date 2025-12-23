@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../Constants/ConstantVariables.dart';
 import 'DeliveryConfirmPopup.dart';
+import 'PreferencesManager.dart';
 
 class ScheduleDeliveryPopup extends StatefulWidget {
   final List<DeliveryBoy> deliveryBoys;
@@ -27,12 +28,15 @@ class _ScheduleDeliveryPopupState extends State<ScheduleDeliveryPopup> {
   DateTime get _initialCalendarDate => DateTime.now().add(const Duration(days: 1));
 
   void _close() {
-    setState(() {
-      selectedDate = null;
-      hasUserSelected = false;
-      selectedBoy = null;
+    PreferencesManager.getInstance().then((prefs) {
+      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
+      setState(() {
+        selectedDate = null;
+        hasUserSelected = false;
+        selectedBoy = null;
+      });
+      Navigator.pop(context);
     });
-    Navigator.pop(context);
   }
 
   @override
@@ -332,33 +336,36 @@ class _ScheduleDeliveryPopupState extends State<ScheduleDeliveryPopup> {
 
 
   Future<void> openConfirmPopup() async {
-    final bool? confirmed = await showCupertinoModalPopup<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: DeliveryConfirmPopup(
-          selectedDate: selectedDate!,
-          deliveryBoy: selectedBoy!,
-        ),
-      ),
-    );
-
-    if (confirmed == true) {
-      // ✅ ONLY NOW close ScheduleDeliveryPopup
-      Navigator.pop(
-        context,
-        ScheduleDeliveryResult(
-          deliveryBoyId: selectedBoy!.id,
-          utcDate: selectedDate!.toUtc().toIso8601String(),
-        ),
+    PreferencesManager.getInstance().then((prefs) async {
+      prefs.setBooleanValue(PreferenceKeys.isDialogOpened, true);
+      final bool? confirmed = await showCupertinoModalPopup<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) =>
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: DeliveryConfirmPopup(
+                selectedDate: selectedDate!,
+                deliveryBoy: selectedBoy!,
+              ),
+            ),
       );
-    } else {
-      setState(() {
-        selectedBoy = null;
-      });
-    }
-    // ❌ If cancelled → do NOTHING (stay on this screen)
+
+      if (confirmed == true) {
+        // ✅ ONLY NOW close ScheduleDeliveryPopup
+        Navigator.pop(
+          context,
+          ScheduleDeliveryResult(
+            deliveryBoyId: selectedBoy!.id,
+            utcDate: selectedDate!.toUtc().toIso8601String(),
+          ),
+        );
+      } else {
+        setState(() {
+          selectedBoy = null;
+        });
+      }
+    });
   }
 
 

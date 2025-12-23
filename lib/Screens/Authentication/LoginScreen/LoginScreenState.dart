@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
 import '../../../CodeReusable/CommonWidgets.dart';
 import '../../../Utility/PreferencesManager.dart';
-import '../../InnerScreens/MainScreen/MainScreen.dart';
+import '../../AdminScreens/InnerScreens/MainScreen/MainScreen.dart';
 import '../OtpScreen/OtpScreen.dart';
 import 'LoginModel.dart';
 import 'LoginRepository.dart';

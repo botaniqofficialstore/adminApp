@@ -79,6 +79,8 @@ class PreferenceKeys {
   static String isUserLogged = 'isUserLogged';
   static String isDialogOpened = 'isDialogOpened';
   static String isLoadingBarStarted = "isLoadingBarStarted";
+  static String isCommonPopup = "isCommonPopup";
+  static String isBottomSheet = "isBottomSheet";
 
   //Device
   static String fcmToken = 'fcmToken';

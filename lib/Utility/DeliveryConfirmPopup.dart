@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../Constants/ConstantVariables.dart';
+import 'PreferencesManager.dart';
 import 'ScheduleDeliveryPopup.dart';
 
 class DeliveryConfirmPopup extends StatelessWidget {
@@ -62,7 +63,8 @@ class DeliveryConfirmPopup extends StatelessWidget {
                   icon: Icons.calendar_today_sharp,
                   title: 'Delivery Date',
                   value:
-                  '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                  '${selectedDate.day}/${selectedDate.month}/${selectedDate
+                      .year}',
                 ),
 
                 SizedBox(height: 12.dp),
@@ -93,7 +95,8 @@ class DeliveryConfirmPopup extends StatelessWidget {
                           child: Image.network(
                             deliveryBoy.image,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            errorBuilder: (_, __, ___) =>
+                            const Icon(
                               Icons.person,
                               color: Colors.white,
                             ),
@@ -140,14 +143,19 @@ class DeliveryConfirmPopup extends StatelessWidget {
                       child: CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () {
-                          Navigator.of(context).pop(false);
+                          PreferencesManager.getInstance().then((prefs) {
+                            prefs.setBooleanValue(
+                                PreferenceKeys.isDialogOpened, false);
+                            Navigator.of(context).pop(false);
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 12.dp),
                           decoration: BoxDecoration(
                             color: Colors.white.withAlpha(20),
                             borderRadius: BorderRadius.circular(25.dp),
-                            border: Border.all(color: Colors.white.withAlpha(40)),
+                            border: Border.all(
+                                color: Colors.white.withAlpha(40)),
                           ),
                           child: Center(
                             child: objCommonWidgets.customText(
@@ -169,7 +177,11 @@ class DeliveryConfirmPopup extends StatelessWidget {
                       child: CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () {
-                          Navigator.of(context).pop(true);
+                          PreferencesManager.getInstance().then((prefs) {
+                            prefs.setBooleanValue(
+                                PreferenceKeys.isDialogOpened, false);
+                            Navigator.of(context).pop(true);
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 12.dp),

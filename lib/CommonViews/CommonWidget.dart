@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 
+import '../Utility/FullScreenImageViewer.dart';
+import '../Utility/PreferencesManager.dart';
+
 class CommonWidget{
 
   Widget customeText(String text, int size, Color color, String font){
@@ -17,6 +20,39 @@ class CommonWidget{
         fontFamily: font,
       ),
     );
+  }
+
+  void showFullScreenImageViewer(
+      BuildContext context, {
+        required String imageUrl,
+        String title = '',
+      }) {
+    PreferencesManager.getInstance().then((prefs) {
+      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'ImageViewer',
+      barrierColor: Colors.black.withAlpha(150),
+      transitionDuration: const Duration(milliseconds: 250),
+      pageBuilder: (_, __, ___) {
+        return FullScreenImageViewer(
+          imageUrl: imageUrl,
+          title: title,
+        );
+      },
+      transitionBuilder: (_, animation, __, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(animation),
+            child: child,
+          ),
+        );
+      },
+    ).then((_){
+      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
+    });});
   }
 }
 

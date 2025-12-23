@@ -38,7 +38,7 @@ class FullScreenImageViewer extends StatelessWidget {
                         if (progress == null) return child;
                         return const CupertinoActivityIndicator(
                           radius: 16,
-                          color: Colors.white,
+                          color: Colors.yellow,
                         );
                       },
                       errorBuilder: (_, __, ___) {
