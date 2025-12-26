@@ -28,6 +28,11 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
   void initState() {
     super.initState();
 
+    Future.microtask((){
+      var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+      userScreenNotifier.showFooter();
+    });
+
     popupController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
@@ -65,10 +70,23 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
 
                   Row(
                     children: [
+                      CupertinoButton(
+                          minimumSize: Size(0, 0),
+                          padding: EdgeInsets.zero,
+                          child: SizedBox(width: 20.dp,
+                              child: Image.asset(objConstantAssest.backIcon,
+                                color: objConstantColor.white,)),
+                          onPressed: () {
+                            var userScreenNotifier = ref.watch(
+                                MainScreenGlobalStateProvider.notifier);
+                            userScreenNotifier.showFooter();
+                            userScreenNotifier.callHomeNavigation();
+                          }),
+                      SizedBox(width: 2.5.dp),
                       objCommonWidgets.customText(
                         context,
                         'Delivery Partner',
-                        23,
+                        18,
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),
@@ -176,6 +194,7 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
 
                   Expanded(child:
                   SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
                     child: ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -260,7 +279,13 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
                       color: Colors.white,
                       colorBlendMode: BlendMode.srcIn,
                     ), onPressed: () {
-
+                      CommonWidget().showFullScreenImageViewer(
+                        context,
+                        title: 'Driving Licence',
+                        isDownloadable: true,
+                        imageUrl: 'https://drive.google.com/uc?export=download&id=1cXPBw-ZXCG7KmWFuoJdXeAWSfmyZhfmP',
+                        secondImage: 'https://drive.google.com/uc?export=view&id=1DJsYrr53x8jVzPB0WgHptuBxVXB7wsTt',
+                      );
                     }),
 
                     SizedBox(width: 5.dp),

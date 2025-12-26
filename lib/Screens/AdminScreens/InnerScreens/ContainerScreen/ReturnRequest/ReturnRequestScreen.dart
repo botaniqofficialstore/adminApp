@@ -1,32 +1,30 @@
+
 import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
-import '../../../../../Constants/Constants.dart';
-import '../../../../../Utility/FullScreenImageViewer.dart';
 import '../../../../../Utility/PreferencesManager.dart';
 import '../../../../../Utility/ScheduleDeliveryPopup.dart';
 import '../../MainScreen/MainScreenState.dart';
-import 'PackedOrderScreenState.dart';
+import 'ReturnRequestScreenState.dart';
 
-class PackedOrderScreen extends ConsumerStatefulWidget {
-  const PackedOrderScreen({super.key});
+class ReturnRequestScreen extends ConsumerStatefulWidget {
+  const ReturnRequestScreen({super.key});
 
   @override
-  PackedOrderScreenState createState() => PackedOrderScreenState();
+  ReturnRequestScreenState createState() => ReturnRequestScreenState();
 }
 
-class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
+class ReturnRequestScreenState extends ConsumerState<ReturnRequestScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    var newOrderScreenState = ref.watch(PackedOrderScreenStateProvider);
+    var userScreenState = ref.watch(ReturnRequestScreenStateProvider);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -43,7 +41,6 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-
                     CupertinoButton(
                         minimumSize: Size(0, 0),
                         padding: EdgeInsets.zero,
@@ -54,38 +51,45 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                           var userScreenNotifier = ref.watch(
                               MainScreenGlobalStateProvider.notifier);
                           userScreenNotifier.showFooter();
-                          userScreenNotifier.callNavigation(ScreenName.home);
+                          userScreenNotifier.callHomeNavigation();
                         }),
                     SizedBox(width: 2.5.dp),
-
                     objCommonWidgets.customText(
                       context,
-                      "Packed Order's",
+                      "Return Request's",
                       18,
                       objConstantColor.white,
                       objConstantFonts.montserratSemiBold,
                     ),
                     const Spacer(),
 
+                    CupertinoButton(
+                      minimumSize: Size(0, 0),
+                      onPressed: () {
+
+                      },
+                      padding: EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          Icon(Icons.calendar_month_sharp,
+                            color: objConstantColor.yellow,
+                            size: 25.dp,),
+                          objCommonWidgets.customText(
+                            context,
+                            'History',
+                            8,
+                            objConstantColor.yellow,
+                            objConstantFonts.montserratSemiBold,
+                          ),
+                        ],
+                      ),
+                    )
+
                   ],
                 ),
 
                 SizedBox(height: 15.dp),
 
-                /// SEARCH
-                CommonTextField(
-                  controller: newOrderScreenState.searchController,
-                  placeholder: "Search by order ID...",
-                  textSize: 12,
-                  fontFamily: objConstantFonts.montserratMedium,
-                  textColor: objConstantColor.white,
-                  isNumber: false,
-                  isDarkView: true,
-                  isShowIcon: true,
-                  onChanged: (_) {},
-                ),
-
-                SizedBox(height: 15.dp),
 
                 /// LIST
                 Expanded(
@@ -159,12 +163,24 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                               ),
                             ],
                           ),
-                          objCommonWidgets.customText(
-                            context,
-                            '₹249/_',
-                            18,
-                            Colors.white,
-                            objConstantFonts.montserratSemiBold,
+                          Row(
+                            children: [
+                              objCommonWidgets.customText(
+                                context,
+                                'Refund Amount:',
+                                13,
+                                objConstantColor.yellow,
+                                objConstantFonts.montserratSemiBold,
+                              ),
+                              SizedBox(width: 5.dp),
+                              objCommonWidgets.customText(
+                                context,
+                                '₹249/_',
+                                14,
+                                Colors.white,
+                                objConstantFonts.montserratSemiBold,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -178,79 +194,38 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
 
                   SizedBox(height: 20.dp),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: CupertinoButton(
-                          onPressed: () {
-                            CommonWidget().showFullScreenImageViewer(
-                              context,
-                              imageUrl:
-                              'https://drive.google.com/uc?export=view&id=1E6BJdw_VtaekKeY50Qd9vCy7_ul7f0uT',
-                              title: 'Package Image',
-                            );
-                          },
-                          padding: EdgeInsets.zero,
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 10.dp),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withAlpha(25),
-                              borderRadius: BorderRadius.circular(22.dp),
-                              border: Border.all(color: Colors.white.withAlpha(45)),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.image, size: 18.5.dp, color: objConstantColor.yellow,),
-                                SizedBox(width: 2.5.dp),
-                                objCommonWidgets.customText(
-                                  context,
-                                  'View Package',
-                                  11,
-                                  objConstantColor.yellow,
-                                  objConstantFonts.montserratSemiBold,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+
+                  Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 8.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(35),
+                        borderRadius: BorderRadius.circular(10.dp),
                       ),
-
-
-                      SizedBox(width: 8.dp),
-
-                      /// VIEW ITEMS BUTTON
-                      Expanded(
-                        child: CupertinoButton(
-                          onPressed: () => showPurchaseBottomSheet(context),
-                          padding: EdgeInsets.zero,
-                          child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 12.5.dp),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(25),
-                                borderRadius: BorderRadius.circular(22.dp),
-                                border: Border.all(color: Colors.white.withAlpha(45)),
-                              ),
-                              child: Center(
-                                child: objCommonWidgets.customText(
-                                  context,
-                                  'View Details',
-                                  11,
-                                  objConstantColor.yellow,
-                                  objConstantFonts.montserratSemiBold,
-                                ),
-                              )
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          objCommonWidgets.customText(
+                            context,
+                            'Reason for return',
+                            10,
+                            objConstantColor.yellow,
+                            objConstantFonts.montserratSemiBold,
                           ),
-                        ),
-                      ),
-                    ],
+                          objCommonWidgets.customText(
+                            context,
+                            'Product is in out of expiry date',
+                            10,
+                            objConstantColor.white.withAlpha(245),
+                            objConstantFonts.montserratMedium,
+                          )
+                        ],
+                      )
                   ),
 
 
-                  SizedBox(height: 15.dp),
+                      SizedBox(height: 20.dp),
+
 
                   CupertinoButton(
                     onPressed: () async {
@@ -275,24 +250,6 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                               'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
                               id: '978754',
                               name: 'Jacob Thomas'),
-
-                          DeliveryBoy('Male',
-                              'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
-                              'PJS44948789',
-                              'KL07H9461',
-                              'vaishnav@gmail.com',
-                              'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
-                              id: '998754',
-                              name: 'Vaishanv S'),
-
-                          DeliveryBoy('Male',
-                              'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
-                              'PJS44318789',
-                              'KL07H9461',
-                              'mathewIsac@gmail.com',
-                              'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
-                              id: '978754',
-                              name: 'Mathew Isac'),
                         ],
                       );
 
@@ -313,17 +270,37 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                         child: Center(
                           child: objCommonWidgets.customText(
                             context,
-                            'Schedule Delivery',
+                            'Schedule Pickup',
                             14,
                             objConstantColor.black,
                             objConstantFonts.montserratSemiBold,
                           ),
                         )
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
+
+            Positioned(
+                top: 10.dp,
+                right: 10.dp,
+                child: CupertinoButton(
+              onPressed: () => showPurchaseBottomSheet(context),
+              padding: EdgeInsets.zero,
+              child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12.5.dp),
+                  child: Center(
+                    child: objCommonWidgets.customText(
+                      context,
+                      'View Details',
+                      11,
+                      objConstantColor.yellow,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+                  )
+              ),
+            ))
 
 
 
@@ -341,29 +318,29 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
     return PreferencesManager.getInstance().then((prefs) {
       prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
       showGeneralDialog<ScheduleDeliveryResult>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'ScheduleDelivery',
-      barrierColor: Colors.black.withOpacity(0.45),
-      transitionDuration: const Duration(milliseconds: 250),
-      pageBuilder: (_, __, ___) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: ScheduleDeliveryPopup(
-            deliveryBoys: deliveryBoys,
-          ),
-        );
-      },
-      transitionBuilder: (_, animation, __, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
-            child: child,
-          ),
-        );
-      },
-    ).then((_){
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'ScheduleDelivery',
+        barrierColor: Colors.black.withOpacity(0.45),
+        transitionDuration: const Duration(milliseconds: 250),
+        pageBuilder: (_, __, ___) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: ScheduleDeliveryPopup(
+              deliveryBoys: deliveryBoys,
+            ),
+          );
+        },
+        transitionBuilder: (_, animation, __, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+              child: child,
+            ),
+          );
+        },
+      ).then((_){
         prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
       });});
   }
@@ -442,7 +419,7 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                                             CupertinoButton(
                                               minimumSize: Size(0, 0),
                                               onPressed: () {
-                                                  Navigator.pop(context);
+                                                Navigator.pop(context);
                                               },
                                               padding: EdgeInsets.zero,
                                               child: Container(
@@ -457,55 +434,6 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
                                           ],),),
 
                                       SizedBox(height: 20.dp),
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.dp),
-                                        child: Row(
-                                          children:
-                                          [
-                                            objCommonWidgets.customText(
-                                              context,
-                                              "Price Details",
-                                              13, Colors.white,
-                                              objConstantFonts
-                                                  .montserratSemiBold,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      SizedBox(height: 10.dp),
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.dp),
-                                        child: Container(
-                                          padding: EdgeInsets.all(14.dp),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black.withAlpha(155),
-                                            borderRadius: BorderRadius.circular(
-                                                15.dp),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .spaceBetween,
-                                            children: [
-                                              pricePill(
-                                                  context, 'Product Price',
-                                                  '₹189'),
-                                              pricePill(
-                                                  context, 'Delivery Charge',
-                                                  '₹80'),
-                                              pricePill(context, 'Total Amount',
-                                                  '₹249',
-                                                  isPrimary: true),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      SizedBox(height: 10.dp),
 
                                       Padding(
                                         padding: EdgeInsets.symmetric(
@@ -603,19 +531,22 @@ class PackedOrderScreenState extends ConsumerState<PackedOrderScreen>
       children: [
         timelineRow(
           context,
+          icon: Icons.location_on,
+          title: 'Aswin Kumar',
+          subtitle: 'Chandran Nivas, Chandra Nagar, Palakkad, Kerala, India',
+          topic: 'Pickup',
+        ),
+
+        SizedBox(height: 10.dp),
+
+        timelineRow(
+          context,
           icon: Icons.store_mall_directory,
           title: 'BotaniQ Store',
           subtitle: 'BotaniQ, Pavodi, Vadakkathara, Chittur, Palakkad pin. 678101',
           topic: 'Seller',
         ),
-        SizedBox(height: 10.dp),
-        timelineRow(
-          context,
-          icon: Icons.location_on,
-          title: 'Aswin Kumar',
-          subtitle: 'Chandran Nivas, Chandra Nagar, Palakkad, Kerala, India',
-          topic: 'Delivery',
-        ),
+
       ],
     );
   }

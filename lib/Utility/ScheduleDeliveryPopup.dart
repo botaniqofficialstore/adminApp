@@ -78,6 +78,7 @@ class _ScheduleDeliveryPopupState extends State<ScheduleDeliveryPopup> {
 
             Expanded(
               child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: 16.dp),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

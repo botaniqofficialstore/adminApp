@@ -2,27 +2,27 @@ import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
 import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../Constants/Constants.dart';
-import '../../MainScreen/MainScreenState.dart';
+import '../../SellerMainScreen/SellerMainScreenState.dart';
 
-class DashboardScreenState {
+class SellerDashboardScreenState {
   final String? currentDay;
 
-  DashboardScreenState({
+  SellerDashboardScreenState({
     this.currentDay,
   });
 
-  DashboardScreenState copyWith({
+  SellerDashboardScreenState copyWith({
     String? currentDay
   }) {
-    return DashboardScreenState(
-    currentDay: currentDay ?? this.currentDay
+    return SellerDashboardScreenState(
+        currentDay: currentDay ?? this.currentDay
     );
   }
 }
 
-class DashboardScreenStateNotifier
-    extends StateNotifier<DashboardScreenState> {
-  DashboardScreenStateNotifier() : super(DashboardScreenState());
+class SellerDashboardScreenStateNotifier
+    extends StateNotifier<SellerDashboardScreenState> {
+  SellerDashboardScreenStateNotifier() : super(SellerDashboardScreenState());
 
 
   ///This method is used to get current day
@@ -32,7 +32,7 @@ class DashboardScreenStateNotifier
   }
 
   ///This method is used to handle screen navigation for sub modules in dashboard
-  void callSubModuleScreenNavigation(int selectedIndex, MainScreenGlobalStateNotifier userScreenNotifier){
+  void callSubModuleScreenNavigation(int selectedIndex, SellerMainScreenGlobalStateNotifier userScreenNotifier){
     if (selectedIndex == 0){
       userScreenNotifier.callNavigation(ScreenName.newOrder);
     } else if (selectedIndex == 1){
@@ -51,7 +51,7 @@ class DashboardScreenStateNotifier
   }
 
   ///This method is used to handle screen navigation for sub modules in dashboard
-  void callSubCancelAndReturnsModuleScreenNavigation(int selectedIndex, MainScreenGlobalStateNotifier userScreenNotifier){
+  void callSubCancelAndReturnsModuleScreenNavigation(int selectedIndex, SellerMainScreenGlobalStateNotifier userScreenNotifier){
     if (selectedIndex == 0){
       userScreenNotifier.callNavigation(ScreenName.cancelledOrder);
     } else if (selectedIndex == 1){
@@ -62,8 +62,8 @@ class DashboardScreenStateNotifier
 
 }
 
-final DashboardScreenStateProvider =
-StateNotifierProvider.autoDispose<DashboardScreenStateNotifier,
-    DashboardScreenState>((ref) {
-  return DashboardScreenStateNotifier();
+final SellerDashboardScreenStateProvider =
+StateNotifierProvider.autoDispose<SellerDashboardScreenStateNotifier,
+    SellerDashboardScreenState>((ref) {
+  return SellerDashboardScreenStateNotifier();
 });

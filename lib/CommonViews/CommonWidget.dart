@@ -25,7 +25,8 @@ class CommonWidget{
   void showFullScreenImageViewer(
       BuildContext context, {
         required String imageUrl,
-        String title = '',
+        String secondImage = '',
+        String title = '', bool isDownloadable = false,
       }) {
     PreferencesManager.getInstance().then((prefs) {
       prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
@@ -39,6 +40,8 @@ class CommonWidget{
         return FullScreenImageViewer(
           imageUrl: imageUrl,
           title: title,
+          imageUrl2: secondImage,
+          isDownloadable: isDownloadable,
         );
       },
       transitionBuilder: (_, animation, __, child) {
@@ -134,7 +137,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               controller: widget.controller,
               padding: EdgeInsets.symmetric(
                 horizontal: widget.isShowIcon ? 8 : 14,   // adjust padding
-                vertical: 14,
+                vertical: 12,
               ),
               obscureText: widget.isPassword ? _isObscured : false,
               keyboardType: widget.isNumber

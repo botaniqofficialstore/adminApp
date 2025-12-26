@@ -72,6 +72,8 @@ dependencies:
   video_player: ^2.10.1
   table_calendar: ^3.0.9
   auto_size_text: ^3.0.0
+  pdf: ^3.10.7
+  open_filex: ^4.4.0
 
 
 dev_dependencies:

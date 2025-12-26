@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
+import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/PreferencesManager.dart';
+import '../../MainScreen/MainScreenState.dart';
 import 'DeliveryScreenState.dart';
 
 class DeliveryScreen extends ConsumerStatefulWidget {
@@ -39,12 +41,26 @@ class DeliveryScreenState extends ConsumerState<DeliveryScreen>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    objCommonWidgets.customText(
-                      context,
-                      'Delivery',
-                      20,
-                      objConstantColor.white,
-                      objConstantFonts.montserratSemiBold,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CupertinoButton(
+                            minimumSize: Size(0, 0),
+                            padding: EdgeInsets.zero, child: SizedBox(width: 20.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
+                            onPressed: (){
+                              var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+                              userScreenNotifier.showFooter();
+                              userScreenNotifier.callNavigation(ScreenName.home);
+                            }),
+                        SizedBox(width: 2.5.dp),
+                        objCommonWidgets.customText(
+                          context,
+                          'Delivery',
+                          18,
+                          objConstantColor.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ],
                     ),
                     const Spacer(),
 
@@ -93,14 +109,19 @@ class DeliveryScreenState extends ConsumerState<DeliveryScreen>
 
                 /// LIST
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 20.dp),
-                        child: cellView(context),
-                      );
-                    },
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 20.dp),
+                          child: cellView(context),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

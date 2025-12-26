@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../../../CommonViews/CommonDropdown.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../MainScreen/MainScreen.dart';
@@ -201,6 +200,11 @@ class ContractScreenState extends ConsumerState<ContractScreen>
   void initState() {
     super.initState();
 
+    Future.microtask((){
+      var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+      userScreenNotifier.showFooter();
+    });
+
     popupController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
@@ -359,10 +363,23 @@ class ContractScreenState extends ConsumerState<ContractScreen>
 
                   Row(
                     children: [
+                      CupertinoButton(
+                          minimumSize: Size(0, 0),
+                          padding: EdgeInsets.zero,
+                          child: SizedBox(width: 20.dp,
+                              child: Image.asset(objConstantAssest.backIcon,
+                                color: objConstantColor.white,)),
+                          onPressed: () {
+                            var userScreenNotifier = ref.watch(
+                                MainScreenGlobalStateProvider.notifier);
+                            userScreenNotifier.showFooter();
+                            userScreenNotifier.callHomeNavigation();
+                          }),
+                      SizedBox(width: 2.5.dp),
                       objCommonWidgets.customText(
                         context,
                         'Contracts',
-                        23,
+                        18,
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),
@@ -473,6 +490,7 @@ class ContractScreenState extends ConsumerState<ContractScreen>
 
                   Expanded(
                     child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,

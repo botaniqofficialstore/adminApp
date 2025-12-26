@@ -7,7 +7,9 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
+import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/PreferencesManager.dart';
+import '../../MainScreen/MainScreenState.dart';
 import 'NewOrderScreenState.dart';
 
 class NewOrderScreen extends ConsumerStatefulWidget {
@@ -38,12 +40,21 @@ class NewOrderScreenState extends ConsumerState<NewOrderScreen>
               children: [
 
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    CupertinoButton(
+                        minimumSize: Size(0, 0),
+                        padding: EdgeInsets.zero, child: SizedBox(width: 20.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
+                        onPressed: (){
+                          var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+                          userScreenNotifier.showFooter();
+                          userScreenNotifier.callNavigation(ScreenName.home);
+                        }),
+                    SizedBox(width: 2.5.dp),
                     objCommonWidgets.customText(
                       context,
                       "Fresh Order's",
-                      20,
+                      18,
                       objConstantColor.white,
                       objConstantFonts.montserratSemiBold,
                     ),
@@ -71,14 +82,19 @@ class NewOrderScreenState extends ConsumerState<NewOrderScreen>
 
                 /// LIST
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 20.dp),
-                        child: cellView(context),
-                      );
-                    },
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 20.dp),
+                          child: cellView(context),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

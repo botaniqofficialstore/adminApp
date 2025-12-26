@@ -1,30 +1,34 @@
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/CancelledOrder/CancelledOrderScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/CompletedOrder/CompletedDeliveryScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ConfirmedOrder/ConfirmedOrderScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Contract/AddContractScreen/AddContractScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Contract/ContractScreen/ContractScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryPartnerScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/DeliveryScreen/DeliveryScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/NewOrder/NewOrderScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Products/AddProductScreen/AddProductScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Products/ProductScreen/ProductScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ProfileScreen/ProfileScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Reels/AddReelScreen/AddReelScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/Reels/ReelsScreen/ReelsScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ScheduledDelivery/ScheduledDeliveryScreen.dart';
+import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ReturnRequest/ReturnRequestScreen.dart';
+import 'package:botaniq_admin/Screens/Authentication/LoginScreen/LoginScreen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
-import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
+import '../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/PushNotificationService/NotificationService.dart';
 import '../ContainerScreen/AdvertisementScreen/AdvertisementScreen.dart';
+import '../ContainerScreen/CancelledOrder/CancelledOrderScreen.dart';
+import '../ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
+import '../ContainerScreen/CompletedOrder/CompletedDeliveryScreen.dart';
+import '../ContainerScreen/ConfirmedOrder/ConfirmedOrderScreen.dart';
+import '../ContainerScreen/Contract/AddContractScreen/AddContractScreen.dart';
+import '../ContainerScreen/Contract/ContractScreen/ContractScreen.dart';
+import '../ContainerScreen/Customers/CustomerScreen.dart';
+import '../ContainerScreen/DashboardScreen/DashboardScreen.dart';
+import '../ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryPartnerScreen.dart';
+import '../ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
+import '../ContainerScreen/DeliveryScreen/DeliveryScreen.dart';
+import '../ContainerScreen/NewOrder/NewOrderScreen.dart';
+import '../ContainerScreen/NotificationScreen/NotificationScreen.dart';
 import '../ContainerScreen/PackedOrder/PackedOrderScreen.dart';
+import '../ContainerScreen/Products/AddProductScreen/AddProductScreen.dart';
+import '../ContainerScreen/Products/ProductScreen/ProductScreen.dart';
+import '../ContainerScreen/ProfileScreen/ProfileScreen.dart';
+import '../ContainerScreen/Reels/AddReelScreen/AddReelScreen.dart';
+import '../ContainerScreen/Reels/ReelsScreen/ReelsScreen.dart';
+import '../ContainerScreen/RevenueScreen/RevenueScreen.dart';
+import '../ContainerScreen/ScheduledDelivery/ScheduledDeliveryScreen.dart';
 
 class MainScreenGlobalState {
   final ScreenName currentModule;
@@ -117,6 +121,10 @@ class MainScreenGlobalStateNotifier
       return const CompletedDeliveryScreen();
     } else if (state.currentModule == ScreenName.cancelledOrder) {
       return const CancelledOrderScreen();
+    } else if (state.currentModule == ScreenName.returnedOrder) {
+      return const ReturnRequestScreen();
+    } else if (state.currentModule == ScreenName.customers) {
+      return const CustomerScreen();
     } else {
       return const DashboardScreen();
     }
@@ -140,6 +148,20 @@ class MainScreenGlobalStateNotifier
   /// This Method to used to change screenName
   void callNavigation(ScreenName selectedScreen) {
     state = state.copyWith(currentModule: selectedScreen);
+  }
+
+  /// This Method to used to change screenName
+  void callHomeNavigation() {
+    state = state.copyWith(currentModule: ScreenName.home);
+  }
+
+  /// This Method to used for logout
+  void callLogoutNavigation(BuildContext context) {
+    PreferencesManager.getInstance().then((prefs) {
+      prefs.setBooleanValue(PreferenceKeys.isUserLogged, false);
+      //Call Navigation
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    });
   }
 
 

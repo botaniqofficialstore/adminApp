@@ -7,6 +7,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../constants/ConstantVariables.dart';
 import '../../../CodeReusable/CodeReusability.dart';
 import '../../../CommonViews/CommonWidget.dart';
+import '../../../Constants/Constants.dart';
 import '../../../Utility/PreferencesManager.dart';
 import 'LoginScreenState.dart';
 
@@ -19,6 +20,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class LoginScreenState extends ConsumerState<LoginScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _lights = true;
 
   @override
   void initState() {
@@ -139,6 +142,31 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
 
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+
+              objCommonWidgets.customText(
+                context,
+                'Login type Admin',
+                12,
+                objConstantColor.navyBlue,
+                objConstantFonts.montserratSemiBold,
+              ),
+              CupertinoSwitch(
+                value: _lights,
+                activeTrackColor: CupertinoColors.activeGreen,
+                inactiveTrackColor: CupertinoColors.systemGrey5,
+                thumbColor: CupertinoColors.white,
+                onChanged: (bool value) {
+                  setState(() {
+                    _lights = value;
+                  });
+                },
+              ),
+            ],
+          ),
+
           SizedBox(height: 15.dp),
 
           objCommonWidgets.customText(
@@ -210,6 +238,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               color: objConstantColor.orange,
               borderRadius: BorderRadius.circular(12.dp),
               onPressed: () {
+                currentUser = _lights ? UserRole.admin : UserRole.seller ;
                 loginNotifier.checkLoginFieldValidation(context);
               },
               child: objCommonWidgets.customText(

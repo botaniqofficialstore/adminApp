@@ -155,6 +155,12 @@ class CodeReusability {
     return filtered.join(' ').trim();
   }
 
+  static String getCurrentDayAndDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('EEEE, dd/MM/yyyy');
+    return formatter.format(now);
+  }
+
   ///This method is used to convert UTC date to local date and time
   /*String convertUTCToIST(String utcString) {
     try {

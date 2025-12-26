@@ -24,24 +24,35 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
     'Packed Products',
     'Scheduled Delivery',
     'Completed Delivery',
-    'Returned Orders',
-    'Cancelled Orders'
   ];
+
+  final List<String> menu2List = [
+    'Cancelled Orders',
+    'Return Requests',
+  ];
+
   final List<String> menuSubList = [
     'Fresh orders not confirmed yet.',
     "Order's confirmed by seller's.",
     "Products ready for delivery",
     "Assigned order's for delivery partner",
     "Delivery completed order's",
-    "Order's returned by customers",
-    "Order's Cancelled by customers."
   ];
+
+  final List<String> menu2SubList = [
+    "Order's Cancelled by customers.",
+    "Order return request's by customers",
+  ];
+
   final List<String> menuSubCount = [
     '30',
     '130',
     '47',
     '15',
     '5',
+  ];
+
+  final List<String> menu2SubCount = [
     '2',
     '10'
   ];
@@ -52,9 +63,24 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
     objConstantAssest.packedOrder,
     objConstantAssest.deliveryCar,
     objConstantAssest.completedOrder,
-    objConstantAssest.returnedOrder,
-    objConstantAssest.cancelledOrder,
   ];
+
+
+  final List<String> menu2SubIcons = [
+    objConstantAssest.cancelledOrder,
+    objConstantAssest.returnedOrder,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask((){
+      var userScreenNotifier = ref.watch(DashboardScreenStateProvider.notifier);
+      userScreenNotifier.updateCurrentDay();
+    });
+
+  }
 
 
   @override
@@ -135,7 +161,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     objConstantColor.white,
                                     objConstantFonts.montserratSemiBold),
                                 objCommonWidgets.customText(context,
-                                    'Monday, 10/12/2025', 13,
+                                    '${dashboardScreenState.currentDay}', 13,
                                     objConstantColor.white,
                                     objConstantFonts.montserratSemiBold),
                                 SizedBox(height: 25.dp,),
@@ -173,7 +199,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   objCommonWidgets.customText(
                     context,
                     'Orders',
-                    18,
+                    15,
                     objConstantColor.white,
                     objConstantFonts.montserratSemiBold,
                   ),
@@ -191,8 +217,37 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     itemCount: menuList.length,
                     itemBuilder: (context, index) {
-                      return buildMenuCard(context, index, () {
-                        dashboardScreenNotifier.callSubModuleScreenNavigation(index, userScreenNotifier);
+                      return buildMenuCard(context, index, menuList, menuSubList, menuSubIcons, () {
+                        dashboardScreenNotifier.callSubModuleScreenNavigation(index, userScreenNotifier );
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: 25.dp,),
+
+                  objCommonWidgets.customText(
+                    context,
+                    'Return & Cancelled Orders',
+                    15,
+                    objConstantColor.white,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+
+                  SizedBox(height: 5.dp,),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    // FIX
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 15,
+                      childAspectRatio: 1.05,
+                    ),
+                    itemCount: menu2List.length,
+                    itemBuilder: (context, index) {
+                      return buildMenuCard(context, index, menu2List, menu2SubList, menu2SubIcons, () {
+                        dashboardScreenNotifier.callSubCancelAndReturnsModuleScreenNavigation(index, userScreenNotifier);
                       });
                     },
                   ),
@@ -202,7 +257,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   objCommonWidgets.customText(
                     context,
                     'Partners',
-                    18,
+                    15,
                     objConstantColor.white,
                     objConstantFonts.montserratSemiBold,
                   ),
@@ -234,7 +289,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   objCommonWidgets.customText(
                     context,
                     'Customers',
-                    18,
+                    15,
                     objConstantColor.white,
                     objConstantFonts.montserratSemiBold,
                   ),
@@ -242,7 +297,9 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   SizedBox(height: 5.dp,),
 
                   CupertinoButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      userScreenNotifier.callNavigation(ScreenName.customers);
+                    },
                     padding: EdgeInsets.zero,
                     child: Container(
                       width: double.infinity,
@@ -308,7 +365,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 
   ///Menu Card....
-  Widget buildMenuCard(BuildContext context, int index, VoidCallback onTap) {
+  Widget buildMenuCard(BuildContext context, int index, List<String> menuList, List<String> menuSubList, List<String> menuSubIcons, VoidCallback onTap) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: onTap,

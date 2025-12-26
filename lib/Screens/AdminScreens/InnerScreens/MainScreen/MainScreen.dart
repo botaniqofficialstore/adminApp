@@ -109,9 +109,14 @@ class MainScreenState extends ConsumerState<MainScreen> {
           backgroundColor: objConstantColor.white,
           drawer: SideMenu(
             onMenuClick: (module) {
-              // HANDLE MENU SELECTION
               var notifier = ref.read(MainScreenGlobalStateProvider.notifier);
-              notifier.callNavigation(module);
+              // HANDLE MENU SELECTION
+
+              if (module == ScreenName.logout){
+                notifier.callLogoutNavigation(context);
+              } else {
+                notifier.callNavigation(module);
+              }
 
               // Close drawer after selection
               mainScaffoldKey.currentState?.closeDrawer();
@@ -146,11 +151,10 @@ class MainScreenState extends ConsumerState<MainScreen> {
             ),
 
                 /// FOOTER
-                if (userScreenState.currentModule != ScreenName.reels &&
-                    userScreenState.currentModule != ScreenName.addProduct &&
-                    userScreenState.currentModule != ScreenName.advertisement &&
-                    userScreenState.currentModule != ScreenName.addContract &&
-                    userScreenState.currentModule != ScreenName.addDeliveryPartner)
+                if (userScreenState.currentModule == ScreenName.home ||
+                    userScreenState.currentModule == ScreenName.notification ||
+                    userScreenState.currentModule == ScreenName.revenue ||
+                    userScreenState.currentModule == ScreenName.profile)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
@@ -160,11 +164,10 @@ class MainScreenState extends ConsumerState<MainScreen> {
                   child: const _BlurFooterContainer(),
                 ),
 
-                if (userScreenState.currentModule != ScreenName.reels &&
-                    userScreenState.currentModule != ScreenName.addProduct &&
-                    userScreenState.currentModule != ScreenName.advertisement &&
-                    userScreenState.currentModule != ScreenName.addContract &&
-                    userScreenState.currentModule != ScreenName.addDeliveryPartner)
+                if (userScreenState.currentModule == ScreenName.home ||
+                    userScreenState.currentModule == ScreenName.notification ||
+                    userScreenState.currentModule == ScreenName.revenue ||
+                    userScreenState.currentModule == ScreenName.profile)
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,

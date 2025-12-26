@@ -60,7 +60,8 @@ enum ScreenName {
   cancelledOrder,
   completedDelivery,
   shceduledDelivery,
-  returnedOrder
+  returnedOrder,
+  customers
 }
 
 

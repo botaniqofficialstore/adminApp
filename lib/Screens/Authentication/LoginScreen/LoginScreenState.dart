@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../CodeReusable/CodeReusability.dart';
 import '../../../CodeReusable/CommonWidgets.dart';
+import '../../../Constants/Constants.dart';
 import '../../../Utility/PreferencesManager.dart';
 import '../../AdminScreens/InnerScreens/MainScreen/MainScreen.dart';
+import '../../SellerScreens/SellerMainScreen/SellerMainScreen.dart';
 import '../OtpScreen/OtpScreen.dart';
 import 'LoginModel.dart';
 import 'LoginRepository.dart';
@@ -47,7 +49,13 @@ class LoginScreenGlobalStateNotifier
     if (!context.mounted) return;
     CodeReusability.hideKeyboard(context);
 
-    if (CodeReusability.isEmptyOrWhitespace(state.userNameController.text)) {
+    if (currentUser == UserRole.admin){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+    } else {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SellerMainScreen()));
+    }
+
+    /*if (CodeReusability.isEmptyOrWhitespace(state.userNameController.text)) {
       CodeReusability().showAlert(context, 'Please Enter Your Email/Mobile Number');
     } else if (!CodeReusability.isValidMailOrMobile(state.userNameController.text)){
       CodeReusability().showAlert(context, 'Please Enter Valid Email or Mobile Number');
@@ -55,12 +63,14 @@ class LoginScreenGlobalStateNotifier
       CodeReusability().showAlert(context, 'Please Enter Your Password');
     } else {
       callLoginAPI(context);
-    }
+    }*/
   }
 
   ///This method is used to call Login API
   void callLoginAPI(BuildContext context){
     if (!context.mounted) return;
+
+
 
     CodeReusability().isConnectedToNetwork().then((isConnected) async {
       if (isConnected) {

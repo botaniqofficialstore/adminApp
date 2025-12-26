@@ -53,23 +53,27 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: [
 
                 Padding(
-                  padding: EdgeInsets.only(left: 5.dp, top: 15.dp),
+                  padding: EdgeInsets.only(left: 10.dp, top: 15.dp),
                   child: Row(
                     children: [
-                      CupertinoButton(padding: EdgeInsets.zero, child: SizedBox(width: 25.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
+                      CupertinoButton(
+                        minimumSize: Size(0, 0),
+                          padding: EdgeInsets.zero, child: SizedBox(width: 20.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
                           onPressed: (){
                             var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
                             userScreenNotifier.showFooter();
                             userScreenNotifier.callNavigation(ScreenName.home);
                           }),
+                      SizedBox(width: 2.5.dp),
                       objCommonWidgets.customText(
                         context,
                         'Profile',
-                        23,
+                        18,
                         objConstantColor.white,
                         objConstantFonts.montserratSemiBold,
                       ),
@@ -100,7 +104,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                           borderRadius: BorderRadius.circular(20.dp),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 13.dp),
+                          padding: EdgeInsets.symmetric(vertical: 10.dp),
                           child: Center(
                             child: objCommonWidgets.customText(
                               context,
@@ -141,7 +145,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           CommonTextField(
             controller: textField,
             placeholder: placeholder,
-            textSize: 15,
+            textSize: 13,
             fontFamily: objConstantFonts.montserratMedium,
             textColor: objConstantColor.white,
             isDarkView: true,
@@ -180,11 +184,11 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 7.5.dp),
+                  padding: EdgeInsets.symmetric(vertical: 9.dp, horizontal: 7.5.dp),
                   child: objCommonWidgets.customText(
                     context,
                     '+91',
-                    15,
+                    13,
                     objConstantColor.white,
                     objConstantFonts.montserratMedium,
                   ),
@@ -197,7 +201,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: CommonTextField(
                   controller: textField,
                   placeholder: placeholder,
-                  textSize: 15,
+                  textSize: 13,
                   fontFamily: objConstantFonts.montserratMedium,
                   textColor: objConstantColor.white,
                   isNumber: true, // alphabetic

@@ -6,8 +6,10 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
+import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/CalendarFilterPopup.dart';
 import '../../../../../Utility/PreferencesManager.dart';
+import '../../MainScreen/MainScreenState.dart';
 import 'ScheduledDeliveryScreenState.dart';
 
 class ScheduledDeliveryScreen extends ConsumerStatefulWidget {
@@ -48,12 +50,25 @@ class ScheduledDeliveryScreenState extends ConsumerState<ScheduledDeliveryScreen
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                objCommonWidgets.customText(
-                  context,
-                  'Scheduled Delivery',
-                  18,
-                  objConstantColor.white,
-                  objConstantFonts.montserratSemiBold,
+                Row(
+                  children: [
+                    CupertinoButton(
+                        minimumSize: Size(0, 0),
+                        padding: EdgeInsets.zero, child: SizedBox(width: 20.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),
+                        onPressed: (){
+                          var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+                          userScreenNotifier.showFooter();
+                          userScreenNotifier.callNavigation(ScreenName.home);
+                        }),
+                    SizedBox(width: 2.5.dp),
+                    objCommonWidgets.customText(
+                      context,
+                      'Scheduled Delivery',
+                      18,
+                      objConstantColor.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: 15.dp),
@@ -114,6 +129,7 @@ class ScheduledDeliveryScreenState extends ConsumerState<ScheduledDeliveryScreen
 
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
                     child:
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

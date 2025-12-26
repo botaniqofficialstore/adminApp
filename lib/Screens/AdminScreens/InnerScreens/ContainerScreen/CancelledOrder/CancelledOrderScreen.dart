@@ -11,6 +11,7 @@ import '../../../../../Utility/CalendarFilterPopup.dart';
 import '../../../../../Utility/FullScreenImageViewer.dart';
 import '../../../../../Utility/PreferencesManager.dart';
 import '../../../../../Utility/ScheduleDeliveryPopup.dart';
+import '../../MainScreen/MainScreenState.dart';
 import 'CancelledOrderScreenState.dart';
 
 class CancelledOrderScreen extends ConsumerStatefulWidget {
@@ -66,8 +67,21 @@ class CancelledOrderScreenState extends ConsumerState<CancelledOrderScreen>
               children: [
 
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    CupertinoButton(
+                        minimumSize: Size(0, 0),
+                        padding: EdgeInsets.zero,
+                        child: SizedBox(width: 20.dp,
+                            child: Image.asset(objConstantAssest.backIcon,
+                              color: objConstantColor.white,)),
+                        onPressed: () {
+                          var userScreenNotifier = ref.watch(
+                              MainScreenGlobalStateProvider.notifier);
+                          userScreenNotifier.showFooter();
+                          userScreenNotifier.callHomeNavigation();
+                        }),
+                    SizedBox(width: 2.5.dp),
                     objCommonWidgets.customText(
                       context,
                       "Cancelled Order's",
@@ -100,17 +114,20 @@ class CancelledOrderScreenState extends ConsumerState<CancelledOrderScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    objCommonWidgets.customText(context, 'Filtered list', 14, Colors.white, objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(
+                        context, 'Filtered list', 14, Colors.white,
+                        objConstantFonts.montserratSemiBold),
 
                     CupertinoButton(
                       key: filterKey,
                       minimumSize: Size(0, 0),
                       padding: EdgeInsets.zero,
-                      onPressed: (){
+                      onPressed: () {
                         showFilterPopup();
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 5.dp, horizontal: 10.dp),
                         decoration: BoxDecoration(
                           color: Colors.white.withAlpha(25),
                           borderRadius: BorderRadius.circular(5.dp),
@@ -118,8 +135,12 @@ class CancelledOrderScreenState extends ConsumerState<CancelledOrderScreen>
                         ),
                         child: Row(
                           children: [
-                            objCommonWidgets.customText(context, userScreenState.filterType ?? '', 12, objConstantColor.yellow, objConstantFonts.montserratSemiBold),
-                            Icon(Icons.arrow_drop_down_outlined, size: 22.dp, color: objConstantColor.yellow,)
+                            objCommonWidgets.customText(
+                                context, userScreenState.filterType ?? '', 12,
+                                objConstantColor.yellow,
+                                objConstantFonts.montserratSemiBold),
+                            Icon(Icons.arrow_drop_down_outlined, size: 22.dp,
+                              color: objConstantColor.yellow,)
                           ],
                         ),
                       ),
@@ -131,14 +152,19 @@ class CancelledOrderScreenState extends ConsumerState<CancelledOrderScreen>
 
                 /// LIST
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 20.dp),
-                        child: cellView(context),
-                      );
-                    },
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 20.dp),
+                          child: cellView(context),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
