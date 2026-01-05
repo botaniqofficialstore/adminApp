@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../CommonViews/CommonWidget.dart';
-import '../../../../Constants/ConstantVariables.dart';
-import '../../../CodeReusable/CodeReusability.dart';
-import '../../../Constants/Constants.dart';
-import '../../../Utility/PreferencesManager.dart';
-import '../../AdminScreens/InnerScreens/MainScreen/MainScreenState.dart';
+import '../../../../../../CommonViews/CommonWidget.dart';
+import '../../../../../../Constants/ConstantVariables.dart';
+import '../../../../../CodeReusable/CodeReusability.dart';
+import '../../../../../Constants/Constants.dart';
+import '../../../../../Utility/PreferencesManager.dart';
+import '../../MainScreen/MainScreenState.dart';
 import 'NewOrderScreenState.dart';
 
 class NewOrderScreen extends ConsumerStatefulWidget {
@@ -111,125 +111,122 @@ class NewOrderScreenState extends ConsumerState<NewOrderScreen>
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          padding: EdgeInsets.all(16.dp),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.14),
-                Colors.white.withOpacity(0.06),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(22.dp),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              /// HEADER
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          objCommonWidgets.customText(
-                            context,
-                            'Order',
-                            15,
-                            objConstantColor.yellow,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                          SizedBox(width: 5.dp),
-                          objCommonWidgets.customText(
-                            context,
-                            '578421015455',
-                            12,
-                            Colors.white,
-                            objConstantFonts.montserratMedium,
-                          ),
-                        ],
-                      ),
-                      objCommonWidgets.customText(
-                        context,
-                        '₹249/_',
-                        18,
-                        Colors.white,
-                        objConstantFonts.montserratSemiBold,
-                      ),
-                    ],
-                  ),
-
-                  const Spacer(),
-
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          objCommonWidgets.customText(
-                            context,
-                            'Monday',
-                            9,
-                            objConstantColor.white,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                          objCommonWidgets.customText(
-                            context,
-                            '01/01/2026',
-                            9,
-                            objConstantColor.white,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 2.dp),
-                      Icon(Icons.calendar_month_sharp,
-                          size: 33.dp,
-                          color: objConstantColor.yellow),
-                    ],
-                  )
-
-                ],
-              ),
-
-              SizedBox(height: 20.dp),
-
-              deliveryTimeline(context),
-
-              SizedBox(height: 20.dp),
-
-              /// VIEW ITEMS BUTTON
-              CupertinoButton(
-                onPressed: () => showPurchaseBottomSheet(context),
-                padding: EdgeInsets.zero,
-                child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 14.dp, vertical: 12.dp),
-                    decoration: BoxDecoration(
-                      color: objConstantColor.yellow,
-                      borderRadius: BorderRadius.circular(20.dp),
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: Center(
-                      child: objCommonWidgets.customText(
-                        context,
-                        'View Details',
-                        13,
-                        objConstantColor.navyBlue,
-                        objConstantFonts.montserratSemiBold,
-                      ),
-                    )
-                ),
-              ),
+      child: Container(
+        padding: EdgeInsets.all(16.dp),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withOpacity(0.14),
+              Colors.white.withOpacity(0.06),
             ],
           ),
+          borderRadius: BorderRadius.circular(22.dp),
+          border: Border.all(color: Colors.white.withOpacity(0.12)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            /// HEADER
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        objCommonWidgets.customText(
+                          context,
+                          'Order',
+                          15,
+                          objConstantColor.yellow,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                        SizedBox(width: 5.dp),
+                        objCommonWidgets.customText(
+                          context,
+                          '578421015455',
+                          12,
+                          Colors.white,
+                          objConstantFonts.montserratMedium,
+                        ),
+                      ],
+                    ),
+                    objCommonWidgets.customText(
+                      context,
+                      '₹249/_',
+                      18,
+                      Colors.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        objCommonWidgets.customText(
+                          context,
+                          'Monday',
+                          9,
+                          objConstantColor.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                        objCommonWidgets.customText(
+                          context,
+                          '01/01/2026',
+                          9,
+                          objConstantColor.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 2.dp),
+                    Icon(Icons.calendar_month_sharp,
+                        size: 33.dp,
+                        color: objConstantColor.yellow),
+                  ],
+                )
+
+              ],
+            ),
+
+            SizedBox(height: 20.dp),
+
+            deliveryTimeline(context),
+
+            SizedBox(height: 20.dp),
+
+            /// VIEW ITEMS BUTTON
+            CupertinoButton(
+              onPressed: () => showPurchaseBottomSheet(context),
+              padding: EdgeInsets.zero,
+              child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 14.dp, vertical: 12.dp),
+                  decoration: BoxDecoration(
+                    color: objConstantColor.yellow,
+                    borderRadius: BorderRadius.circular(20.dp),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Center(
+                    child: objCommonWidgets.customText(
+                      context,
+                      'View Details',
+                      13,
+                      objConstantColor.navyBlue,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+                  )
+              ),
+            ),
+          ],
         ),
       ),
     );

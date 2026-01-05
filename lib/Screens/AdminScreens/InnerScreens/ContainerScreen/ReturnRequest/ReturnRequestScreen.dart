@@ -29,11 +29,12 @@ class ReturnRequestScreenState extends ConsumerState<ReturnRequestScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,191 +122,188 @@ class ReturnRequestScreenState extends ConsumerState<ReturnRequestScreen>
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Stack(
-          children: [
+      child: Stack(
+        children: [
 
-            Container(
-              padding: EdgeInsets.all(16.dp),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(25),
-                borderRadius: BorderRadius.circular(22.dp),
-                border: Border.all(color: Colors.white.withAlpha(10)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          Container(
+            padding: EdgeInsets.all(16.dp),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(25),
+              borderRadius: BorderRadius.circular(22.dp),
+              border: Border.all(color: Colors.white.withAlpha(10)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                  /// HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              objCommonWidgets.customText(
-                                context,
-                                'Order',
-                                15,
-                                objConstantColor.yellow,
-                                objConstantFonts.montserratSemiBold,
-                              ),
-                              SizedBox(width: 5.dp),
-                              objCommonWidgets.customText(
-                                context,
-                                '578421015455',
-                                12,
-                                Colors.white,
-                                objConstantFonts.montserratMedium,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              objCommonWidgets.customText(
-                                context,
-                                'Refund Amount:',
-                                13,
-                                objConstantColor.yellow,
-                                objConstantFonts.montserratSemiBold,
-                              ),
-                              SizedBox(width: 5.dp),
-                              objCommonWidgets.customText(
-                                context,
-                                '₹249/_',
-                                14,
-                                Colors.white,
-                                objConstantFonts.montserratSemiBold,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                /// HEADER
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Order',
+                              15,
+                              objConstantColor.yellow,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(width: 5.dp),
+                            objCommonWidgets.customText(
+                              context,
+                              '578421015455',
+                              12,
+                              Colors.white,
+                              objConstantFonts.montserratMedium,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Refund Amount:',
+                              13,
+                              objConstantColor.yellow,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(width: 5.dp),
+                            objCommonWidgets.customText(
+                              context,
+                              '₹249/_',
+                              14,
+                              Colors.white,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
 
-                    ],
-                  ),
+                  ],
+                ),
 
-                  SizedBox(height: 20.dp),
+                SizedBox(height: 20.dp),
 
-                  deliveryTimeline(context),
+                deliveryTimeline(context),
 
-                  SizedBox(height: 20.dp),
+                SizedBox(height: 20.dp),
 
 
-                  Container(
+                Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 8.dp),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(35),
+                      borderRadius: BorderRadius.circular(10.dp),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        objCommonWidgets.customText(
+                          context,
+                          'Reason for return',
+                          10,
+                          objConstantColor.yellow,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                        objCommonWidgets.customText(
+                          context,
+                          'Product is in out of expiry date',
+                          10,
+                          objConstantColor.white.withAlpha(245),
+                          objConstantFonts.montserratMedium,
+                        )
+                      ],
+                    )
+                ),
+
+
+                    SizedBox(height: 20.dp),
+
+
+                CupertinoButton(
+                  onPressed: () async {
+
+                    final result = await showScheduleDeliveryPopup(
+                      context,
+                      deliveryBoys: [
+                        DeliveryBoy('Male',
+                            'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
+                            'PJS44178789',
+                            'KL70H1661',
+                            'arunkumar48@gmail.com',
+                            'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
+                            id: '124875',
+                            name: 'Arun Kumar'),
+
+                        DeliveryBoy('Male',
+                            'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
+                            'PJS44178789',
+                            'KL07H9461',
+                            'jacobThomas@gmail.com',
+                            'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
+                            id: '978754',
+                            name: 'Jacob Thomas'),
+                      ],
+                    );
+
+                    if (result != null) {
+                      debugPrint(result.deliveryBoyId); // DB001
+                      debugPrint(result.utcDate);       // 2025-01-21T00:00:00Z
+                    }
+
+                  },
+                  padding: EdgeInsets.zero,
+                  child: Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 8.dp),
+                      padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
                       decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(35),
-                        borderRadius: BorderRadius.circular(10.dp),
+                        color: objConstantColor.yellow,
+                        borderRadius: BorderRadius.circular(22.dp),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          objCommonWidgets.customText(
-                            context,
-                            'Reason for return',
-                            10,
-                            objConstantColor.yellow,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                          objCommonWidgets.customText(
-                            context,
-                            'Product is in out of expiry date',
-                            10,
-                            objConstantColor.white.withAlpha(245),
-                            objConstantFonts.montserratMedium,
-                          )
-                        ],
+                      child: Center(
+                        child: objCommonWidgets.customText(
+                          context,
+                          'Schedule Pickup',
+                          14,
+                          objConstantColor.black,
+                          objConstantFonts.montserratSemiBold,
+                        ),
                       )
                   ),
-
-
-                      SizedBox(height: 20.dp),
-
-
-                  CupertinoButton(
-                    onPressed: () async {
-
-                      final result = await showScheduleDeliveryPopup(
-                        context,
-                        deliveryBoys: [
-                          DeliveryBoy('Male',
-                              'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
-                              'PJS44178789',
-                              'KL70H1661',
-                              'arunkumar48@gmail.com',
-                              'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
-                              id: '124875',
-                              name: 'Arun Kumar'),
-
-                          DeliveryBoy('Male',
-                              'https://drive.google.com/uc?export=videsw&id=1vNjNvV-ahFL4j0XiF73arYmuKyIyOHDg',
-                              'PJS44178789',
-                              'KL07H9461',
-                              'jacobThomas@gmail.com',
-                              'Chendrathil house, Vadakkathar, Chuttur, Kerala, 678101 (P.O)',
-                              id: '978754',
-                              name: 'Jacob Thomas'),
-                        ],
-                      );
-
-                      if (result != null) {
-                        debugPrint(result.deliveryBoyId); // DB001
-                        debugPrint(result.utcDate);       // 2025-01-21T00:00:00Z
-                      }
-
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
-                        decoration: BoxDecoration(
-                          color: objConstantColor.yellow,
-                          borderRadius: BorderRadius.circular(22.dp),
-                        ),
-                        child: Center(
-                          child: objCommonWidgets.customText(
-                            context,
-                            'Schedule Pickup',
-                            14,
-                            objConstantColor.black,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                        )
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
 
-            Positioned(
-                top: 10.dp,
-                right: 10.dp,
-                child: CupertinoButton(
-              onPressed: () => showPurchaseBottomSheet(context),
-              padding: EdgeInsets.zero,
-              child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12.5.dp),
-                  child: Center(
-                    child: objCommonWidgets.customText(
-                      context,
-                      'View Details',
-                      11,
-                      objConstantColor.yellow,
-                      objConstantFonts.montserratSemiBold,
-                    ),
-                  )
-              ),
-            ))
+          Positioned(
+              top: 10.dp,
+              right: 10.dp,
+              child: CupertinoButton(
+            onPressed: () => showPurchaseBottomSheet(context),
+            padding: EdgeInsets.zero,
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.5.dp),
+                child: Center(
+                  child: objCommonWidgets.customText(
+                    context,
+                    'View Details',
+                    11,
+                    objConstantColor.yellow,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+                )
+            ),
+          ))
 
 
 
-          ],
-        ),
+        ],
       ),
     );
   }

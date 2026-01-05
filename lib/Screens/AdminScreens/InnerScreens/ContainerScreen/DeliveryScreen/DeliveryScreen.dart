@@ -29,11 +29,12 @@ class DeliveryScreenState extends ConsumerState<DeliveryScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -137,162 +138,159 @@ class DeliveryScreenState extends ConsumerState<DeliveryScreen>
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Stack(
-          children: [
+      child: Stack(
+        children: [
 
-            Container(
-              padding: EdgeInsets.all(16.dp),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.14),
-                    Colors.white.withOpacity(0.06),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(22.dp),
-                border: Border.all(color: Colors.white.withOpacity(0.12)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  /// HEADER
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              objCommonWidgets.customText(
-                                context,
-                                'Order',
-                                12,
-                                objConstantColor.yellow,
-                                objConstantFonts.montserratSemiBold,
-                              ),
-                              SizedBox(width: 5.dp),
-                              objCommonWidgets.customText(
-                                context,
-                                '578421015455',
-                                12,
-                                Colors.white,
-                                objConstantFonts.montserratMedium,
-                              ),
-                            ],
-                          ),
-                          objCommonWidgets.customText(
-                            context,
-                            '₹249/_',
-                            18,
-                            Colors.white,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-
-                  SizedBox(height: 18.dp),
-
-                  /// TIMELINE
-                  deliveryTimeline(context),
-
-                  SizedBox(height: 16.dp),
-
-                  /// PERSON CARDS
-                  Row(
-                    children: [
-                      miniPersonCard(
-                        context,
-                        icon: Icons.person,
-                        title: 'Customer',
-                        value: 'Aswin',
-                      ),
-
-                      SizedBox(width: 5.dp),
-
-                      miniPersonCard(
-                        context,
-                        icon: Icons.calendar_today_rounded,
-                        title: 'Order Date',
-                        value: '10/12/2025',
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 5.dp),
-
-                  Row(
-                    children: [
-
-                      miniPersonCard(
-                        context,
-                        icon: Icons.delivery_dining,
-                        title: 'Rider',
-                        value: 'Arjun',
-                      ),
-                      SizedBox(width: 5.dp),
-                      distanceCard(context, icon: objConstantAssest.distance, title: 'Total Distance', value: '18km'),
-                    ],
-                  ),
-
-                  SizedBox(height: 16.dp),
-
-                  /// PRICE STRIP
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 10.dp),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(80),
-                      borderRadius: BorderRadius.circular(10.dp),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        pricePill(context, 'Product Price', '₹189'),
-                        pricePill(context, 'Delivery Charge', '₹80'),
-                        pricePill(context, 'Total Amount', '₹249', isPrimary: true),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 20.dp),
-
-                  /// VIEW ITEMS BUTTON
-                  CupertinoButton(
-                    onPressed: () => showPurchaseBottomSheet(context),
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
-                      decoration: BoxDecoration(
-                        color: objConstantColor.yellow,
-                        borderRadius: BorderRadius.circular(20.dp),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: Center(
-                        child: objCommonWidgets.customText(
-                          context,
-                          'View Purchased Items',
-                          13,
-                          objConstantColor.navyBlue,
-                          objConstantFonts.montserratSemiBold,
-                        ),
-                      )
-                    ),
-                  ),
+          Container(
+            padding: EdgeInsets.all(16.dp),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.14),
+                  Colors.white.withOpacity(0.06),
                 ],
               ),
+              borderRadius: BorderRadius.circular(22.dp),
+              border: Border.all(color: Colors.white.withOpacity(0.12)),
             ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-            Positioned(top: 10.dp,
-              right: 15.dp,
-              child: statusChip(context, 'Download Invoice'),)
-          ],
-        ),
+                /// HEADER
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Order',
+                              12,
+                              objConstantColor.yellow,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(width: 5.dp),
+                            objCommonWidgets.customText(
+                              context,
+                              '578421015455',
+                              12,
+                              Colors.white,
+                              objConstantFonts.montserratMedium,
+                            ),
+                          ],
+                        ),
+                        objCommonWidgets.customText(
+                          context,
+                          '₹249/_',
+                          18,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ],
+                    ),
+
+                  ],
+                ),
+
+                SizedBox(height: 18.dp),
+
+                /// TIMELINE
+                deliveryTimeline(context),
+
+                SizedBox(height: 16.dp),
+
+                /// PERSON CARDS
+                Row(
+                  children: [
+                    miniPersonCard(
+                      context,
+                      icon: Icons.person,
+                      title: 'Customer',
+                      value: 'Aswin',
+                    ),
+
+                    SizedBox(width: 5.dp),
+
+                    miniPersonCard(
+                      context,
+                      icon: Icons.calendar_today_rounded,
+                      title: 'Order Date',
+                      value: '10/12/2025',
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 5.dp),
+
+                Row(
+                  children: [
+
+                    miniPersonCard(
+                      context,
+                      icon: Icons.delivery_dining,
+                      title: 'Rider',
+                      value: 'Arjun',
+                    ),
+                    SizedBox(width: 5.dp),
+                    distanceCard(context, icon: objConstantAssest.distance, title: 'Total Distance', value: '18km'),
+                  ],
+                ),
+
+                SizedBox(height: 16.dp),
+
+                /// PRICE STRIP
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 10.dp),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withAlpha(80),
+                    borderRadius: BorderRadius.circular(10.dp),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      pricePill(context, 'Product Price', '₹189'),
+                      pricePill(context, 'Delivery Charge', '₹80'),
+                      pricePill(context, 'Total Amount', '₹249', isPrimary: true),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 20.dp),
+
+                /// VIEW ITEMS BUTTON
+                CupertinoButton(
+                  onPressed: () => showPurchaseBottomSheet(context),
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+                    decoration: BoxDecoration(
+                      color: objConstantColor.yellow,
+                      borderRadius: BorderRadius.circular(20.dp),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Center(
+                      child: objCommonWidgets.customText(
+                        context,
+                        'View Purchased Items',
+                        13,
+                        objConstantColor.navyBlue,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    )
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Positioned(top: 10.dp,
+            right: 15.dp,
+            child: statusChip(context, 'Download Invoice'),)
+        ],
       ),
     );
   }

@@ -1,7 +1,10 @@
 import 'dart:ui';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+
 import '../Constants/ConstantVariables.dart';
 import 'PdfDownloader.dart';
 
@@ -11,12 +14,18 @@ class FullScreenImageViewer extends StatefulWidget {
   final String title;
   final bool isDownloadable;
 
+  /// ✅ NEW (optional)
+  /// false → network image (default, existing behavior)
+  /// true  → local file image
+  final bool isLocalImage;
+
   const FullScreenImageViewer({
     super.key,
     required this.imageUrl,
     this.imageUrl2,
     required this.title,
     this.isDownloadable = false,
+    this.isLocalImage = false,
   });
 
   @override
@@ -34,11 +43,8 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
 
   bool _isZoomed = false;
   Offset _doubleTapPosition = Offset.zero;
-  late final List<double> _rotations;
-  Size _imageSize = Size.zero;
+
   late List<int> _quarterTurns;
-
-
 
   TransformationController get _activeController =>
       images.length == 1 ? _singleController : _controllers[currentIndex];
@@ -60,9 +66,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
           (_) => TransformationController()..addListener(_onTransformChanged),
     );
 
-    _rotations = List.filled(images.length, 0.0);
     _quarterTurns = List.filled(images.length, 0);
-
   }
 
   @override
@@ -87,28 +91,20 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
   void _resetAllZoom() {
     if (images.length == 1) {
       _singleController.value = Matrix4.identity();
-      _rotations[0] = 0;
     } else {
-      for (int i = 0; i < _controllers.length; i++) {
-        _controllers[i].value = Matrix4.identity();
-        _rotations[i] = 0;
+      for (final c in _controllers) {
+        c.value = Matrix4.identity();
       }
     }
     _isZoomed = false;
   }
 
-
   void _onDoubleTap() {
     final controller = _activeController;
     final scale = controller.value.getMaxScaleOnAxis();
 
-    final radians =
-        _rotations[currentIndex] * 3.141592653589793 / 180;
-
     if (scale > 1.0) {
-      // reset zoom but KEEP rotation
-      controller.value = Matrix4.identity()
-        ..rotateZ(radians);
+      controller.value = Matrix4.identity();
       _isZoomed = false;
       return;
     }
@@ -118,35 +114,74 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
 
     controller.value = Matrix4.identity()
       ..translate(pos.dx * (1 - zoom), pos.dy * (1 - zoom))
-      ..scale(zoom)
-      ..rotateZ(radians);
+      ..scale(zoom);
 
     _isZoomed = true;
   }
 
-
   void _rotateImage() {
     setState(() {
-      // Increment quarter turns (90 degrees each)
-      _quarterTurns[currentIndex] = (_quarterTurns[currentIndex] + 1) % 4;
+      _quarterTurns[currentIndex] =
+          (_quarterTurns[currentIndex] + 1) % 4;
 
-      // Reset zoom when rotating to prevent clipping issues
       _activeController.value = Matrix4.identity();
       _isZoomed = false;
     });
   }
 
+  /// ✅ CENTRALIZED IMAGE HANDLER (NETWORK + LOCAL)
+  Widget _buildImage({
+    required String path,
+    required double width,
+    required double height,
+  }) {
+    if (widget.isLocalImage) {
+      return Image.file(
+        File(path),
+        width: width,
+        height: height,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => const Icon(
+          Icons.broken_image,
+          color: Colors.white,
+          size: 50,
+        ),
+      );
+    }
 
+    return Image.network(
+      path,
+      width: width,
+      height: height,
+      fit: BoxFit.contain,
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded) return child;
 
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: frame == null
+              ? const Center(
+            key: ValueKey('loader'),
+            child: CircularProgressIndicator(color: Colors.white),
+          )
+              : child,
+        );
+      },
+      errorBuilder: (_, __, ___) => const Icon(
+        Icons.broken_image,
+        color: Colors.white,
+        size: 50,
+      ),
+    );
 
-
-
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
+        top: false,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Stack(
@@ -156,7 +191,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: images.length,
-                  physics: (_isZoomed || _rotations[currentIndex] % 180 != 0)
+                  physics: _isZoomed
                       ? const NeverScrollableScrollPhysics()
                       : const BouncingScrollPhysics(),
                   onPageChanged: (index) {
@@ -173,45 +208,38 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                         ),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            bool isRotatedSideWays = _quarterTurns[index] % 2 != 0;
+                            final isSideways =
+                                _quarterTurns[index] % 2 != 0;
 
                             return GestureDetector(
                               onDoubleTapDown: (d) =>
                               _doubleTapPosition = d.localPosition,
                               onDoubleTap: _onDoubleTap,
                               child: InteractiveViewer(
-                                transformationController:
-                                _activeController,
+                                transformationController: _activeController,
                                 minScale: 1.0,
                                 maxScale: 4.0,
 
-                                /// ✅ FIXED
-                                scaleEnabled: true,
-                                panEnabled: _isZoomed,
+                                panEnabled: true,
+                                constrained: true, // 🔥 IMPORTANT
+                                boundaryMargin: EdgeInsets.zero, // 🔥 IMPORTANT
+                                clipBehavior: Clip.hardEdge, // 🔥 IMPORTANT
 
-                                clipBehavior: Clip.none,
-                                boundaryMargin: EdgeInsets.symmetric(
-                                  horizontal: constraints.maxWidth,
-                                  vertical: constraints.maxHeight,
-                                ),
-                                // Inside your PageView itemBuilder -> InteractiveViewer
                                 child: RotatedBox(
                                   quarterTurns: _quarterTurns[index],
-                                  child: Image.network(
-                                    images[index],
-                                    width: isRotatedSideWays ? constraints.maxHeight : constraints.maxWidth,
-                                    height: isRotatedSideWays ? constraints.maxWidth : constraints.maxHeight,
-                                    fit: BoxFit.contain, // Keep contain to ensure it fits the screen
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(child: CircularProgressIndicator(color: Colors.white));
-                                    },
-                                    errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.broken_image, color: Colors.white, size: 50),
+                                  child: _buildImage(
+                                    path: images[index],
+                                    width: isSideways
+                                        ? constraints.maxHeight
+                                        : constraints.maxWidth,
+                                    height: isSideways
+                                        ? constraints.maxWidth
+                                        : constraints.maxHeight,
                                   ),
                                 ),
+                              )
 
-                              ),
+
                             );
                           },
                         ),
@@ -234,52 +262,54 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.65),
+                        Colors.transparent,
                         Colors.transparent,
                       ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () => Navigator.pop(context),
-                        minimumSize: Size(0, 0),
-                        child: Icon(
-                          CupertinoIcons.left_chevron,
-                          color: Colors.white,
-                          size: 18.dp,
-                        ),
-                      ),
-                      SizedBox(width: 5.dp),
-                      objCommonWidgets.customText(
-                        context,
-                        widget.title,
-                        15,
-                        Colors.white,
-                        objConstantFonts.montserratSemiBold,
-                      ),
-                      const Spacer(),
-                      if (widget.isDownloadable)
+                  child: SafeArea(
+                    child: Row(
+                      children: [
                         CupertinoButton(
                           padding: EdgeInsets.zero,
-                          onPressed: downloadPDF,
+                          onPressed: () => Navigator.pop(context),
+                          minimumSize: Size.zero,
                           child: Icon(
-                            Icons.file_download_outlined,
+                            CupertinoIcons.left_chevron,
+                            color: Colors.white,
+                            size: 18.dp,
+                          ),
+                        ),
+                        SizedBox(width: 5.dp),
+                        objCommonWidgets.customText(
+                          context,
+                          widget.title,
+                          15,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                        const Spacer(),
+                        if (widget.isDownloadable)
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: downloadPDF,
+                            child: Icon(
+                              Icons.file_download_outlined,
+                              color: Colors.white,
+                              size: 22.5.dp,
+                            ),
+                          ),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: _rotateImage,
+                          child: Icon(
+                            Icons.rotate_left,
                             color: Colors.white,
                             size: 22.5.dp,
                           ),
                         ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: _rotateImage,
-                        child: Icon(
-                          Icons.rotate_left,
-                          color: Colors.white,
-                          size: 22.5.dp,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

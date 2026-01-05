@@ -20,7 +20,7 @@ import '../ContainerScreen/DeliveryPartner/AddDeliveryPartnerScreen/AddDeliveryP
 import '../ContainerScreen/DeliveryPartner/DeliveryPartnerScreen/DeliveryPartnerScreen.dart';
 import '../ContainerScreen/DeliveryScreen/DeliveryScreen.dart';
 import '../ContainerScreen/NewOrder/NewOrderScreen.dart';
-import '../ContainerScreen/NotificationScreen/NotificationScreen.dart';
+import '../../../CommonScreens/NotificationScreen/NotificationScreen.dart';
 import '../ContainerScreen/PackedOrder/PackedOrderScreen.dart';
 import '../ContainerScreen/Products/AddProductScreen/AddProductScreen.dart';
 import '../ContainerScreen/Products/ProductScreen/ProductScreen.dart';
@@ -187,7 +187,8 @@ class MainScreenGlobalStateNotifier
     module == ScreenName.shceduledDelivery ||
     module == ScreenName.completedDelivery ||
     module == ScreenName.cancelledOrder ||
-    module == ScreenName.returnedOrder) {
+    module == ScreenName.returnedOrder ||
+    module == ScreenName.customers) {
       onScreen = ScreenName.home;
     } else if (module == ScreenName.addContract){
       onScreen = ScreenName.contracts;

@@ -36,11 +36,12 @@ class CustomerScreenState extends ConsumerState<CustomerScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -115,117 +116,169 @@ class CustomerScreenState extends ConsumerState<CustomerScreen>
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 15.dp),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.14),
-                Colors.white.withOpacity(0.06),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(22.dp),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              /// Customer Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  objCommonWidgets.customText(context,
-                      'Vikas C', 14,
-                      objConstantColor.yellow, objConstantFonts.montserratSemiBold),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20.dp),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 2.5.dp, horizontal: 8.dp),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 3.5.dp,
-                          backgroundColor: Color(0xFF0CFD02),
-                        ),
-                        SizedBox(width: 5.dp),
-                        objCommonWidgets.customText(context,
-                            'Active', 10,
-                            objConstantColor.white,
-                            objConstantFonts.montserratSemiBold),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 14.dp),
-
-              Row(
-                children: [
-                  miniPersonCard(
-                    context,
-                    icon: Icons.phone,
-                    title: 'Contact',
-                    value: '+91 98765 43210',
-                  ),
-
-                  SizedBox(width: 5.dp),
-
-                  miniPersonCard(
-                    context,
-                    icon: Icons.mail,
-                    title: 'Email',
-                    value: 'vikas25@gmail.com',
-                  ),
-                ],
-              ),
-
-              /// Contact Details
-              SizedBox(height: 10.dp),
-
-
-
-              /// Address
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    CupertinoIcons.location_solid,
-                    size: 14.dp,
-                    color: Colors.white.withOpacity(0.7),
-                  ),
-                  SizedBox(width: 8.dp),
-                  Expanded(
-                    child: objCommonWidgets.customText(context,
-                        'Chittur, Palakkad, Kerala, India, 678101', 10,
-                        objConstantColor.white,
-                        objConstantFonts.montserratMedium),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 14.dp),
-
-              /// Order Stats
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _statItem('Orders', '24'),
-                  SizedBox(width: 5.dp,),
-                  _statItem('Delivered', '22'),
-                  SizedBox(width: 5.dp,),
-                  _statItem('Cancelled', '2'),
-                ],
-              ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 15.dp),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.14),
+              Colors.white.withOpacity(0.06),
             ],
           ),
+          borderRadius: BorderRadius.circular(22.dp),
+          border: Border.all(color: Colors.white.withOpacity(0.12)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            /// Customer Header
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start, // Aligns badge with the top of the name
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 1. Wrap the text section in Expanded so the address can wrap properly
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      objCommonWidgets.customText(
+                        context,
+                        'Vikas C',
+                        14,
+                        objConstantColor.yellow,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                      SizedBox(height: 5.dp),
+
+                      /// Address Row
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start, // Aligns icon with first line of address
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 2.dp), // Fine-tune icon alignment
+                            child: Icon(
+                              CupertinoIcons.location_solid,
+                              size: 14.dp,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                          ),
+                          SizedBox(width: 5.dp),
+                          // Expanded here allows the text to wrap to the next line safely
+                          Expanded(
+                            child: objCommonWidgets.customText(
+                              context,
+                              'Chittur, Palakkad, Kerala, India, 678101',
+                              10,
+                              objConstantColor.white,
+                              objConstantFonts.montserratMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(width: 12.dp), // Reduced spacing slightly for better balance
+
+                // 2. The Status Badge
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20.dp),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 4.dp, horizontal: 10.dp),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 3.5.dp,
+                        backgroundColor: const Color(0xFF0CFD02),
+                      ),
+                      SizedBox(width: 6.dp),
+                      objCommonWidgets.customText(
+                        context,
+                        'Active',
+                        10,
+                        objConstantColor.white,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 14.dp),
+
+            Row(
+              children: [
+                miniPersonCard(
+                  context,
+                  icon: Icons.phone,
+                  title: 'Contact',
+                  value: '+91 98765 43210',
+                ),
+
+                SizedBox(width: 5.dp),
+
+                miniPersonCard(
+                  context,
+                  icon: Icons.mail,
+                  title: 'Email',
+                  value: 'vikas25@gmail.com',
+                ),
+              ],
+            ),
+
+            SizedBox(height: 5.dp),
+
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(20),
+                borderRadius: BorderRadius.circular(8.dp),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 12.5.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  objCommonWidgets.customText(
+                    context,
+                    '25',
+                    15,
+                    objConstantColor.yellow,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+                  objCommonWidgets.customText(
+                    context,
+                    'Total Orders',
+                    10,
+                    objConstantColor.white,
+                    objConstantFonts.montserratMedium,
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 5.dp,),
+
+            /// Order Stats
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _statItem('Returned', '1'),
+                SizedBox(width: 5.dp,),
+                _statItem('Delivered', '22'),
+                SizedBox(width: 5.dp,),
+                _statItem('Cancelled', '2'),
+              ],
+            ),
+          ],
         ),
       ),
     );

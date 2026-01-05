@@ -57,6 +57,7 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
         FocusScope.of(context).unfocus();
       },
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: Colors.transparent,
@@ -65,7 +66,7 @@ class AddDeliveryPartnerScreenState extends ConsumerState<AddDeliveryPartnerScre
               children: [
 
                 Padding(
-                  padding: EdgeInsets.only(left: 5.dp, top: 15.dp, right: 15.dp),
+                  padding: EdgeInsets.only(left: 5.dp, right: 15.dp),
                   child: Row(
                     children: [
                       CupertinoButton(padding: EdgeInsets.zero, child: SizedBox(width: 25.dp ,child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.white,)),

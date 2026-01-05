@@ -40,13 +40,7 @@ class SellerDashboardScreenStateNotifier
     } else if (selectedIndex == 2){
       userScreenNotifier.callNavigation(ScreenName.packedOrder);
     } else if (selectedIndex == 3){
-      userScreenNotifier.callNavigation(ScreenName.shceduledDelivery);
-    } else if (selectedIndex == 4){
       userScreenNotifier.callNavigation(ScreenName.completedDelivery);
-    } else if (selectedIndex == 5){
-      userScreenNotifier.callNavigation(ScreenName.returnedOrder);
-    } else {
-      userScreenNotifier.callNavigation(ScreenName.cancelledOrder);
     }
   }
 

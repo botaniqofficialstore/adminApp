@@ -1,6 +1,14 @@
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ReturnRequest/ReturnRequestScreen.dart';
+import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
+import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/LoginScreen/LoginScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/ConfirmPackedOrderScreen/ConfirmPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCancelledOrderScreen/SellerCancelledOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCompletedDeliveryScreen/SellerCompletedDeliveryScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerConfirmOrderScreen/SellerConfirmOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerDashboardScreen/SellerDashboardScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerNewOrderScreen/SellerNewOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerPackedOrderScreen/SellerPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnedOrderScreen/SellerReturnedOrderScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,30 +16,31 @@ import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/PushNotificationService/NotificationService.dart';
-import '../../AdminScreens/InnerScreens/ContainerScreen/DashboardScreen/DashboardScreen.dart';
-import '../../AdminScreens/InnerScreens/ContainerScreen/NotificationScreen/NotificationScreen.dart';
+import '../../CommonScreens/NotificationScreen/NotificationScreen.dart';
 
+
+enum NavigationDirection { forward, backward }
 
 class SellerMainScreenGlobalState {
   final ScreenName currentModule;
   final int notificationCount;
-  final bool isFooterVisible;
+  final NavigationDirection navigationDirection;
 
   SellerMainScreenGlobalState({
     this.currentModule = ScreenName.home,
     this.notificationCount = 0,
-    this.isFooterVisible = true,
+    this.navigationDirection = NavigationDirection.forward,
   });
 
   SellerMainScreenGlobalState copyWith({
     ScreenName? currentModule,
     int? notificationCount,
-    bool? isFooterVisible,
+    NavigationDirection? navigationDirection,
   }) {
     return SellerMainScreenGlobalState(
       currentModule: currentModule ?? this.currentModule,
       notificationCount: notificationCount ?? this.notificationCount,
-      isFooterVisible: isFooterVisible ?? this.isFooterVisible,
+      navigationDirection: navigationDirection ?? this.navigationDirection,
     );
   }
 }
@@ -51,20 +60,29 @@ class SellerMainScreenGlobalStateNotifier
     state = SellerMainScreenGlobalState();
   }
 
-  ///This method is used to show footer
-  void showFooter() {
-    state = state.copyWith(isFooterVisible: true);
-  }
-
-  ///This method is used to hide footer
-  void hideFooter() {
-    state = state.copyWith(isFooterVisible: false);
-  }
 
   /// This method used to get widget container
   Widget getChildContainer() {
     if (state.currentModule == ScreenName.notification) {
       return const NotificationScreen();
+    } else if (state.currentModule == ScreenName.newOrder) {
+      return const SellerNewOrderScreen();
+    } else if (state.currentModule == ScreenName.confirmOrder) {
+      return const SellerConfirmOrderScreen();
+    } else if (state.currentModule == ScreenName.confirmPacked) {
+      return const ConfirmPackedOrderScreen();
+    } else if (state.currentModule == ScreenName.packedOrder) {
+      return const SellerPackedOrderScreen();
+    } else if (state.currentModule == ScreenName.completedDelivery) {
+      return const SellerCompletedDeliveryScreen();
+    } else if (state.currentModule == ScreenName.changePassword) {
+      return const ChangePasswordScreen();
+    } else if (state.currentModule == ScreenName.cancelledOrder) {
+      return const SellerCancelledOrderScreen();
+    } else if (state.currentModule == ScreenName.returnedOrder) {
+      return const SellerReturnedOrderScreen();
+    } else if (state.currentModule == ScreenName.revenue) {
+      return const RevenueScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -82,12 +100,19 @@ class SellerMainScreenGlobalStateNotifier
     } else {
       selectedModule = ScreenName.home;
     }
-    state = state.copyWith(currentModule: selectedModule);
+
+    state = state.copyWith(
+      currentModule: selectedModule,
+      navigationDirection: NavigationDirection.forward,
+    );
   }
 
   /// This Method to used to change screenName
   void callNavigation(ScreenName selectedScreen) {
-    state = state.copyWith(currentModule: selectedScreen);
+    state = state.copyWith(
+      currentModule: selectedScreen,
+      navigationDirection: NavigationDirection.forward,
+    );
   }
 
   /// This Method to used to change screenName
@@ -137,9 +162,14 @@ class SellerMainScreenGlobalStateNotifier
       onScreen = ScreenName.reels;
     } else if (module == ScreenName.addProduct){
       onScreen = ScreenName.products;
+    } else if (state.currentModule == ScreenName.confirmPacked) {
+      onScreen = ScreenName.confirmOrder;
     }
 
-    state = state.copyWith(currentModule: onScreen);
+    state = state.copyWith(
+      currentModule: onScreen,
+      navigationDirection: NavigationDirection.backward,
+    );
   }
 
   void closeCommonPopup(BuildContext context){

@@ -12,11 +12,14 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-        backgroundColor: Colors.transparent,
-        width: 260.dp,
-        child: (currentUser == UserRole.admin) ? blurView(context) :
-        normalView(context)
+    return SafeArea(
+      bottom: false,
+      child: Drawer(
+          backgroundColor: Colors.transparent,
+          width: 260.dp,
+          child: (currentUser == UserRole.admin) ? blurView(context) :
+          normalView(context)
+      ),
     );
   }
 
@@ -150,7 +153,7 @@ class SideMenu extends StatelessWidget {
   }
 
   Color getColorForUSerRole() {
-    return (currentUser == UserRole.admin) ? Colors.white : objConstantColor.navyBlue;
+    return (currentUser == UserRole.admin) ? Colors.white : Colors.black;
 }
 
   Widget menuCard(BuildContext context, String icon, String title,

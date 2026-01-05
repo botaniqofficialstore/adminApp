@@ -26,7 +26,7 @@ class MultiColorProgressBar extends StatelessWidget {
           child: objCommonWidgets.customText(context,
               "${(percent * 100).toStringAsFixed(0)}%",
               12.5,
-              objConstantColor.white,
+              objConstantColor.black,
               objConstantFonts.montserratSemiBold)
         ),
 
@@ -40,7 +40,7 @@ class MultiColorProgressBar extends StatelessWidget {
               child: Container(
                 height: 5.dp,
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: Colors.black.withAlpha(60),
                   borderRadius: BorderRadius.circular(10.dp),
                 ),
                 child: LayoutBuilder(

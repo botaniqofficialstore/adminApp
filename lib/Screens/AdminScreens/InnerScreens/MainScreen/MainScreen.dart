@@ -4,18 +4,20 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
+
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/SideMenu.dart';
 import 'MainScreenState.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/cupertino.dart';
-
 
 final GlobalKey<ScaffoldState> mainScaffoldKey = GlobalKey<ScaffoldState>();
+
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
@@ -25,15 +27,15 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class MainScreenState extends ConsumerState<MainScreen> {
 
-
   @override
   void initState() {
     super.initState();
     BackButtonInterceptor.add(mainInterceptor);
 
-    //Fetch count data when app starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(MainScreenGlobalStateProvider.notifier).backgroundRefreshForAPI(context);
+      ref
+          .read(MainScreenGlobalStateProvider.notifier)
+          .backgroundRefreshForAPI(context);
     });
   }
 
@@ -54,136 +56,133 @@ class MainScreenState extends ConsumerState<MainScreen> {
     PreferencesManager.getInstance().then((prefs) {
 
       if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
-        Logger().log('Called isDialogOpened -------------->');
         return;
       }
 
-      /// 1️⃣ Close COMMON POPUP first
       if (prefs.getBooleanValue(PreferenceKeys.isCommonPopup) == true) {
-        Logger().log('Called isCommonPopup -------------->');
         notifier.closeCommonPopup(context);
         prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
         return;
       }
 
-      /// 2️⃣ Close BOTTOM SHEET next
       if (prefs.getBooleanValue(PreferenceKeys.isBottomSheet) == true) {
-        Logger().log('Called isBottomSheet -------------->');
         notifier.closeBottomSheet(context);
         prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
         return;
       }
 
-      /// 3️⃣ Close Drawer
       if (mainScaffoldKey.currentState?.isDrawerOpen ?? false) {
         mainScaffoldKey.currentState?.closeDrawer();
         return;
       }
 
-      /// 4️⃣ Prevent back when loading
       if (prefs.getBooleanValue(PreferenceKeys.isLoadingBarStarted) == true) {
         return;
       }
 
-      /// 5️⃣ Default back navigation
       notifier.callBackNavigation(context, state.currentModule);
     });
 
-    /// IMPORTANT: Always return TRUE to intercept system back
     return true;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    var userScreenState = ref.watch(MainScreenGlobalStateProvider);
-    var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
+    final userScreenState = ref.watch(MainScreenGlobalStateProvider);
+    final userScreenNotifier =
+    ref.watch(MainScreenGlobalStateProvider.notifier);
 
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // ANDROID → WHITE ICONS
+        statusBarBrightness: Brightness.dark, // iOS → WHITE ICONS
+      ),
       child: SafeArea(
-        child: Scaffold(
-          key: mainScaffoldKey,
-          backgroundColor: objConstantColor.white,
-          drawer: SideMenu(
-            onMenuClick: (module) {
-              var notifier = ref.read(MainScreenGlobalStateProvider.notifier);
-              // HANDLE MENU SELECTION
+        top: false,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            key: mainScaffoldKey,
+            backgroundColor: objConstantColor.white,
+            extendBodyBehindAppBar: true,
+            drawer: SideMenu(
+              onMenuClick: (module) {
+                final notifier =
+                ref.read(MainScreenGlobalStateProvider.notifier);
 
-              if (module == ScreenName.logout){
-                notifier.callLogoutNavigation(context);
-              } else {
-                notifier.callNavigation(module);
-              }
-
-              // Close drawer after selection
-              mainScaffoldKey.currentState?.closeDrawer();
-            },
-          ),
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1E0033), // Dark Violet Color(0xFF26323e),//
-                  Color(0xFF0A0A0A), // Almost Black
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Stack(
-              children: [
-
-            NotificationListener<ScrollNotification>(
-            onNotification: (scroll) {
-              if (scroll is UserScrollNotification) {
-                if (scroll.direction == ScrollDirection.reverse) {
-                  userScreenNotifier.hideFooter();
-                } else if (scroll.direction == ScrollDirection.forward) {
-                  userScreenNotifier.showFooter();
+                if (module == ScreenName.logout) {
+                  notifier.callLogoutNavigation(context);
+                } else {
+                  notifier.callNavigation(module);
                 }
-              }
-              return true;
-            },
-              child: userScreenNotifier.getChildContainer(),
+
+                mainScaffoldKey.currentState?.closeDrawer();
+              },
             ),
-
-                /// FOOTER
-                if (userScreenState.currentModule == ScreenName.home ||
-                    userScreenState.currentModule == ScreenName.notification ||
-                    userScreenState.currentModule == ScreenName.revenue ||
-                    userScreenState.currentModule == ScreenName.profile)
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
-                  left: 35.dp,
-                  right: 35.dp,
-                  child: const _BlurFooterContainer(),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF1E0033),
+                    Color(0xFF0A0A0A),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+              ),
+              child: Stack(
+                children: [
 
-                if (userScreenState.currentModule == ScreenName.home ||
-                    userScreenState.currentModule == ScreenName.notification ||
-                    userScreenState.currentModule == ScreenName.revenue ||
-                    userScreenState.currentModule == ScreenName.profile)
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  bottom: userScreenState.isFooterVisible ? 15.dp : -120.dp,
-                  left: 25.dp,
-                  right: 25.dp,
-                  child: UserFooterView(
-                    currentModule: userScreenState.currentModule,
-                    notificationCount: userScreenState.notificationCount,
-                    selectedFooterIndex: (index) {
-                      userScreenNotifier.setFooterSelection(index);
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (scroll) {
+                      if (scroll is UserScrollNotification) {
+                        if (scroll.direction == ScrollDirection.reverse) {
+                          userScreenNotifier.hideFooter();
+                        } else if (scroll.direction ==
+                            ScrollDirection.forward) {
+                          userScreenNotifier.showFooter();
+                        }
+                      }
+                      return true;
                     },
+                    child: userScreenNotifier.getChildContainer(),
                   ),
-                ),
 
-              ],
+                  /// BLUR FOOTER BACKGROUND
+                  if (_showFooter(userScreenState.currentModule))
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      bottom: userScreenState.isFooterVisible
+                          ? 15.dp
+                          : -120.dp,
+                      left: 35.dp,
+                      right: 35.dp,
+                      child: const _BlurFooterContainer(),
+                    ),
+
+                  /// FOOTER CONTENT
+                  if (_showFooter(userScreenState.currentModule))
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      bottom: userScreenState.isFooterVisible
+                          ? 15.dp
+                          : -120.dp,
+                      left: 25.dp,
+                      right: 25.dp,
+                      child: UserFooterView(
+                        currentModule: userScreenState.currentModule,
+                        notificationCount:
+                        userScreenState.notificationCount,
+                        selectedFooterIndex: (index) {
+                          userScreenNotifier.setFooterSelection(index);
+                        },
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -191,8 +190,14 @@ class MainScreenState extends ConsumerState<MainScreen> {
     );
   }
 
-
+  bool _showFooter(ScreenName module) {
+    return module == ScreenName.home ||
+        module == ScreenName.notification ||
+        module == ScreenName.revenue ||
+        module == ScreenName.profile;
+  }
 }
+
 
 
 

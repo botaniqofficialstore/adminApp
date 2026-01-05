@@ -26,7 +26,9 @@ class CommonWidget{
       BuildContext context, {
         required String imageUrl,
         String secondImage = '',
-        String title = '', bool isDownloadable = false,
+        String title = '',
+        bool isDownloadable = false,
+        bool isLocal = false,
       }) {
     PreferencesManager.getInstance().then((prefs) {
       prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
@@ -42,6 +44,7 @@ class CommonWidget{
           title: title,
           imageUrl2: secondImage,
           isDownloadable: isDownloadable,
+          isLocalImage: isLocal,
         );
       },
       transitionBuilder: (_, animation, __, child) {
@@ -106,8 +109,8 @@ class _CommonTextFieldState extends State<CommonTextField> {
         borderRadius: BorderRadius.circular(7.dp),
         boxShadow: [
           BoxShadow(
-            color: widget.isDarkView ? Colors.black.withOpacity(0.1) : Colors.white,
-            blurRadius: 5,
+            color: widget.isDarkView ? Colors.black.withOpacity(0.1) : Colors.white.withAlpha(0),
+            blurRadius: widget.isDarkView ? 5 : 0,
             offset: const Offset(0, 1),
           ),
         ],
@@ -125,7 +128,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               padding: EdgeInsets.only(left: 12.dp),
               child: Icon(
                 CupertinoIcons.search,
-                color: widget.isDarkView ? Colors.white70 : Colors.grey,
+                color: widget.isDarkView ? Colors.white70 : Colors.black,
                 size: 18.dp,
               ),
             ),

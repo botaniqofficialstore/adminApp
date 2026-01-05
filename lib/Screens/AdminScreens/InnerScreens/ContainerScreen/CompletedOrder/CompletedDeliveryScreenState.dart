@@ -3,7 +3,6 @@ import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
 import 'package:botaniq_admin/constants/Constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../../Utility/Logger.dart';
 
 class CompletedDeliveryScreenState {

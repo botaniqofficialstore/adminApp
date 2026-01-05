@@ -9,7 +9,6 @@ import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Utility/CalendarFilterPopup.dart';
-import '../../../../../Utility/FullScreenImageViewer.dart';
 import '../../../../../Utility/PreferencesManager.dart';
 import '../../../../../Utility/ScheduleDeliveryPopup.dart';
 import '../../MainScreen/MainScreenState.dart';
@@ -64,11 +63,12 @@ class CompletedDeliveryScreenState extends ConsumerState<CompletedDeliveryScreen
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -187,139 +187,181 @@ class CompletedDeliveryScreenState extends ConsumerState<CompletedDeliveryScreen
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          padding: EdgeInsets.all(16.dp),
-          decoration: BoxDecoration(
-            color: Colors.white.withAlpha(25),
-            borderRadius: BorderRadius.circular(22.dp),
-            border: Border.all(color: Colors.white.withAlpha(10)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      child: Container(
+        padding: EdgeInsets.all(16.dp),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(25),
+          borderRadius: BorderRadius.circular(22.dp),
+          border: Border.all(color: Colors.white.withAlpha(10)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
 
-              /// HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            /// HEADER
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                objCommonWidgets.customText(
+                                  context,
+                                  'Order',
+                                  15,
+                                  objConstantColor.yellow,
+                                  objConstantFonts.montserratSemiBold,
+                                ),
+                                SizedBox(width: 5.dp),
+                                objCommonWidgets.customText(
+                                  context,
+                                  '578421015455',
+                                  12,
+                                  Colors.white,
+                                  objConstantFonts.montserratMedium,
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+
+                      ],
+                    ),
+
+
+                    distanceCard(
+                        context,
+                        icon: objConstantAssest.distance,
+                        title: 'Total Distance :',
+                        value: '18km'),
+                  ],
+                ),
+
+                objCommonWidgets.customText(
+                  context,
+                  '₹249/_',
+                  18,
+                  objConstantColor.yellow,
+                  objConstantFonts.montserratSemiBold,
+                )
+              ],
+            ),
+
+            SizedBox(height: 10.dp),
+
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12.dp, horizontal: 10.dp),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(65),
+                borderRadius: BorderRadius.circular(10.dp),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  objCommonWidgets.customText(
-                                    context,
-                                    'Order',
-                                    15,
-                                    objConstantColor.yellow,
-                                    objConstantFonts.montserratSemiBold,
-                                  ),
-                                  SizedBox(width: 5.dp),
-                                  objCommonWidgets.customText(
-                                    context,
-                                    '578421015455',
-                                    12,
-                                    Colors.white,
-                                    objConstantFonts.montserratMedium,
-                                  ),
-                                ],
-                              ),
-
-                            ],
-                          ),
-
-                        ],
-                      ),
-
-
-                      distanceCard(
-                          context,
-                          icon: objConstantAssest.distance,
-                          title: 'Total Distance :',
-                          value: '18km'),
-                    ],
-                  ),
-
-                  objCommonWidgets.customText(
-                    context,
-                    '₹249/_',
-                    18,
-                    objConstantColor.yellow,
-                    objConstantFonts.montserratSemiBold,
-                  )
+                  pricePill(
+                      context, 'Product Price', '₹189'),
+                  pricePill(
+                      context, 'Delivery Charge', '₹80'),
+                  pricePill(context, 'Total Amount', '₹249'),
                 ],
               ),
+            ),
 
-              SizedBox(height: 10.dp),
+            SizedBox(height: 10.dp),
 
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 12.dp, horizontal: 10.dp),
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(65),
-                  borderRadius: BorderRadius.circular(10.dp),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween,
-                  children: [
-                    pricePill(
-                        context, 'Product Price', '₹189'),
-                    pricePill(
-                        context, 'Delivery Charge', '₹80'),
-                    pricePill(context, 'Total Amount', '₹249'),
-                  ],
-                ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12.dp, horizontal: 10.dp),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(65),
+                borderRadius: BorderRadius.circular(10.dp),
               ),
-
-              SizedBox(height: 10.dp),
-
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 12.dp, horizontal: 10.dp),
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(65),
-                  borderRadius: BorderRadius.circular(10.dp),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceAround,
-                  children: [
-                    deliveryPill(
-                        context, 'Ordered Date', '20/12/2025', '06:23 PM'),
-                    deliveryPill(
-                        context, 'Delivered Date', '04/01/2026', '03:45 PM'),
-                  ],
-                ),
-              ),
-
-
-              SizedBox(height: 12.5.dp),
-
-
-                Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceAround,
                 children: [
-                  Expanded(
-                    child: CupertinoButton(
-                      onPressed: () {
-                        CommonWidget().showFullScreenImageViewer(
-                          context,
-                          imageUrl:
-                          'https://drive.google.com/uc?export=view&id=1E6BJdw_VtaekKeY50Qd9vCy7_ul7f0uT',
-                          title: 'Package Image',
-                        );
-                      },
-                      padding: EdgeInsets.zero,
-                      child: Container(
+                  deliveryPill(
+                      context, 'Ordered Date', '20/12/2025', '06:23 PM'),
+                  deliveryPill(
+                      context, 'Delivered Date', '04/01/2026', '03:45 PM'),
+                ],
+              ),
+            ),
+
+
+            SizedBox(height: 12.5.dp),
+
+
+              Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: CupertinoButton(
+                    onPressed: () {
+                      CommonWidget().showFullScreenImageViewer(
+                        context,
+                        imageUrl:
+                        'https://drive.google.com/uc?export=view&id=1E6BJdw_VtaekKeY50Qd9vCy7_ul7f0uT',
+                        title: 'Package Image',
+                      );
+                    },
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(25),
+                        borderRadius: BorderRadius.circular(22.dp),
+                        border: Border.all(color: Colors.white.withAlpha(45)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image, size: 18.5.dp, color: objConstantColor.yellow,),
+                          SizedBox(width: 2.5.dp),
+
+                          Flexible(
+                            child: objCommonWidgets.customText(
+                              context,
+                              'Packed Photo',
+                              11,
+                              objConstantColor.yellow,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+
+                SizedBox(width: 8.dp),
+
+                /// VIEW ITEMS BUTTON
+                Expanded(
+                  child: CupertinoButton(
+                    onPressed: (){
+                      CommonWidget().showFullScreenImageViewer(
+                        context,
+                        imageUrl:
+                        'https://drive.usercontent.google.com/download?id=1GxhyPtudSpzg5IDSoaOqXXIN1aVjrWK5&export=view&authuser=0',
+                        title: 'Package Image',
+                      );
+                    },
+                    padding: EdgeInsets.zero,
+                    child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
                         decoration: BoxDecoration(
@@ -332,11 +374,10 @@ class CompletedDeliveryScreenState extends ConsumerState<CompletedDeliveryScreen
                           children: [
                             Icon(Icons.image, size: 18.5.dp, color: objConstantColor.yellow,),
                             SizedBox(width: 2.5.dp),
-
                             Flexible(
                               child: objCommonWidgets.customText(
                                 context,
-                                'Packed Photo',
+                                'Delivery Photo',
                                 11,
                                 objConstantColor.yellow,
                                 objConstantFonts.montserratSemiBold,
@@ -344,84 +385,40 @@ class CompletedDeliveryScreenState extends ConsumerState<CompletedDeliveryScreen
                             ),
                           ],
                         ),
-                      ),
                     ),
                   ),
-
-
-                  SizedBox(width: 8.dp),
-
-                  /// VIEW ITEMS BUTTON
-                  Expanded(
-                    child: CupertinoButton(
-                      onPressed: (){
-                        CommonWidget().showFullScreenImageViewer(
-                          context,
-                          imageUrl:
-                          'https://drive.usercontent.google.com/download?id=1GxhyPtudSpzg5IDSoaOqXXIN1aVjrWK5&export=view&authuser=0',
-                          title: 'Package Image',
-                        );
-                      },
-                      padding: EdgeInsets.zero,
-                      child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(25),
-                            borderRadius: BorderRadius.circular(22.dp),
-                            border: Border.all(color: Colors.white.withAlpha(45)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.image, size: 18.5.dp, color: objConstantColor.yellow,),
-                              SizedBox(width: 2.5.dp),
-                              Flexible(
-                                child: objCommonWidgets.customText(
-                                  context,
-                                  'Delivery Photo',
-                                  11,
-                                  objConstantColor.yellow,
-                                  objConstantFonts.montserratSemiBold,
-                                ),
-                              ),
-                            ],
-                          ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-
-              SizedBox(height: 15.dp),
-
-
-              CupertinoButton(
-                onPressed: () => showPurchaseBottomSheet(context),
-                padding: EdgeInsets.zero,
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 12.dp),
-                  decoration: BoxDecoration(
-                    color: objConstantColor.yellow,
-                    borderRadius: BorderRadius.circular(25.dp),
-                  ),
-                  child: Center(
-                    child: objCommonWidgets.customText(
-                      context,
-                      'View Details',
-                      12.5,
-                      objConstantColor.black,
-                      objConstantFonts.montserratSemiBold,
-                    ),
-                  )
                 ),
+              ],
+            ),
+
+
+            SizedBox(height: 15.dp),
+
+
+            CupertinoButton(
+              onPressed: () => showPurchaseBottomSheet(context),
+              padding: EdgeInsets.zero,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 12.dp),
+                decoration: BoxDecoration(
+                  color: objConstantColor.yellow,
+                  borderRadius: BorderRadius.circular(25.dp),
+                ),
+                child: Center(
+                  child: objCommonWidgets.customText(
+                    context,
+                    'View Details',
+                    12.5,
+                    objConstantColor.black,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+                )
               ),
+            ),
 
 
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -1120,23 +1117,25 @@ class CompletedDeliveryScreenState extends ConsumerState<CompletedDeliveryScreen
 
 
 
-  Future<DateRangeResult?> showCalendarFilterPopup(BuildContext context) {
-    return PreferencesManager.getInstance().then((prefs) {
-      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
-      showDialog<DateRangeResult>(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withOpacity(0.45),
-        builder: (_) =>
-            BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: const CalendarFilterPopup(isCustomRange: true)
-            ),
-      ).then((_) {
-        prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
-      });
-    });
+  Future<DateRangeResult?> showCalendarFilterPopup(BuildContext context) async {
+    final prefs = await PreferencesManager.getInstance();
+    prefs.setBooleanValue(PreferenceKeys.isCommonPopup, true);
+
+    final result = await showDialog<DateRangeResult>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: const Color(0xFF2B2B2B).withAlpha(220),
+      builder: (_) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: const CalendarFilterPopup(isCustomRange: true),
+      ),
+    );
+
+    prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
+
+    return result;
   }
+
 
 
 

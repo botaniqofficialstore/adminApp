@@ -29,11 +29,12 @@ class ConfirmedOrderScreenState extends ConsumerState<ConfirmedOrderScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -111,120 +112,117 @@ class ConfirmedOrderScreenState extends ConsumerState<ConfirmedOrderScreen>
   Widget cellView(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22.dp),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Stack(
-          children: [
+      child: Stack(
+        children: [
 
-            Container(
-              padding: EdgeInsets.all(16.dp),
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(25),
-                borderRadius: BorderRadius.circular(22.dp),
-                border: Border.all(color: Colors.white.withAlpha(10)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          Container(
+            padding: EdgeInsets.all(16.dp),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(25),
+              borderRadius: BorderRadius.circular(22.dp),
+              border: Border.all(color: Colors.white.withAlpha(10)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                  /// HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              objCommonWidgets.customText(
-                                context,
-                                'Order',
-                                15,
-                                objConstantColor.yellow,
-                                objConstantFonts.montserratSemiBold,
-                              ),
-                              SizedBox(width: 5.dp),
-                              objCommonWidgets.customText(
-                                context,
-                                '578421015455',
-                                12,
-                                Colors.white,
-                                objConstantFonts.montserratMedium,
-                              ),
-                            ],
-                          ),
-                          objCommonWidgets.customText(
-                            context,
-                            '₹249/_',
-                            18,
-                            Colors.white,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-
-                  SizedBox(height: 20.dp),
-
-                  deliveryTimeline(context),
-
-                  SizedBox(height: 20.dp),
-
-                  /// VIEW ITEMS BUTTON
-                  CupertinoButton(
-                    onPressed: () => showPurchaseBottomSheet(context),
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 14.dp, vertical: 12.dp),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(25),
-                          borderRadius: BorderRadius.circular(22.dp),
-                          border: Border.all(color: Colors.white.withAlpha(45)),
+                /// HEADER
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Order',
+                              15,
+                              objConstantColor.yellow,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(width: 5.dp),
+                            objCommonWidgets.customText(
+                              context,
+                              '578421015455',
+                              12,
+                              Colors.white,
+                              objConstantFonts.montserratMedium,
+                            ),
+                          ],
                         ),
-                        child: Center(
-                          child: objCommonWidgets.customText(
-                            context,
-                            'View Details',
-                            13,
-                            objConstantColor.yellow,
-                            objConstantFonts.montserratSemiBold,
-                          ),
-                        )
+                        objCommonWidgets.customText(
+                          context,
+                          '₹249/_',
+                          18,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ],
                     ),
+
+                  ],
+                ),
+
+                SizedBox(height: 20.dp),
+
+                deliveryTimeline(context),
+
+                SizedBox(height: 20.dp),
+
+                /// VIEW ITEMS BUTTON
+                CupertinoButton(
+                  onPressed: () => showPurchaseBottomSheet(context),
+                  padding: EdgeInsets.zero,
+                  child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.dp, vertical: 12.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(25),
+                        borderRadius: BorderRadius.circular(22.dp),
+                        border: Border.all(color: Colors.white.withAlpha(45)),
+                      ),
+                      child: Center(
+                        child: objCommonWidgets.customText(
+                          context,
+                          'View Details',
+                          13,
+                          objConstantColor.yellow,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      )
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+
+          Positioned(
+            top: 17.dp,
+            right: 10.dp,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 4.dp,
+                horizontal: 10.dp,
+              ),
+              decoration: BoxDecoration(
+                color: objConstantColor.yellow,
+                borderRadius: BorderRadius.circular(22.dp),
+              ),
+              child: objCommonWidgets.customText(
+                context,
+                'Confirmed',
+                12,
+                objConstantColor.black,
+                objConstantFonts.montserratBold,
               ),
             ),
-
-            Positioned(
-              top: 17.dp,
-              right: 10.dp,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 4.dp,
-                  horizontal: 10.dp,
-                ),
-                decoration: BoxDecoration(
-                  color: objConstantColor.yellow,
-                  borderRadius: BorderRadius.circular(22.dp),
-                ),
-                child: objCommonWidgets.customText(
-                  context,
-                  'Confirmed',
-                  12,
-                  objConstantColor.black,
-                  objConstantFonts.montserratBold,
-                ),
-              ),
-            ),
+          ),
 
 
-          ],
-        ),
+        ],
       ),
     );
   }

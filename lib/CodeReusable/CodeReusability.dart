@@ -307,6 +307,42 @@ class CodeReusability {
   }
 
 
+  String formatDateRange(DateTime start, DateTime? end) {
+    // Convert to local if needed
+    final s = start.toLocal();
+    final e = end?.toLocal();
+
+    String dayMonth(DateTime d) =>
+        "${d.day} ${_monthName(d.month)}";
+
+    String dayMonthYear(DateTime d) =>
+        "${d.day} ${_monthName(d.month)} ${d.year}";
+
+    // Single day
+    if (e == null || s.isAtSameMomentAs(e)) {
+      return dayMonthYear(s);
+    }
+
+    // Same year
+    if (s.year == e.year) {
+      return "${dayMonth(s)} to ${dayMonth(e)} ${s.year}";
+    }
+
+    // Different year
+    return "${dayMonthYear(s)} to ${dayMonthYear(e)}";
+  }
+
+
+  String _monthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
+  }
+
+
+
 
 
   ///This method used to show alert dialog.

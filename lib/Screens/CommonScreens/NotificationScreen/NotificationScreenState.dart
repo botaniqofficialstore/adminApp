@@ -1,6 +1,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../Constants/Constants.dart';
+import '../../../Constants/Constants.dart';
 
 
 class NotificationScreenState {

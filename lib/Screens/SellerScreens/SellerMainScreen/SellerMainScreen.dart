@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +8,6 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../Utility/SideMenu.dart';
 import 'SellerMainScreenState.dart';
@@ -31,7 +30,8 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
 
     //Fetch count data when app starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(SellerMainScreenGlobalStateProvider.notifier).backgroundRefreshForAPI(context);
+      ref.read(SellerMainScreenGlobalStateProvider.notifier)
+          .backgroundRefreshForAPI(context);
     });
   }
 
@@ -50,7 +50,6 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
     final notifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
 
     PreferencesManager.getInstance().then((prefs) {
-
       if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
         Logger().log('Called isDialogOpened -------------->');
         return;
@@ -91,62 +90,86 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
     return true;
   }
 
-
   @override
   Widget build(BuildContext context) {
     var userScreenState = ref.watch(SellerMainScreenGlobalStateProvider);
-    var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+    var userScreenNotifier =
+    ref.watch(SellerMainScreenGlobalStateProvider.notifier);
 
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: SafeArea(
-        child: Scaffold(
-          key: mainSellerScaffoldKey,
-          backgroundColor: Color(0xFFF4F4F4),
-          drawer: SideMenu(
-            onMenuClick: (module) {
-              var notifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
-              // HANDLE MENU SELECTION
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SafeArea(
+          top: false,
+          child: Scaffold(
+            extendBody: true,
+            key: mainSellerScaffoldKey,
+            backgroundColor: const Color(0xFFF4F4F4),
+            drawer: SideMenu(
+              onMenuClick: (module) {
+                var notifier = ref.read(
+                    SellerMainScreenGlobalStateProvider.notifier);
 
-              if (module == ScreenName.logout){
-                notifier.callLogoutNavigation(context);
-              } else {
-                notifier.callNavigation(module);
-              }
+                if (module == ScreenName.logout) {
+                  notifier.callLogoutNavigation(context);
+                } else {
+                  notifier.callNavigation(module);
+                }
 
-              // Close drawer after selection
-              mainSellerScaffoldKey.currentState?.closeDrawer();
-            },
-          ),
-          body: Column(
-            children: [
+                mainSellerScaffoldKey.currentState?.closeDrawer();
+              },
+            ),
 
-               Expanded(child: userScreenNotifier.getChildContainer()),
+            /// ✅ ANIMATED SCREEN SWAP
+            body: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, animation) {
+                final isForward =
+                    userScreenState.navigationDirection ==
+                        NavigationDirection.forward;
 
-              if (userScreenState.currentModule == ScreenName.home ||
-                  userScreenState.currentModule == ScreenName.notification ||
-                  userScreenState.currentModule == ScreenName.revenue ||
-                  userScreenState.currentModule == ScreenName.profile)
-                UserFooterView(
-                  currentModule: userScreenState.currentModule,
-                  notificationCount: userScreenState.notificationCount,
-                  selectedFooterIndex: (index) {
-                    userScreenNotifier.setFooterSelection(index);
-                  },
-                ),
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: isForward
+                        ? const Offset(0.2, 0)
+                        : const Offset(-0.2, 0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: KeyedSubtree(
+                key: ValueKey(userScreenState.currentModule),
+                child: userScreenNotifier.getChildContainer(),
+              ),
+            ),
 
-
-
-
-
-            ],
+            /// FOOTER (UNCHANGED)
+            bottomNavigationBar: UserFooterView(
+              currentModule: userScreenState.currentModule,
+              notificationCount: userScreenState.notificationCount,
+              selectedFooterIndex: (index) {
+                userScreenNotifier.setFooterSelection(index);
+              },
+            ),
           ),
         ),
       ),
     );
   }
+
 
 
 }
@@ -200,23 +223,19 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: objConstantColor.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(20),
             blurRadius: 20,
             offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: Colors.black.withAlpha(20),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
+          )
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: 15.dp, bottom: 5.dp, left: 10.dp, right: 10.dp),
+        padding: EdgeInsets.only(top: 15.dp, left: 10.dp, right: 10.dp),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
@@ -227,27 +246,30 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                 return Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Column(
-                        children: [
-                          CupertinoButton(
-                            onPressed: () => widget.selectedFooterIndex(index),
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(0, 0),
-                            child: Image.asset(
-                              isSelected ? activeIcons[index] : inactiveIcons[index],
-                              width: 20.dp,
-                              color: objConstantColor.navyBlue,
-                              colorBlendMode: BlendMode.srcIn,
-                            ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10.dp),
+                        child: CupertinoButton(
+                          onPressed: () => widget.selectedFooterIndex(index),
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(0, 0),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                isSelected ? activeIcons[index] : inactiveIcons[index],
+                                width: 20.dp,
+                                color: objConstantColor.black.withAlpha(isSelected ? 250 : 150),
+                                colorBlendMode: BlendMode.srcIn,
+                              ),
+                              SizedBox(height: 3.5.dp),
+                              objCommonWidgets.customText(
+                                context,
+                                moduleTitle[index],
+                                10, objConstantColor.black.withAlpha(isSelected ? 250 : 150) ,
+                                isSelected ? objConstantFonts.montserratSemiBold : objConstantFonts.montserratMedium,
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 3.5.dp),
-                          objCommonWidgets.customText(
-                            context,
-                            moduleTitle[index],
-                            10, objConstantColor.navyBlue,
-                            isSelected ? objConstantFonts.montserratSemiBold : objConstantFonts.montserratMedium,
-                          ),
-                        ],
+                        ),
                       ),
 
                       //Badge for Cart

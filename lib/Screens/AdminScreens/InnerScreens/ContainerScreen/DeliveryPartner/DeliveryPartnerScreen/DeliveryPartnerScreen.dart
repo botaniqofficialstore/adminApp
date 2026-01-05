@@ -59,11 +59,12 @@ class DeliveryPartnerScreenState extends ConsumerState<DeliveryPartnerScreen> wi
         FocusScope.of(context).unfocus();
       },
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: Colors.transparent,
             body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+              padding: EdgeInsets.symmetric(horizontal: 15.dp),
               child: Column(
                 children: [
                   SizedBox(height: 5.dp,),

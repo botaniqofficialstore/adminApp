@@ -67,7 +67,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
         key: _scaffoldKey,
         backgroundColor: objConstantColor.navyBlue,
         body: SafeArea(
-          bottom: false,
+          top: false,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -130,12 +130,12 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
         children: [
           // Title
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.dp),
+            padding: EdgeInsets.symmetric(vertical: 15.dp),
             child: Center(
               child: objCommonWidgets.customText(
                 context,
-                'Admin Login',
-                28,
+                'Login',
+                20,
                 objConstantColor.navyBlue,
                 objConstantFonts.montserratBold,
               ),
@@ -172,7 +172,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           objCommonWidgets.customText(
             context,
             'Email/Mobile Number',
-            15,
+            12,
             objConstantColor.navyBlue,
             objConstantFonts.montserratSemiBold,
           ),
@@ -182,7 +182,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           CommonTextField(
             controller: loginState.userNameController,
             placeholder: "Enter your Email/Mobile Number",
-            textSize: 13,
+            textSize: 12,
             fontFamily: objConstantFonts.montserratMedium,
             textColor: objConstantColor.navyBlue,
             isNumber: false,
@@ -194,7 +194,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           objCommonWidgets.customText(
             context,
             'Password',
-            15,
+            12,
             objConstantColor.navyBlue,
             objConstantFonts.montserratSemiBold,
           ),
@@ -204,7 +204,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           CommonTextField(
             controller: loginState.passwordController,
             placeholder: "Enter your password",
-            textSize: 13,
+            textSize: 12,
             fontFamily: objConstantFonts.montserratMedium,
             textColor: objConstantColor.navyBlue,
             isNumber: false,
@@ -218,7 +218,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               CupertinoButton(padding: EdgeInsets.zero,
                   child: objCommonWidgets.customText(context,
                       'Forgot Password?',
-                      12,
+                      10,
                       objConstantColor.orange,
                       objConstantFonts.montserratSemiBold
                   ),
@@ -234,7 +234,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
           SizedBox(
             width: double.infinity,
             child: CupertinoButton(
-              padding: EdgeInsets.symmetric(vertical: 15.dp),
+              padding: EdgeInsets.symmetric(vertical: 10.dp),
               color: objConstantColor.orange,
               borderRadius: BorderRadius.circular(12.dp),
               onPressed: () {
@@ -244,7 +244,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
               child: objCommonWidgets.customText(
                 context,
                 'Login',
-                18,
+                15,
                 objConstantColor.white,
                 objConstantFonts.montserratSemiBold,
               ),

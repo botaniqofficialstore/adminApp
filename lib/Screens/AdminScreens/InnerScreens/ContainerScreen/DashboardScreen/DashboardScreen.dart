@@ -90,275 +90,276 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
         DashboardScreenStateProvider.notifier);
     var userScreenNotifier = ref.watch(MainScreenGlobalStateProvider.notifier);
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: Colors.transparent, // removed solid background
-          body: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 45.dp),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 5.dp,),
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Colors.transparent, // removed solid background
+            body: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 45.dp),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.dp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                  Row(
-                    children: [
-                      objCommonWidgets.customText(
-                        context,
-                        'Hi, Vikas',
-                        20,
-                        objConstantColor.white,
-                        objConstantFonts.montserratSemiBold,
-                      ),
-
-                      Spacer(),
-
-                      CupertinoButton(
-                          padding: EdgeInsets.zero, child: Image.asset(
-                        objConstantAssest.menuIcon,
-                        height: 25.dp,
-                        color: Colors.white,
-                        colorBlendMode: BlendMode.srcIn,
-                      ), onPressed: () {
-                        mainScaffoldKey.currentState?.openDrawer();
-                      })
-
-
-                    ],
-                  ),
-
-                  SizedBox(height: 10.dp,),
-
-                  CupertinoButton(
-                    onPressed: () {
-                      userScreenNotifier.callNavigation(ScreenName.delivery);
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(10.dp),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.40),
-                          width: 1,
+                    Row(
+                      children: [
+                        objCommonWidgets.customText(
+                          context,
+                          'Hi, Vikas',
+                          20,
+                          objConstantColor.white,
+                          objConstantFonts.montserratSemiBold,
                         ),
-                      ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.dp,
-                                horizontal: 10.dp),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10.dp,),
-                                objCommonWidgets.customText(context,
-                                    'Delivery', 20,
-                                    objConstantColor.white,
-                                    objConstantFonts.montserratSemiBold),
-                                objCommonWidgets.customText(context,
-                                    '${dashboardScreenState.currentDay}', 13,
-                                    objConstantColor.white,
-                                    objConstantFonts.montserratSemiBold),
-                                SizedBox(height: 25.dp,),
-                                Row(
-                                  children: [
-                                    objCommonWidgets.customText(context,
-                                        'Count :', 15,
-                                        objConstantColor.white,
-                                        objConstantFonts.montserratSemiBold),
-                                    SizedBox(width: 5.dp,),
-                                    objCommonWidgets.customText(context,
-                                        '25', 22,
-                                        objConstantColor.yellow,
-                                        objConstantFonts.montserratSemiBold),
-                                    Spacer(),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Positioned(bottom: 10.dp,
-                              right: 10.dp,
-                              child: Image.asset(objConstantAssest.motorbike,
-                                color: Colors.white.withAlpha(75),
-                                width: 55.dp,))
-                        ],
-                      ),
+      
+                        Spacer(),
+      
+                        CupertinoButton(
+                            padding: EdgeInsets.zero, child: Image.asset(
+                          objConstantAssest.menuIcon,
+                          height: 25.dp,
+                          color: Colors.white,
+                          colorBlendMode: BlendMode.srcIn,
+                        ), onPressed: () {
+                          mainScaffoldKey.currentState?.openDrawer();
+                        })
+      
+      
+                      ],
                     ),
-                  ),
-
-                  SizedBox(height: 25.dp,),
-
-                  objCommonWidgets.customText(
-                    context,
-                    'Orders',
-                    15,
-                    objConstantColor.white,
-                    objConstantFonts.montserratSemiBold,
-                  ),
-
-                  SizedBox(height: 5.dp,),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    // FIX
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 15,
-                      childAspectRatio: 1.05,
-                    ),
-                    itemCount: menuList.length,
-                    itemBuilder: (context, index) {
-                      return buildMenuCard(context, index, menuList, menuSubList, menuSubIcons, () {
-                        dashboardScreenNotifier.callSubModuleScreenNavigation(index, userScreenNotifier );
-                      });
-                    },
-                  ),
-
-                  SizedBox(height: 25.dp,),
-
-                  objCommonWidgets.customText(
-                    context,
-                    'Return & Cancelled Orders',
-                    15,
-                    objConstantColor.white,
-                    objConstantFonts.montserratSemiBold,
-                  ),
-
-                  SizedBox(height: 5.dp,),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    // FIX
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 15,
-                      childAspectRatio: 1.05,
-                    ),
-                    itemCount: menu2List.length,
-                    itemBuilder: (context, index) {
-                      return buildMenuCard(context, index, menu2List, menu2SubList, menu2SubIcons, () {
-                        dashboardScreenNotifier.callSubCancelAndReturnsModuleScreenNavigation(index, userScreenNotifier);
-                      });
-                    },
-                  ),
-
-                  SizedBox(height: 30.dp,),
-
-                  objCommonWidgets.customText(
-                    context,
-                    'Partners',
-                    15,
-                    objConstantColor.white,
-                    objConstantFonts.montserratSemiBold,
-                  ),
-
-                  SizedBox(height: 5.dp,),
-
-                  Row(
-                    children: [
-                      partnerCard(context, 'Business\nContracts', '15',
-                          objConstantAssest.sellerPartner,
-                          'Signed contracts list', () {
-                            userScreenNotifier.callNavigation(
-                                ScreenName.contracts);
-                          }),
-                      SizedBox(width: 10.dp),
-                      partnerCard(context, 'Delivery\nPartners', '8',
-                          objConstantAssest.deliveryBoy,
-                          'Delivery partners list', () {
-                            userScreenNotifier.callNavigation(
-                                ScreenName.deliveryPartner);
-                          }),
-
-                    ],
-                  ),
-
-
-                  SizedBox(height: 30.dp,),
-
-                  objCommonWidgets.customText(
-                    context,
-                    'Customers',
-                    15,
-                    objConstantColor.white,
-                    objConstantFonts.montserratSemiBold,
-                  ),
-
-                  SizedBox(height: 5.dp,),
-
-                  CupertinoButton(
-                    onPressed: () {
-                      userScreenNotifier.callNavigation(ScreenName.customers);
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        // frosted glass effect
-                        borderRadius: BorderRadius.circular(12.dp),
-                        border: Border.all(
+      
+                    SizedBox(height: 10.dp,),
+      
+                    CupertinoButton(
+                      onPressed: () {
+                        userScreenNotifier.callNavigation(ScreenName.delivery);
+                      },
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
-                          width: 1,
+                          borderRadius: BorderRadius.circular(10.dp),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.40),
+                            width: 1,
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.dp,
+                                  horizontal: 10.dp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 10.dp,),
+                                  objCommonWidgets.customText(context,
+                                      'Delivery', 20,
+                                      objConstantColor.white,
+                                      objConstantFonts.montserratSemiBold),
+                                  objCommonWidgets.customText(context,
+                                      '${dashboardScreenState.currentDay}', 13,
+                                      objConstantColor.white,
+                                      objConstantFonts.montserratSemiBold),
+                                  SizedBox(height: 25.dp,),
+                                  Row(
+                                    children: [
+                                      objCommonWidgets.customText(context,
+                                          'Count :', 15,
+                                          objConstantColor.white,
+                                          objConstantFonts.montserratSemiBold),
+                                      SizedBox(width: 5.dp,),
+                                      objCommonWidgets.customText(context,
+                                          '25', 22,
+                                          objConstantColor.yellow,
+                                          objConstantFonts.montserratSemiBold),
+                                      Spacer(),
+      
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+      
+                            Positioned(bottom: 10.dp,
+                                right: 10.dp,
+                                child: Image.asset(objConstantAssest.motorbike,
+                                  color: Colors.white.withAlpha(75),
+                                  width: 55.dp,))
+                          ],
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.dp,
-                                horizontal: 10.dp),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10.dp,),
-                                objCommonWidgets.customText(context,
-                                    'Total Customers', 18,
-                                    objConstantColor.white,
-                                    objConstantFonts.montserratSemiBold),
-                                SizedBox(height: 35.dp,),
-                                Row(
-                                  children: [
-                                    objCommonWidgets.customText(context,
-                                        'Count :', 15,
-                                        objConstantColor.white,
-                                        objConstantFonts.montserratSemiBold),
-                                    SizedBox(width: 5.dp,),
-                                    objCommonWidgets.customText(context,
-                                        '178', 20,
-                                        objConstantColor.yellow,
-                                        objConstantFonts.montserratSemiBold),
-                                    Spacer(),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          Positioned(bottom: 10.dp,
-                              right: 10.dp,
-                              child: Image.asset(objConstantAssest.customer,
-                                color: Colors.white.withAlpha(75),
-                                width: 55.dp,))
-                        ],
-                      ),
                     ),
-                  )
-
-                ],
+      
+                    SizedBox(height: 25.dp,),
+      
+                    objCommonWidgets.customText(
+                      context,
+                      'Orders',
+                      15,
+                      objConstantColor.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+      
+                    SizedBox(height: 5.dp,),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      // FIX
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 15,
+                        childAspectRatio: 1.05,
+                      ),
+                      itemCount: menuList.length,
+                      itemBuilder: (context, index) {
+                        return buildMenuCard(context, index, menuList, menuSubList, menuSubIcons, () {
+                          dashboardScreenNotifier.callSubModuleScreenNavigation(index, userScreenNotifier );
+                        });
+                      },
+                    ),
+      
+                    SizedBox(height: 25.dp,),
+      
+                    objCommonWidgets.customText(
+                      context,
+                      'Return & Cancelled Orders',
+                      15,
+                      objConstantColor.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+      
+                    SizedBox(height: 5.dp,),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      // FIX
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 15,
+                        childAspectRatio: 1.05,
+                      ),
+                      itemCount: menu2List.length,
+                      itemBuilder: (context, index) {
+                        return buildMenuCard(context, index, menu2List, menu2SubList, menu2SubIcons, () {
+                          dashboardScreenNotifier.callSubCancelAndReturnsModuleScreenNavigation(index, userScreenNotifier);
+                        });
+                      },
+                    ),
+      
+                    SizedBox(height: 30.dp,),
+      
+                    objCommonWidgets.customText(
+                      context,
+                      'Partners',
+                      15,
+                      objConstantColor.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+      
+                    SizedBox(height: 5.dp,),
+      
+                    Row(
+                      children: [
+                        partnerCard(context, 'Business\nContracts', '15',
+                            objConstantAssest.sellerPartner,
+                            'Signed contracts list', () {
+                              userScreenNotifier.callNavigation(
+                                  ScreenName.contracts);
+                            }),
+                        SizedBox(width: 10.dp),
+                        partnerCard(context, 'Delivery\nPartners', '8',
+                            objConstantAssest.deliveryBoy,
+                            'Delivery partners list', () {
+                              userScreenNotifier.callNavigation(
+                                  ScreenName.deliveryPartner);
+                            }),
+      
+                      ],
+                    ),
+      
+      
+                    SizedBox(height: 30.dp,),
+      
+                    objCommonWidgets.customText(
+                      context,
+                      'Customers',
+                      15,
+                      objConstantColor.white,
+                      objConstantFonts.montserratSemiBold,
+                    ),
+      
+                    SizedBox(height: 5.dp,),
+      
+                    CupertinoButton(
+                      onPressed: () {
+                        userScreenNotifier.callNavigation(ScreenName.customers);
+                      },
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          // frosted glass effect
+                          borderRadius: BorderRadius.circular(12.dp),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.15),
+                            width: 1,
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.dp,
+                                  horizontal: 10.dp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 10.dp,),
+                                  objCommonWidgets.customText(context,
+                                      'Total Customers', 18,
+                                      objConstantColor.white,
+                                      objConstantFonts.montserratSemiBold),
+                                  SizedBox(height: 35.dp,),
+                                  Row(
+                                    children: [
+                                      objCommonWidgets.customText(context,
+                                          'Count :', 15,
+                                          objConstantColor.white,
+                                          objConstantFonts.montserratSemiBold),
+                                      SizedBox(width: 5.dp,),
+                                      objCommonWidgets.customText(context,
+                                          '178', 20,
+                                          objConstantColor.yellow,
+                                          objConstantFonts.montserratSemiBold),
+                                      Spacer(),
+      
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+      
+                            Positioned(bottom: 10.dp,
+                                right: 10.dp,
+                                child: Image.asset(objConstantAssest.customer,
+                                  color: Colors.white.withAlpha(75),
+                                  width: 55.dp,))
+                          ],
+                        ),
+                      ),
+                    )
+      
+                  ],
+                ),
               ),
-            ),
-          )
+            )
+        ),
       ),
     );
   }
