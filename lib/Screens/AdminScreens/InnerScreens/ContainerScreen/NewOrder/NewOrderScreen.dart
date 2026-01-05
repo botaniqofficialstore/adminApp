@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../../../CommonViews/CommonWidget.dart';
-import '../../../../../../Constants/ConstantVariables.dart';
-import '../../../../../CodeReusable/CodeReusability.dart';
-import '../../../../../Constants/Constants.dart';
-import '../../../../../Utility/PreferencesManager.dart';
-import '../../MainScreen/MainScreenState.dart';
+import '../../../../CommonViews/CommonWidget.dart';
+import '../../../../Constants/ConstantVariables.dart';
+import '../../../CodeReusable/CodeReusability.dart';
+import '../../../Constants/Constants.dart';
+import '../../../Utility/PreferencesManager.dart';
+import '../../AdminScreens/InnerScreens/MainScreen/MainScreenState.dart';
 import 'NewOrderScreenState.dart';
 
 class NewOrderScreen extends ConsumerStatefulWidget {
@@ -30,11 +30,12 @@ class NewOrderScreenState extends ConsumerState<NewOrderScreen>
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 10.dp),
+            padding: EdgeInsets.symmetric(horizontal: 15.dp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
