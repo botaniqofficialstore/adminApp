@@ -62,7 +62,14 @@ enum ScreenName {
   shceduledDelivery,
   returnedOrder,
   customers,
-  confirmPacked
+  confirmPacked,
+  location,
+  settings,
+  rating,
+  legal,
+  businessHours,
+  editProfile,
+  productReview
 }
 
 

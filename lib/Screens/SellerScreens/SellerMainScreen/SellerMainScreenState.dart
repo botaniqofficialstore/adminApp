@@ -6,9 +6,14 @@ import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/Selle
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCompletedDeliveryScreen/SellerCompletedDeliveryScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerConfirmOrderScreen/SellerConfirmOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerDashboardScreen/SellerDashboardScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerLegalScreen/SellerLegalScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerNewOrderScreen/SellerNewOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerPackedOrderScreen/SellerPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductFeebackScreen/SellerProductFeedbackScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProfileScreen/SellerProfileScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerRatingScreen/SellerRatingScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnedOrderScreen/SellerReturnedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerSettingsScreen/SellerSettingsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,6 +88,16 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerReturnedOrderScreen();
     } else if (state.currentModule == ScreenName.revenue) {
       return const RevenueScreen();
+    } else if (state.currentModule == ScreenName.profile) {
+      return const SellerProfileScreen();
+    } else if (state.currentModule == ScreenName.settings) {
+      return const SellerSettingsScreen();
+    } else if (state.currentModule == ScreenName.legal) {
+      return const SellerLegalScreen();
+    } else if (state.currentModule == ScreenName.rating) {
+      return const SellerRatingScreen();
+    } else if (state.currentModule == ScreenName.productReview) {
+      return const SellerProductFeedbackScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -164,6 +179,12 @@ class SellerMainScreenGlobalStateNotifier
       onScreen = ScreenName.products;
     } else if (state.currentModule == ScreenName.confirmPacked) {
       onScreen = ScreenName.confirmOrder;
+    } else if (state.currentModule == ScreenName.settings ||
+        state.currentModule == ScreenName.legal ||
+        state.currentModule == ScreenName.rating) {
+      onScreen = ScreenName.profile;
+    } else if (state.currentModule == ScreenName.productReview) {
+      onScreen = ScreenName.rating;
     }
 
     state = state.copyWith(
