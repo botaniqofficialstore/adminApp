@@ -262,6 +262,7 @@ class SellerRatingScreenStateUI extends ConsumerState<SellerRatingScreen> {
                   // Product Image with subtle shadow
                   Container(
                     decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10.dp),
                         boxShadow: [
                           BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 5)
@@ -269,10 +270,51 @@ class SellerRatingScreenStateUI extends ConsumerState<SellerRatingScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.dp),
-                      child: Image.network(product.image,
-                          width: 75.dp,
-                          height: 75.dp,
-                          fit: BoxFit.cover), // Use Cover for better professional fit
+                      child: Image.network(
+                        product.image,
+                        width: 75.dp,
+                        height: 75.dp,
+                        fit: BoxFit.cover,
+                        // Handle the loading state
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child; // Image is fully loaded
+
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 1. The Local Placeholder Image
+                              Image.asset(
+                                objConstantAssest.placeholderImage,
+                                width: 75.dp,
+                                height: 75.dp,
+                                fit: BoxFit.cover,
+                              ),
+                              // 2. The White Progress Bar
+                              SizedBox(
+                                width: 20.dp, // Small and clean
+                                height: 20.dp,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, // Thinner lines look more modern
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                  backgroundColor: Colors.white24, // Subtle track color
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        // Optional: Handle errors (e.g., 404 or no internet)
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            objConstantAssest.placeholderImage,
+                            width: 75.dp,
+                            height: 75.dp,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
                     ),
                   ),
                   SizedBox(width: 15.dp),

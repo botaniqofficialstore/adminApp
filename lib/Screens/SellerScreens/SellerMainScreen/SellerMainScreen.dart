@@ -1,18 +1,17 @@
-import 'package:flutter/services.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:botaniq_admin/Utility/Logger.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
-import 'package:flutter/cupertino.dart';
 import '../../../Utility/SideMenu.dart';
 import 'SellerMainScreenState.dart';
 
-final GlobalKey<ScaffoldState> mainSellerScaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> mainSellerScaffoldKey =
+GlobalKey<ScaffoldState>();
+
 class SellerMainScreen extends ConsumerStatefulWidget {
   const SellerMainScreen({super.key});
 
@@ -22,147 +21,76 @@ class SellerMainScreen extends ConsumerStatefulWidget {
 
 class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
 
-
   @override
   void initState() {
     super.initState();
-    BackButtonInterceptor.add(mainInterceptor);
 
-    //Fetch count data when app starts
+    // Fetch API data once UI is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(SellerMainScreenGlobalStateProvider.notifier)
+      ref
+          .read(SellerMainScreenGlobalStateProvider.notifier)
           .backgroundRefreshForAPI(context);
     });
   }
 
   @override
-  void dispose() {
-    BackButtonInterceptor.remove(mainInterceptor);
-    super.dispose();
-  }
-
-  bool mainInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    if (kDebugMode) {
-      debugPrint("Back button intercepted!");
-    }
-
-    final state = ref.read(SellerMainScreenGlobalStateProvider);
-    final notifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
-
-    PreferencesManager.getInstance().then((prefs) {
-      if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
-        Logger().log('Called isDialogOpened -------------->');
-        return;
-      }
-
-      /// 1️⃣ Close COMMON POPUP first
-      if (prefs.getBooleanValue(PreferenceKeys.isCommonPopup) == true) {
-        Logger().log('Called isCommonPopup -------------->');
-        notifier.closeCommonPopup(context);
-        prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
-        return;
-      }
-
-      /// 2️⃣ Close BOTTOM SHEET next
-      if (prefs.getBooleanValue(PreferenceKeys.isBottomSheet) == true) {
-        Logger().log('Called isBottomSheet -------------->');
-        notifier.closeBottomSheet(context);
-        prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
-        return;
-      }
-
-      /// 3️⃣ Close Drawer
-      if (mainSellerScaffoldKey.currentState?.isDrawerOpen ?? false) {
-        mainSellerScaffoldKey.currentState?.closeDrawer();
-        return;
-      }
-
-      /// 4️⃣ Prevent back when loading
-      if (prefs.getBooleanValue(PreferenceKeys.isLoadingBarStarted) == true) {
-        return;
-      }
-
-      /// 5️⃣ Default back navigation
-      notifier.callBackNavigation(context, state.currentModule);
-    });
-
-    /// IMPORTANT: Always return TRUE to intercept system back
-    return true;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var userScreenState = ref.watch(SellerMainScreenGlobalStateProvider);
-    var userScreenNotifier =
+    final userScreenState =
+    ref.watch(SellerMainScreenGlobalStateProvider);
+    final userScreenNotifier =
     ref.watch(SellerMainScreenGlobalStateProvider.notifier);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: SafeArea(
-          top: false,
-          child: Scaffold(
-            extendBody: true,
-            key: mainSellerScaffoldKey,
-            backgroundColor: const Color(0xFFF4F4F4),
-            drawer: SideMenu(
-              onMenuClick: (module) {
-                var notifier = ref.read(
-                    SellerMainScreenGlobalStateProvider.notifier);
-
-                if (module == ScreenName.logout) {
-                  notifier.callLogoutNavigation(context);
-                } else {
-                  notifier.callNavigation(module);
-                }
-
-                mainSellerScaffoldKey.currentState?.closeDrawer();
-              },
-            ),
-
-            /// ✅ ANIMATED SCREEN SWAP
-            body: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 350),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                final isForward =
-                    userScreenState.navigationDirection ==
-                        NavigationDirection.forward;
-
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: isForward
-                        ? const Offset(0.2, 0)
-                        : const Offset(-0.2, 0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
-                );
-              },
-              child: KeyedSubtree(
+    return PopScope(
+      canPop: false, // 🔥 We fully control back navigation
+      onPopInvokedWithResult: (didPop, dynamic) {
+        if (didPop) return;
+        _handleBack(context);
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent, // optional
+          statusBarIconBrightness: Brightness.dark, // ANDROID → black icons
+          statusBarBrightness: Brightness.light, // iOS → black icons
+        ),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SafeArea(
+            top: false,
+            child: Scaffold(
+              key: mainSellerScaffoldKey,
+              extendBody: true,
+              backgroundColor: const Color(0xFFF4F4F4),
+        
+              /// SIDE MENU
+              drawer: SideMenu(
+                onMenuClick: (module) {
+                  final notifier = ref.read(
+                      SellerMainScreenGlobalStateProvider.notifier);
+        
+                  if (module == ScreenName.logout) {
+                    notifier.callLogoutNavigation(context);
+                  } else {
+                    notifier.callNavigation(module);
+                  }
+        
+                  mainSellerScaffoldKey.currentState?.closeDrawer();
+                },
+              ),
+        
+              /// BODY (Animated Screen Swap)
+              body: KeyedSubtree(
                 key: ValueKey(userScreenState.currentModule),
                 child: userScreenNotifier.getChildContainer(),
               ),
-            ),
-
-            /// FOOTER (UNCHANGED)
-            bottomNavigationBar: UserFooterView(
-              currentModule: userScreenState.currentModule,
-              notificationCount: userScreenState.notificationCount,
-              selectedFooterIndex: (index) {
-                userScreenNotifier.setFooterSelection(index);
-              },
+        
+              /// FOOTER
+              bottomNavigationBar: UserFooterView(
+                currentModule: userScreenState.currentModule,
+                notificationCount: userScreenState.notificationCount,
+                selectedFooterIndex: (index) {
+                  userScreenNotifier.setFooterSelection(index);
+                },
+              ),
             ),
           ),
         ),
@@ -170,8 +98,56 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
     );
   }
 
+  /// 🔥 SAFE BACK HANDLER
+  Future<void> _handleBack(BuildContext context) async {
+    if (!context.mounted) return;
 
+    final notifier =
+    ref.read(SellerMainScreenGlobalStateProvider.notifier);
+    final state =
+    ref.read(SellerMainScreenGlobalStateProvider);
 
+    final prefs = await PreferencesManager.getInstance();
+
+    /// 1️⃣ Dialog open → block back
+    if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
+      return;
+    }
+
+    /// 2️⃣ Common popup
+    if (prefs.getBooleanValue(PreferenceKeys.isCommonPopup) == true) {
+      notifier.closeCommonPopup(context);
+      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
+      return;
+    }
+
+    /// 3️⃣ Bottom sheet
+    if (prefs.getBooleanValue(PreferenceKeys.isBottomSheet) == true) {
+      notifier.closeBottomSheet(context);
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
+      return;
+    }
+
+    /// 4️⃣ Drawer
+    if (mainSellerScaffoldKey.currentState?.isDrawerOpen ?? false) {
+      mainSellerScaffoldKey.currentState?.closeDrawer();
+      return;
+    }
+
+    /// 5️⃣ Loading state → block back
+
+    if (prefs.getBooleanValue(
+    PreferenceKeys.isLoadingBarStarted) ==
+        true) {
+      return;
+    }
+
+    /// 6️⃣ Custom back navigation
+    notifier.callBackNavigation(
+    context,
+      state.currentModule,
+    );
+  }
 }
 
 

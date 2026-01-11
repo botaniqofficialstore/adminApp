@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerMainScreen/SellerMainScreenState.dart';
 import 'package:botaniq_admin/constants/Constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,19 +19,38 @@ class SellerReturnedOrderScreen extends ConsumerStatefulWidget {
 }
 
 class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Animation Controllers
+  late AnimationController _mainController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    Future.microtask((){
-      var screenNotifier = ref.watch(SellerReturnedOrderScreenStateProvider.notifier);
-      screenNotifier.getFilteredDate(DateFilterType.last7Days);
-    });
+    _mainController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
 
+    _fadeAnimation = CurvedAnimation(
+      parent: _mainController,
+      curve: Curves.easeIn,
+    );
+
+    Future.microtask(() {
+      var screenNotifier = ref.read(SellerReturnedOrderScreenStateProvider.notifier);
+      screenNotifier.getFilteredDate(DateFilterType.last7Days);
+      _mainController.forward(); // Start animations
+    });
+  }
+
+  @override
+  void dispose() {
+    _mainController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,100 +69,12 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CupertinoButton(
-                        minimumSize: Size(0, 0),
-                        padding: EdgeInsets.zero,
-                        child: SizedBox(width: 20.dp,
-                            child: Image.asset(objConstantAssest.backIcon,
-                              color: objConstantColor.black,)),
-                        onPressed: () {
-                          var userScreenNotifier = ref.watch(
-                              SellerMainScreenGlobalStateProvider.notifier);
-                          userScreenNotifier.callHomeNavigation();
-                        }),
-                    SizedBox(width: 2.5.dp),
-                    objCommonWidgets.customText(
-                      context,
-                      "Returned Order's",
-                      16,
-                      objConstantColor.black,
-                      objConstantFonts.montserratSemiBold,
-                    ),
-                    const Spacer(),
-
-                  ],
-                ),
-
+                _buildHeader(),
                 SizedBox(height: 15.dp),
-
-                /// SEARCH
-                Row(
-                  children: [
-                    Expanded(
-                      child: CommonTextField(
-                        controller: userScreenState.searchController,
-                        placeholder: "Search by order ID...",
-                        textSize: 13,
-                        fontFamily: objConstantFonts.montserratMedium,
-                        textColor: objConstantColor.black,
-                        isNumber: false,
-                        isDarkView: false,
-                        isShowIcon: true,
-                        onChanged: (_) {},
-                      ),
-                    ),
-
-                    SizedBox(width: 10.dp),
-
-                    CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: (){
-
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(8.dp),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF795548),
-                          borderRadius: BorderRadius.circular(8.dp),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(20),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ],
-                        ),
-                        child: Icon(
-                            Icons.history_rounded, size: 22.dp,
-                            color: Colors.white
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-
+                _buildSearchBar(userScreenState),
                 SizedBox(height: 15.dp),
-
-                /// LIST
                 Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 20.dp),
-                          child: cellView(context),
-                        );
-                      },
-                    ),
-                  ),
+                  child: _buildAnimatedList(),
                 ),
               ],
             ),
@@ -154,19 +84,140 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
     );
   }
 
+  /// HEADER WITH SLIDE ANIMATION
+  Widget _buildHeader() {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: Tween<Offset>(begin: const Offset(0, -0.2), end: Offset.zero)
+            .animate(CurvedAnimation(parent: _mainController, curve: Curves.easeOut)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CupertinoButton(
+                minimumSize: Size(0, 0),
+                padding: EdgeInsets.zero,
+                child: SizedBox(
+                    width: 20.dp,
+                    child: Image.asset(
+                      objConstantAssest.backIcon,
+                      color: objConstantColor.black,
+                    )),
+                onPressed: () {
+                  var userScreenNotifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
+                  userScreenNotifier.callHomeNavigation();
+                }),
+            SizedBox(width: 2.5.dp),
+            objCommonWidgets.customText(
+              context,
+              "Return Order's",
+              16,
+              objConstantColor.black,
+              objConstantFonts.montserratSemiBold,
+            ),
+            const Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
 
+  /// SEARCH BAR WITH SCALE ANIMATION
+  Widget _buildSearchBar(userScreenState) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: Tween<Offset>(begin: const Offset(0, -0.2), end: Offset.zero)
+            .animate(CurvedAnimation(parent: _mainController, curve: Curves.easeOut)),
+        child: Row(
+          children: [
+            Expanded(
+              child: CommonTextField(
+                controller: userScreenState.searchController,
+                placeholder: "Search by order ID...",
+                textSize: 13,
+                fontFamily: objConstantFonts.montserratMedium,
+                textColor: objConstantColor.black,
+                isNumber: false,
+                isDarkView: false,
+                isShowIcon: true,
+                onChanged: (_) {},
+              ),
+            ),
+            SizedBox(width: 10.dp),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                var userScreenNotifier = ref.watch(
+                    SellerMainScreenGlobalStateProvider.notifier);
+                userScreenNotifier.callOrderHistoryNavigation();
+              },
+              child: Container(
+                padding: EdgeInsets.all(8.dp),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF795548),
+                  borderRadius: BorderRadius.circular(8.dp),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(20),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: Icon(Icons.history_rounded, size: 22.dp, color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
+  /// LIST WITH STAGGERED ITEM ANIMATION
+  Widget _buildAnimatedList() {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: 5, // Replace with your actual list length
+      itemBuilder: (context, index) {
+        // Create an individual animation for each item
+        final itemDelay = (index * 0.1).clamp(0.0, 1.0);
+        final Animation<double> itemAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: Interval(0.3 + itemDelay, 1.0, curve: Curves.decelerate),
+          ),
+        );
+
+        return AnimatedBuilder(
+          animation: itemAnimation,
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: itemAnimation,
+              child: Transform.translate(
+                offset: Offset(0, 50 * (1 - itemAnimation.value)),
+                child: child,
+              ),
+            );
+          },
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 12.dp),
+            child: cellView(context),
+          ),
+        );
+      },
+    );
+  }
 
   Widget cellView(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.dp),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20.dp),
-        border: Border.all(color: Color(0xFF795548).withAlpha(100)),
+        border: Border.all(color: const Color(0xFF795548).withAlpha(40)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(12),
+            color: Colors.black.withAlpha(10),
             blurRadius: 15,
             offset: const Offset(0, 8),
           )
@@ -174,11 +225,11 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
       ),
       child: Column(
         children: [
-          /// 1. TOP HEADER: Status & Order ID
+          /// 1. TOP HEADER
           Container(
             padding: EdgeInsets.all(16.dp),
             decoration: BoxDecoration(
-              color: Color(0xFF795548).withAlpha(10),
+              color: const Color(0xFF795548).withAlpha(10),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.dp)),
             ),
             child: Row(
@@ -187,7 +238,7 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    objCommonWidgets.customText(context, 'RETURN ORDER', 10, Color(0xFF795548), objConstantFonts.montserratBold),
+                    objCommonWidgets.customText(context, 'RETURN ORDER', 10, const Color(0xFF795548), objConstantFonts.montserratBold),
                     SizedBox(height: 2.dp),
                     objCommonWidgets.customText(context, '578421015', 14, Colors.black, objConstantFonts.montserratSemiBold),
                   ],
@@ -195,7 +246,7 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    objCommonWidgets.customText(context, 'Drop On', 10, Color(0xFF795548), objConstantFonts.montserratBold),
+                    objCommonWidgets.customText(context, 'Drop On', 10, const Color(0xFF795548), objConstantFonts.montserratBold),
                     SizedBox(height: 2.dp),
                     objCommonWidgets.customText(context, '10 Jan', 10, Colors.black, objConstantFonts.montserratSemiBold),
                   ],
@@ -204,18 +255,17 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
             ),
           ),
 
-          /// 2. MIDDLE CONTENT: Customer & Delivery Partner
+          /// 2. MIDDLE CONTENT
           Padding(
             padding: EdgeInsets.all(16.dp),
             child: Column(
               children: [
-                // Customer Row
                 Row(
                   children: [
                     Container(
                       padding: EdgeInsets.all(8.dp),
-                      decoration: BoxDecoration(color: Color(0xFF795548).withAlpha(20), shape: BoxShape.circle),
-                      child: Icon(Icons.person_outline, size: 18.dp, color: Color(0xFF795548)),
+                      decoration: BoxDecoration(color: const Color(0xFF795548).withAlpha(20), shape: BoxShape.circle),
+                      child: Icon(Icons.person_outline, size: 18.dp, color: const Color(0xFF795548)),
                     ),
                     SizedBox(width: 12.dp),
                     Expanded(
@@ -227,63 +277,25 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
                         ],
                       ),
                     ),
+                    SizedBox(width: 5.dp),
                     Column(
                       children: [
                         objCommonWidgets.customText(context, '₹249.00', 14, Colors.black, objConstantFonts.montserratSemiBold),
-                        objCommonWidgets.customText(context, 'Refund Amonut', 10, Color(0xFF795548), objConstantFonts.montserratBold),
+                        objCommonWidgets.customText(context, 'Refund Amount', 9, const Color(0xFF795548), objConstantFonts.montserratBold),
                       ],
                     ),
                   ],
                 ),
-
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.dp),
-                  child: Divider(color: Color(0xFF795548).withAlpha(40), height: 1),
+                  child: Divider(color: const Color(0xFF795548).withAlpha(30), height: 1),
                 ),
-
-                // Delivery Partner Row (New Addition)
-                Container(
-                  padding: EdgeInsets.all(12.dp),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF795548).withAlpha(15),
-                    borderRadius: BorderRadius.circular(12.dp),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 35.dp, width: 35.dp,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.dp),
-                            border: Border.all(color: Colors.grey.withAlpha(40))
-                        ),
-                        child: Icon(Icons.delivery_dining, color: Color(0xFF795548), size: 20.dp),
-                      ),
-                      SizedBox(width: 12.dp),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            objCommonWidgets.customText(context, 'Delivery Partner', 9, Colors.black, objConstantFonts.montserratMedium),
-                            objCommonWidgets.customText(context, 'Rajesh K.', 11, Colors.black, objConstantFonts.montserratSemiBold),
-                          ],
-                        ),
-                      ),
-                      CupertinoButton(padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          onPressed: (){
-                            var screenNotifier = ref.watch(SellerReturnedOrderScreenStateProvider.notifier);
-                            screenNotifier.makePhoneCall('9061197505');
-                          },
-                          child: CircleAvatar(backgroundColor: Color(0xFF795548), child: Icon(Icons.call, size: 18.dp, color: Colors.white))),
-                    ],
-                  ),
-                ),
+                _buildDeliveryPartnerRow(context),
               ],
             ),
           ),
 
-          /// 3. BOTTOM FOOTER: Reason & Action
+          /// 3. BOTTOM FOOTER
           Padding(
             padding: EdgeInsets.fromLTRB(16.dp, 0, 16.dp, 16.dp),
             child: Row(
@@ -297,18 +309,7 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
                     ],
                   ),
                 ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () => showPurchaseBottomSheet(context),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.dp, vertical: 8.dp),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF795548),
-                      borderRadius: BorderRadius.circular(8.dp),
-                    ),
-                    child: objCommonWidgets.customText(context, 'View Details', 8.5, Colors.white, objConstantFonts.montserratBold),
-                  ),
-                ),
+                _buildDetailsButton(context),
               ],
             ),
           ),
@@ -316,6 +317,65 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
       ),
     );
   }
+
+  Widget _buildDeliveryPartnerRow(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(12.dp),
+      decoration: BoxDecoration(
+        color: const Color(0xFF795548).withAlpha(15),
+        borderRadius: BorderRadius.circular(12.dp),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 35.dp, width: 35.dp,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.dp),
+                border: Border.all(color: Colors.grey.withAlpha(40))
+            ),
+            child: Icon(Icons.delivery_dining, color: const Color(0xFF795548), size: 20.dp),
+          ),
+          SizedBox(width: 12.dp),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                objCommonWidgets.customText(context, 'Delivery Partner', 9, Colors.black, objConstantFonts.montserratMedium),
+                objCommonWidgets.customText(context, 'Rajesh K.', 11, Colors.black, objConstantFonts.montserratSemiBold),
+              ],
+            ),
+          ),
+          CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0),
+              onPressed: () {
+                var screenNotifier = ref.read(SellerReturnedOrderScreenStateProvider.notifier);
+                screenNotifier.makePhoneCall('9061197505');
+              },
+              child: const CircleAvatar(
+                  backgroundColor: Color(0xFF795548),
+                  child: Icon(Icons.call, size: 18, color: Colors.white))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailsButton(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () => showPurchaseBottomSheet(context),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.dp, vertical: 8.dp),
+        decoration: BoxDecoration(
+          color: const Color(0xFF795548),
+          borderRadius: BorderRadius.circular(8.dp),
+        ),
+        child: objCommonWidgets.customText(context, 'View Details', 8.5, Colors.white, objConstantFonts.montserratBold),
+      ),
+    );
+  }
+
 
 
 
@@ -541,8 +601,6 @@ class SellerReturnedOrderScreenState extends ConsumerState<SellerReturnedOrderSc
       ),
     );
   }
-
-
 
 
 }

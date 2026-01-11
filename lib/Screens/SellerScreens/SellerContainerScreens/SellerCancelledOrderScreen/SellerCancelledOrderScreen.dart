@@ -28,7 +28,6 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
   late AnimationController popupController;
   late Animation<double> popupAnimation;
 
-
   @override
   void initState() {
     super.initState();
@@ -50,6 +49,37 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
   }
 
   @override
+  void dispose() {
+    popupController.dispose();
+    super.dispose();
+  }
+
+  /// PRO ANIMATION HELPER
+  /// This creates a staggered Fade + Slide effect
+  Widget _animateEntrance({
+    required Widget child,
+    required int index, // Position in the sequence
+    Offset offset = const Offset(0, 0.35), // Default slide from bottom
+  }) {
+    return TweenAnimationBuilder<double>(
+      // Stagger logic: starts later based on index
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 600 + (index * 100)),
+      curve: Curves.easeOutQuart,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: offset * (100 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     var userScreenState = ref.watch(SellerCancelledOrderScreenStateProvider);
 
@@ -65,163 +95,170 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CupertinoButton(
-                        minimumSize: Size(0, 0),
-                        padding: EdgeInsets.zero,
-                        child: SizedBox(width: 20.dp,
-                            child: Image.asset(objConstantAssest.backIcon,
-                              color: objConstantColor.black,)),
-                        onPressed: () {
-                          var userScreenNotifier = ref.watch(
-                              SellerMainScreenGlobalStateProvider.notifier);
-                          userScreenNotifier.callHomeNavigation();
-                        }),
-                    SizedBox(width: 2.5.dp),
-                    objCommonWidgets.customText(
-                      context,
-                      "Cancelled Order's",
-                      16,
-                      objConstantColor.black,
-                      objConstantFonts.montserratSemiBold,
-                    ),
-                    const Spacer(),
-
-                  ],
-                ),
-
-                SizedBox(height: 15.dp),
-
-                /// SEARCH
-                Row(
-                  children: [
-                    Expanded(
-                      child: CommonTextField(
-                        controller: userScreenState.searchController,
-                        placeholder: "Search by order ID...",
-                        textSize: 13,
-                        fontFamily: objConstantFonts.montserratMedium,
-                        textColor: objConstantColor.black,
-                        isNumber: false,
-                        isDarkView: false,
-                        isShowIcon: true,
-                        onChanged: (_) {},
+                /// HEADER ANIMATION (Index 0)
+                _animateEntrance(
+                  index: 0,
+                  offset: const Offset(0, -0.2), // Slide from top
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CupertinoButton(
+                          minimumSize: Size(0, 0),
+                          padding: EdgeInsets.zero,
+                          child: SizedBox(width: 20.dp,
+                              child: Image.asset(objConstantAssest.backIcon,
+                                color: objConstantColor.black,)),
+                          onPressed: () {
+                            var userScreenNotifier = ref.watch(
+                                SellerMainScreenGlobalStateProvider.notifier);
+                            userScreenNotifier.callHomeNavigation();
+                          }),
+                      SizedBox(width: 2.5.dp),
+                      objCommonWidgets.customText(
+                        context,
+                        "Cancelled Order's",
+                        16,
+                        objConstantColor.black,
+                        objConstantFonts.montserratSemiBold,
                       ),
-                    ),
-
-                    SizedBox(width: 10.dp),
-
-                    CupertinoButton(
-                      key: filterKey,
-                      padding: EdgeInsets.zero,
-                      onPressed: showFilterPopup,
-                      child: Container(
-                        padding: EdgeInsets.all(8.dp),
-                        decoration: BoxDecoration(
-                          color: objConstantColor.orange,
-                          borderRadius: BorderRadius.circular(8.dp),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(20),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ],
-                        ),
-                        child: Icon(
-                            Icons.filter_list, size: 22.dp, color: objConstantColor.white
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-
-                SizedBox(height: 15.dp),
-
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5.dp), // Large radius for a modern feel
-                    boxShadow: [
-                      // Soft ambient shadow
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                      // Sharp outer definition
-                      BoxShadow(
-                        color: objConstantColor.orange.withOpacity(0.08),
-                        blurRadius: 1,
-                        spreadRadius: 1,
-                      ),
+                      const Spacer(),
                     ],
                   ),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Premium accent: A gradient vertical pill
-                        Container(
-                          width: 4,
+                ),
+
+                SizedBox(height: 15.dp),
+
+                /// SEARCH & FILTER ANIMATION (Index 1)
+                _animateEntrance(
+                  index: 1,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CommonTextField(
+                          controller: userScreenState.searchController,
+                          placeholder: "Search by order ID...",
+                          textSize: 13,
+                          fontFamily: objConstantFonts.montserratMedium,
+                          textColor: objConstantColor.black,
+                          isNumber: false,
+                          isDarkView: false,
+                          isShowIcon: true,
+                          onChanged: (_) {},
+                        ),
+                      ),
+                      SizedBox(width: 10.dp),
+                      CupertinoButton(
+                        key: filterKey,
+                        padding: EdgeInsets.zero,
+                        onPressed: showFilterPopup,
+                        child: Container(
+                          padding: EdgeInsets.all(8.dp),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                objConstantColor.orange,
-                                objConstantColor.orange.withOpacity(0.5),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
+                            color: objConstantColor.orange,
+                            borderRadius: BorderRadius.circular(8.dp),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(20),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Icon(
+                              Icons.filter_list, size: 22.dp, color: objConstantColor.white
                           ),
                         ),
-                        SizedBox(width: 5.dp),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            objCommonWidgets.customText(
-                              context,
-                              'Filtered List',
-                              10,
-                              Colors.black.withAlpha(120), // Deep obsidian black for premium contrast
-                              objConstantFonts.montserratMedium,
-                            ),
-                            const SizedBox(height: 2),
-                            objCommonWidgets.customText(
-                              context,
-                              '${userScreenState.filterType ?? 'All'} Delivery List',
-                              10,
-                              const Color(0xFF1A1A1A), // Deep obsidian black for premium contrast
-                              objConstantFonts.montserratSemiBold,
-                            ),
-                          ],
-                        ),
+                      )
+                    ],
+                  ),
+                ),
 
+                SizedBox(height: 15.dp),
+
+                /// FILTER CHIP ANIMATION (Index 2)
+                _animateEntrance(
+                  index: 2,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5.dp),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: objConstantColor.orange.withOpacity(0.08),
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                        ),
                       ],
+                    ),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 4,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  objConstantColor.orange,
+                                  objConstantColor.orange.withOpacity(0.5),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          SizedBox(width: 5.dp),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              objCommonWidgets.customText(
+                                context,
+                                'Filtered List',
+                                10,
+                                Colors.black.withAlpha(120),
+                                objConstantFonts.montserratMedium,
+                              ),
+                              const SizedBox(height: 2),
+                              objCommonWidgets.customText(
+                                context,
+                                '${userScreenState.filterType ?? 'All'} Delivery List',
+                                10,
+                                const Color(0xFF1A1A1A),
+                                objConstantFonts.montserratSemiBold,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
 
                 SizedBox(height: 15.dp),
 
-                /// LIST
+                /// LIST ANIMATION (Staggered items starting from Index 3)
                 Expanded(
                   child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: 5,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 20.dp),
-                          child: cellView(context),
+                        return _animateEntrance(
+                          index: index + 3, // Offset index so list starts after top elements
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.dp),
+                            child: cellView(context),
+                          ),
                         );
                       },
                     ),
@@ -235,14 +272,11 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
     );
   }
 
-
-
-
   Widget cellView(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.dp), // Smoother corners
+        borderRadius: BorderRadius.circular(24.dp),
         border: Border.all(color: objConstantColor.orange.withAlpha(100)),
         boxShadow: [
           BoxShadow(
@@ -254,7 +288,6 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
       ),
       child: Column(
         children: [
-          // --- TOP SECTION: Order Header ---
           Padding(
             padding: EdgeInsets.all(20.dp),
             child: Row(
@@ -271,7 +304,6 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
                     ),
                   ],
                 ),
-                // Floating Price Tag
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 8.dp),
                   decoration: BoxDecoration(
@@ -283,15 +315,13 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
               ],
             ),
           ),
-
-          // --- MIDDLE SECTION: User & Address ---
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.dp),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.dp),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.transparent, // Subtle contrast background
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(16.dp),
                 ),
                 child: Column(
@@ -317,12 +347,10 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
                                 ],
                               ),
                             ),
-                            // Mini Call Button
                           ],
                         ),
                       ),
                     ),
-
                     Container(
                       decoration: BoxDecoration(
                         color: objConstantColor.orange.withAlpha(25),
@@ -350,13 +378,10 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
               ),
             ),
           ),
-
-          // --- BOTTOM SECTION: Actions ---
           Padding(
             padding: EdgeInsets.all(20.dp),
             child: Row(
               children: [
-                // Secondary status text
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +391,6 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
                     ],
                   ),
                 ),
-                // Modern Action Button
                 GestureDetector(
                   onTap: () => showPurchaseBottomSheet(context),
                   child: Container(

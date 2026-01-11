@@ -2,6 +2,7 @@ import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/
 import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/LoginScreen/LoginScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/ConfirmPackedOrderScreen/ConfirmPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerBusinessHourScreen/SellerBusinessHourScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCancelledOrderScreen/SellerCancelledOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCompletedDeliveryScreen/SellerCompletedDeliveryScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerConfirmOrderScreen/SellerConfirmOrderScreen.dart';
@@ -9,13 +10,15 @@ import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/Selle
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerLegalScreen/SellerLegalScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerNewOrderScreen/SellerNewOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerPackedOrderScreen/SellerPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductDetailsScreen/SellerProductDetailsScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductFeebackScreen/SellerProductFeedbackScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductsScreen/SellerProductsScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProfileScreen/SellerProfileScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerRatingScreen/SellerRatingScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnOrderHistoryScreen/SellerReturnOrderHistoryScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnedOrderScreen/SellerReturnedOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerSettingsScreen/SellerSettingsScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/Constants.dart';
@@ -29,23 +32,19 @@ enum NavigationDirection { forward, backward }
 class SellerMainScreenGlobalState {
   final ScreenName currentModule;
   final int notificationCount;
-  final NavigationDirection navigationDirection;
 
   SellerMainScreenGlobalState({
     this.currentModule = ScreenName.home,
     this.notificationCount = 0,
-    this.navigationDirection = NavigationDirection.forward,
   });
 
   SellerMainScreenGlobalState copyWith({
     ScreenName? currentModule,
     int? notificationCount,
-    NavigationDirection? navigationDirection,
   }) {
     return SellerMainScreenGlobalState(
       currentModule: currentModule ?? this.currentModule,
       notificationCount: notificationCount ?? this.notificationCount,
-      navigationDirection: navigationDirection ?? this.navigationDirection,
     );
   }
 }
@@ -86,6 +85,8 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerCancelledOrderScreen();
     } else if (state.currentModule == ScreenName.returnedOrder) {
       return const SellerReturnedOrderScreen();
+    } else if (state.currentModule == ScreenName.returnedOrderHistory) {
+      return const SellerReturnOrderHistoryScreen();
     } else if (state.currentModule == ScreenName.revenue) {
       return const RevenueScreen();
     } else if (state.currentModule == ScreenName.profile) {
@@ -98,6 +99,12 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerRatingScreen();
     } else if (state.currentModule == ScreenName.productReview) {
       return const SellerProductFeedbackScreen();
+    } else if (state.currentModule == ScreenName.businessHours) {
+      return const SellerBusinessHourScreen();
+    } else if (state.currentModule == ScreenName.products) {
+      return const SellerProductsScreen();
+    } else if (state.currentModule == ScreenName.productDetails) {
+      return const SellerProductDetailsScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -118,7 +125,6 @@ class SellerMainScreenGlobalStateNotifier
 
     state = state.copyWith(
       currentModule: selectedModule,
-      navigationDirection: NavigationDirection.forward,
     );
   }
 
@@ -126,7 +132,6 @@ class SellerMainScreenGlobalStateNotifier
   void callNavigation(ScreenName selectedScreen) {
     state = state.copyWith(
       currentModule: selectedScreen,
-      navigationDirection: NavigationDirection.forward,
     );
   }
 
@@ -134,6 +139,17 @@ class SellerMainScreenGlobalStateNotifier
   void callHomeNavigation() {
     state = state.copyWith(currentModule: ScreenName.home);
   }
+
+  void callOrderHistoryNavigation() {
+    state = state.copyWith(currentModule: ScreenName.returnedOrderHistory);
+  }
+
+  void callReturnOrderScreenNavigation() {
+    state = state.copyWith(currentModule: ScreenName.returnedOrder);
+  }
+
+
+
 
   /// This Method to used for logout
   void callLogoutNavigation(BuildContext context) {
@@ -181,15 +197,20 @@ class SellerMainScreenGlobalStateNotifier
       onScreen = ScreenName.confirmOrder;
     } else if (state.currentModule == ScreenName.settings ||
         state.currentModule == ScreenName.legal ||
-        state.currentModule == ScreenName.rating) {
+        state.currentModule == ScreenName.rating ||
+        state.currentModule == ScreenName.businessHours ||
+        state.currentModule == ScreenName.products) {
       onScreen = ScreenName.profile;
     } else if (state.currentModule == ScreenName.productReview) {
       onScreen = ScreenName.rating;
+    } else if (state.currentModule == ScreenName.returnedOrderHistory) {
+      onScreen = ScreenName.returnedOrder;
+    } else if (state.currentModule == ScreenName.productDetails){
+      onScreen = ScreenName.products;
     }
 
     state = state.copyWith(
       currentModule: onScreen,
-      navigationDirection: NavigationDirection.backward,
     );
   }
 

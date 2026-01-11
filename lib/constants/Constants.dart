@@ -61,6 +61,7 @@ enum ScreenName {
   completedDelivery,
   shceduledDelivery,
   returnedOrder,
+  returnedOrderHistory,
   customers,
   confirmPacked,
   location,
@@ -69,7 +70,8 @@ enum ScreenName {
   legal,
   businessHours,
   editProfile,
-  productReview
+  productReview,
+  productDetails
 }
 
 

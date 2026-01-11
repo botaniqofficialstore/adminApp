@@ -87,11 +87,62 @@ class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeed
             builder: (context, value, child) => Transform.scale(scale: value, child: child),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.dp),
-              child: Image.network(
-                state.productImage,
-                width: 85.dp,
-                height: 85.dp,
-                fit: BoxFit.cover,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.dp),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 5)
+                    ]
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.dp),
+                  child: Image.network(
+                    state.productImage,
+                    width: 75.dp,
+                    height: 75.dp,
+                    fit: BoxFit.cover,
+                    // Handle the loading state
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child; // Image is fully loaded
+
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 1. The Local Placeholder Image
+                          Image.asset(
+                            objConstantAssest.placeholderImage,
+                            width: 75.dp,
+                            height: 75.dp,
+                            fit: BoxFit.cover,
+                          ),
+                          // 2. The White Progress Bar
+                          SizedBox(
+                            width: 20.dp, // Small and clean
+                            height: 20.dp,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0, // Thinner lines look more modern
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  : null,
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              backgroundColor: Colors.white24, // Subtle track color
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    // Optional: Handle errors (e.g., 404 or no internet)
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        objConstantAssest.placeholderImage,
+                        width: 75.dp,
+                        height: 75.dp,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -193,7 +244,51 @@ class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeed
               CircleAvatar(
                 radius: 18.dp,
                 backgroundColor: Colors.grey.shade200,
-                backgroundImage: NetworkImage(review.userImage),
+                child: ClipOval(
+                  child: Image.network(
+                    review.userImage,
+                    width: 36.dp, // Diameter (radius * 2)
+                    height: 36.dp, // Diameter (radius * 2)
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 1. Local Placeholder Image
+                          Image.asset(
+                            objConstantAssest.placeholderImage,
+                            width: 36.dp,
+                            height: 36.dp,
+                            fit: BoxFit.cover,
+                          ),
+                          // 2. Small White Circular Progress Bar
+                          SizedBox(
+                            width: 12.dp, // Scaled down for the small avatar
+                            height: 12.dp,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  : null,
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                              backgroundColor: Colors.white24,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        objConstantAssest.profileIcon,
+                        width: 36.dp,
+                        height: 36.dp,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
               ),
               SizedBox(width: 12.dp),
               Expanded(
@@ -234,7 +329,7 @@ class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeed
   // Modern Header
   Widget _buildHeader(BuildContext context) {
     return  Container(
-      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
       child: Row(
         children: [
           CupertinoButton(padding: EdgeInsets.zero,
