@@ -266,13 +266,19 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
   }
 
   void showConfirmPopup(BuildContext context) {
+    PreferencesManager.getInstance().then((pref) {
+      pref.setBooleanValue(PreferenceKeys.isDialogOpened, true);
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => CommonSuccessPopup(
         title: 'Order Confirmed',
         subTitle: 'The order has been successfully confirmed.',
-        onClose: () => Navigator.pop(context),
+        onClose: () {
+          pref.setBooleanValue(PreferenceKeys.isDialogOpened, false);
+        },
       ),
     );
+    });
   }
 }

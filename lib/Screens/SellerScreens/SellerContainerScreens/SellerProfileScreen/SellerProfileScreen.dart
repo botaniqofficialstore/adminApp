@@ -22,52 +22,68 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
 
   final List<ProfileItem> menuItems = [
     ProfileItem(
-      title: "My Profile",
-      subtitle: "Personal details",
-      icon: CupertinoIcons.person_crop_circle_fill,
-      color: const Color(0xFF539701),
+        title: "My Profile",
+        subtitle: "Personal details",
+        icon: CupertinoIcons.person_crop_circle_fill,
+        color: const Color(0xFF539701),
+        showCount: false,
+        count: 0
     ),
     ProfileItem(
-      title: "Location",
-      subtitle: "Manage store address",
-      icon: CupertinoIcons.location_solid,
-      color: objConstantColor.orange,
+        title: "Location",
+        subtitle: "Manage store address",
+        icon: CupertinoIcons.location_solid,
+        color: objConstantColor.orange,
+        showCount: false,
+        count: 0
     ),
     ProfileItem(
-      title: "Ratings",
-      subtitle: "Customer reviews & ratings",
-      icon: Icons.star_rate_sharp,
-      color: const Color(0xFFD3C903),
+        title: "Ratings",
+        subtitle: "Customer reviews & ratings",
+        icon: Icons.star_rate_sharp,
+        color: const Color(0xFFD3C903),
+        showCount: true,
+        count: 150
     ),
     ProfileItem(
-      title: "My Products",
-      subtitle: "manage products",
-      icon: Icons.shopping_cart,
-      color: Colors.brown,
+        title: "My Products",
+        subtitle: "manage products",
+        icon: Icons.shopping_cart,
+        color: Colors.brown,
+        showCount: true,
+        count: 15
     ),
     ProfileItem(
-      title: "Settings",
-      subtitle: "App preferences & controls",
-      icon: CupertinoIcons.settings,
-      color: Colors.black54,
+        title: "Settings",
+        subtitle: "App preferences & controls",
+        icon: CupertinoIcons.settings,
+        color: Colors.black54,
+        showCount: false,
+        count: 0
     ),
     ProfileItem(
-      title: "Legal",
-      subtitle: "Policies, terms & information",
-      icon: CupertinoIcons.doc_text_fill,
-      color: const Color(0xFF2291B3),
+        title: "Legal",
+        subtitle: "Policies, terms & information",
+        icon: CupertinoIcons.doc_text_fill,
+        color: const Color(0xFF2291B3),
+        showCount: false,
+        count: 0
     ),
     ProfileItem(
-      title: "Business Hours",
-      subtitle: "Set open & close timings",
-      icon: Icons.schedule,
-      color: const Color(0xFFE12404),
+        title: "Business Hours",
+        subtitle: "Set open & close timings",
+        icon: Icons.schedule,
+        color: const Color(0xFFE12404),
+        showCount: false,
+        count: 0
     ),
     ProfileItem(
-      title: "Support",
-      subtitle: "Need any help?",
-      icon: Icons.headset_mic_rounded,
-      color: const Color(0xFF1303A6),
+        title: "Support",
+        subtitle: "Need any help?",
+        icon: Icons.headset_mic_rounded,
+        color: const Color(0xFF1303A6),
+        showCount: false,
+        count: 0
     ),
   ];
 
@@ -105,7 +121,8 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
   @override
   Widget build(BuildContext context) {
     final notifier = ref.read(sellerProfileScreenStateProvider.notifier);
-    var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+    var userScreenNotifier = ref.watch(
+        SellerMainScreenGlobalStateProvider.notifier);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
@@ -151,24 +168,29 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                           ),
                           itemBuilder: (context, index) {
                             final item = menuItems[index];
+                            final showCount = item.showCount;
+                            final count = item.count;
 
                             return AnimatedBuilder(
                               animation: _controller,
                               builder: (context, child) {
                                 // Stagger logic
-                                final start = (0.2 + (index * 0.05)).clamp(0.0, 1.0);
+                                final start = (0.2 + (index * 0.05)).clamp(
+                                    0.0, 1.0);
                                 final end = (start + 0.4).clamp(0.0, 1.0);
 
                                 final curve = CurvedAnimation(
                                   parent: _controller,
-                                  curve: Interval(start, end, curve: Curves.easeOutCubic),
+                                  curve: Interval(
+                                      start, end, curve: Curves.easeOutCubic),
                                 );
 
                                 return Opacity(
                                   opacity: curve.value,
                                   child: Transform.translate(
                                     // Reduced offset from 30 to 15 to prevent clipping issues
-                                    offset: Offset(0, (1 - curve.value) * 15.dp),
+                                    offset: Offset(
+                                        0, (1 - curve.value) * 15.dp),
                                     child: child,
                                   ),
                                 );
@@ -178,8 +200,11 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                                 subtitle: item.subtitle,
                                 icon: item.icon,
                                 color: item.color,
+                                showCount: showCount,
+                                count: '$count',
                                 onTap: () {
-                                  notifier.callNavigation(index, userScreenNotifier);
+                                  notifier.callNavigation(
+                                      index, userScreenNotifier);
                                 },
                               ),
                             );
@@ -241,7 +266,9 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                     padding: EdgeInsets.all(2.5.dp),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: objConstantColor.orange.withOpacity(0.3), width: 2),
+                      border: Border.all(
+                          color: objConstantColor.orange.withOpacity(0.3),
+                          width: 2),
                     ),
                     child: ClipOval(
                       child: Image.network(
@@ -249,11 +276,12 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                         width: 60.dp,
                         height: 60.dp,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Image.asset(
-                          objConstantAssest.defaultProfileImage,
-                          width: 60.dp,
-                          height: 60.dp,
-                        ),
+                        errorBuilder: (_, __, ___) =>
+                            Image.asset(
+                              objConstantAssest.defaultProfileImage,
+                              width: 60.dp,
+                              height: 60.dp,
+                            ),
                       ),
                     ),
                   ),
@@ -262,13 +290,18 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        objCommonWidgets.customText(context, 'Nourish Organics', 15, Colors.black, objConstantFonts.montserratSemiBold),
+                        objCommonWidgets.customText(
+                            context, 'Nourish Organics', 15, Colors.black,
+                            objConstantFonts.montserratSemiBold),
                         SizedBox(height: 4.dp),
                         Row(
                           children: [
-                            Icon(Icons.verified_rounded, color: Colors.blueAccent, size: 14.dp),
+                            Icon(Icons.verified_rounded,
+                                color: Colors.blueAccent, size: 14.dp),
                             SizedBox(width: 2.dp),
-                            objCommonWidgets.customText(context, 'Verified Merchant', 10, Colors.black, objConstantFonts.montserratRegular),
+                            objCommonWidgets.customText(context,
+                                'Verified Merchant', 10, Colors.black,
+                                objConstantFonts.montserratRegular),
                           ],
                         ),
                       ],
@@ -282,11 +315,15 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStatItem("4.8", "Rating", Icons.star_rounded, Colors.orange),
+                    _buildStatItem(
+                        "4.8", "Rating", Icons.star_rounded, Colors.orange),
                     Container(width: 1, height: 25.dp, color: Colors.grey[300]),
-                    _buildStatItem("124", "Products", Icons.inventory_2_rounded, Colors.blue),
+                    _buildStatItem("124", "Products", Icons.inventory_2_rounded,
+                        Colors.blue),
                     Container(width: 1, height: 25.dp, color: Colors.grey[300]),
-                    _buildStatItem("2.4k", "Customers", Icons.people_alt_rounded, Colors.green),
+                    _buildStatItem(
+                        "2.4k", "Customers", Icons.people_alt_rounded,
+                        Colors.green),
                   ],
                 ),
               ),
@@ -297,23 +334,34 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
     );
   }
 
-  Widget _buildStatItem(String value, String label, IconData icon, Color color) {
+  Widget _buildStatItem(String value, String label, IconData icon,
+      Color color) {
     return Column(
       children: [
         Row(
           children: [
             Icon(icon, size: 15.dp, color: color),
             SizedBox(width: 5.dp),
-            objCommonWidgets.customText(context, value, 15, Colors.black, objConstantFonts.montserratSemiBold),
+            objCommonWidgets.customText(context, value, 15, Colors.black,
+                objConstantFonts.montserratSemiBold),
           ],
         ),
         SizedBox(height: 2.dp),
-        objCommonWidgets.customText(context, label, 10, Colors.grey[700], objConstantFonts.montserratMedium),
+        objCommonWidgets.customText(context, label, 10, Colors.grey[700],
+            objConstantFonts.montserratMedium),
       ],
     );
   }
 
-  Widget _buildBentoCard({required String title, required String subtitle, required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _buildBentoCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    bool showCount = false,
+    String? count,
+    required VoidCallback onTap
+  }) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: onTap,
@@ -338,11 +386,14 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
               children: [
                 Container(
                   padding: EdgeInsets.all(8.dp),
-                  decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12.dp)),
+                  decoration: BoxDecoration(color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12.dp)),
                   child: Icon(icon, color: color, size: 22.dp),
                 ),
                 SizedBox(height: 20.dp),
-                objCommonWidgets.customText(context, title, 12, objConstantColor.black, objConstantFonts.montserratSemiBold),
+                objCommonWidgets.customText(
+                    context, title, 12, objConstantColor.black,
+                    objConstantFonts.montserratSemiBold),
                 SizedBox(height: 2.dp),
                 Text(
                   subtitle,
@@ -357,7 +408,31 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
               ],
             ),
           ),
-          Positioned(top: 20.dp, right: 10.dp, child: Icon(Icons.chevron_right_rounded, size: 22.dp, color: Colors.black54,))
+
+          if (showCount)
+            Positioned(
+              left: 45.dp,
+              top: 15.dp,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    vertical: 2.dp, horizontal: 6.dp),
+                decoration: BoxDecoration(
+                  color: objConstantColor.redd,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: objCommonWidgets.customText(
+                  context,
+                  '$count',
+                  10, Colors.white,
+                  objConstantFonts.montserratBold,
+                ),
+              ),
+            ),
+
+          Positioned(top: 20.dp,
+              right: 10.dp,
+              child: Icon(Icons.chevron_right_rounded, size: 22.dp,
+                color: Colors.black54,))
         ],
       ),
     );
@@ -370,13 +445,16 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 12.dp),
-        decoration: BoxDecoration(color: objConstantColor.redd, borderRadius: BorderRadius.circular(25.dp)),
+        decoration: BoxDecoration(color: objConstantColor.redd,
+            borderRadius: BorderRadius.circular(25.dp)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.logout, size: 18.dp, color: objConstantColor.white),
             SizedBox(width: 5.dp),
-            objCommonWidgets.customText(context, 'Logout', 13, objConstantColor.white, objConstantFonts.montserratSemiBold)
+            objCommonWidgets.customText(
+                context, 'Logout', 13, objConstantColor.white,
+                objConstantFonts.montserratSemiBold)
           ],
         ),
       ),

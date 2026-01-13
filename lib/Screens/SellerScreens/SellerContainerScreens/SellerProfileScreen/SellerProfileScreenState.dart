@@ -55,11 +55,15 @@ class ProfileItem {
   final String subtitle;
   final IconData icon;
   final Color color;
+  final bool showCount;
+  final int count;
 
   ProfileItem({
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.color,
+    required this.showCount,
+    required this.count,
   });
 }

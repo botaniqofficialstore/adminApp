@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_alert/flutter_platform_alert.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import '../CommonViews/CommonWidget.dart';
 import '../Utility/Logger.dart';
 import '../Utility/PreferencesManager.dart';
 import '../constants/ConstantVariables.dart';
@@ -428,5 +430,637 @@ class CodeReusability {
       });
     }
   }
+
+
+
+  Future<String?> showTextFieldBottomView(
+      BuildContext context,
+      String title,
+      String placeHolder,
+      ) async {
+    final TextEditingController textController = TextEditingController();
+
+    return await PreferencesManager.getInstance().then((prefs) async {
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
+
+      final result = await showModalBottomSheet<String>(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.dp)),
+        ),
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+                  /// Header
+                  Row(
+                    children: [
+                      Spacer(),
+                      CupertinoButton(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(6.dp),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withAlpha(20),
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18.dp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  objCommonWidgets.customText(
+                    context,
+                    title,
+                    13,
+                    Colors.black,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+
+                  SizedBox(height: 10.dp),
+
+                  /// TextField (FIXED)
+                  CommonTextField(
+                    placeholder: placeHolder,
+                    textSize: 12,
+                    fontFamily: objConstantFonts.montserratMedium,
+                    textColor: Colors.black,
+                    controller: textController,
+                    isDarkView: false,
+                    onFocus: true,
+                  ),
+
+                  SizedBox(height: 15.dp),
+
+                  /// Save Button
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      Navigator.pop(context, textController.text.trim());
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 12.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(20.dp),
+                      ),
+                      child: Center(
+                        child: objCommonWidgets.customText(
+                          context,
+                          'Save',
+                          15,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15.dp),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
+      return result;
+    });
+  }
+
+
+  Future<String?> showTextViewBottomView(
+      BuildContext context,
+      String title,
+      String placeHolder,
+      ) async {
+    final TextEditingController textController = TextEditingController();
+
+    return await PreferencesManager.getInstance().then((prefs) async {
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
+
+      final result = await showModalBottomSheet<String>(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.dp)),
+        ),
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+                  /// Header
+                  Row(
+                    children: [
+                      Spacer(),
+                      CupertinoButton(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(6.dp),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withAlpha(20),
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18.dp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+                  objCommonWidgets.customText(
+                    context,
+                    title,
+                    13,
+                    Colors.black,
+                    objConstantFonts.montserratSemiBold,
+                  ),
+
+                  SizedBox(height: 10.dp),
+
+                  CommonTextView(
+                      placeholder: placeHolder,
+                      maxLength: 350,
+                      height: 150.dp,
+                      controller: textController,
+                    isDarkView: false,
+                    onFocus: true,
+                  ),
+
+                  SizedBox(height: 15.dp),
+
+                  /// Save Button
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      Navigator.pop(context, textController.text.trim());
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 12.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(20.dp),
+                      ),
+                      child: Center(
+                        child: objCommonWidgets.customText(
+                          context,
+                          'Save',
+                          15,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15.dp),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
+      return result;
+    });
+  }
+
+
+  Future<(String sellingPrice, String actualPrice)?>
+  showPriceTextFieldBottomView(
+      BuildContext context,
+      String title,
+      String placeHolder1,
+      String placeHolder2,
+      ) async {
+    final TextEditingController sellingController = TextEditingController();
+    final TextEditingController actualController = TextEditingController();
+
+    return await PreferencesManager.getInstance().then((prefs) async {
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
+
+      final result =
+      await showModalBottomSheet<(String, String)?>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20.dp),
+          ),
+        ),
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom:
+              MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Drag Handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius:
+                        BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+                  /// Close Button
+                  Row(
+                    children: [
+                      /// Title
+                      objCommonWidgets.customText(
+                        context,
+                        title,
+                        13,
+                        Colors.black,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                      const Spacer(),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(6.dp),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color:
+                            Colors.black.withAlpha(20),
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18.dp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+
+                  SizedBox(height: 10.dp),
+
+                  /// Price Fields
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Selling Price',
+                              13,
+                              Colors.black,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(height: 5.dp),
+                            CommonTextField(
+                              placeholder: placeHolder1,
+                              textSize: 13,
+                              fontFamily: objConstantFonts.montserratMedium,
+                              textColor: Colors.black,
+                              controller:
+                              sellingController,
+                              isDarkView: false,
+                              onFocus: true,
+                              isNumber: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10.dp),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Actual Price',
+                              13,
+                              Colors.black,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(height: 5.dp),
+                            CommonTextField(
+                              placeholder: placeHolder2,
+                              textSize: 13,
+                              fontFamily:
+                              objConstantFonts
+                                  .montserratMedium,
+                              textColor: Colors.black,
+                              controller:
+                              actualController,
+                              isDarkView: false,
+                              onFocus: true,
+                              isNumber: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 15.dp),
+
+                  /// Save Button
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      Navigator.pop(
+                        context,
+                        (
+                        sellingController.text.trim(),
+                        actualController.text.trim(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius:
+                        BorderRadius.circular(20.dp),
+                      ),
+                      child: Center(
+                        child:
+                        objCommonWidgets.customText(
+                          context,
+                          'Save',
+                          15,
+                          Colors.white,
+                          objConstantFonts
+                              .montserratSemiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15.dp),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      prefs.setBooleanValue(
+          PreferenceKeys.isBottomSheet, false);
+
+      return result;
+    });
+  }
+
+
+  Future<int?> showSpinnerUpdateBottomView(
+      BuildContext context,
+      String title,
+      int minimumCount,
+      int maximumCount, {String placeHolder = ''}
+      ) async {
+    return await PreferencesManager.getInstance().then((prefs) async {
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
+
+      int selectedValue = minimumCount;
+
+      final result = await showModalBottomSheet<int>(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.dp)),
+        ),
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Drag handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
+                  /// Close button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      objCommonWidgets.customText(
+                        context,
+                        title,
+                        13,
+                        Colors.black,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                      CupertinoButton(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        onPressed: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(6.dp),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withAlpha(20),
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18.dp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+
+                  SizedBox(height: 10.dp),
+
+                  /// Spinner
+                  Container(
+                    height: 120.dp,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(16.dp),
+                    ),
+                    child: CupertinoPicker(
+                      scrollController: FixedExtentScrollController(
+                        initialItem: 0,
+                      ),
+                      itemExtent: 50.dp,
+                      onSelectedItemChanged: (index) {
+                        selectedValue = minimumCount + index;
+                      },
+                      children: List.generate(
+                        maximumCount - minimumCount + 1,
+                            (index) => Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              objCommonWidgets.customText(context,
+                                  '${minimumCount + index}',
+                                  16, Colors.black, objConstantFonts.montserratSemiBold),
+
+                              if (placeHolder.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(left: 5.dp),
+                                child: objCommonWidgets.customText(context,
+                                    placeHolder,
+                                    13, Colors.black, objConstantFonts.montserratSemiBold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20.dp),
+
+                  /// Save Button
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      Navigator.pop(context, selectedValue);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 12.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(20.dp),
+                      ),
+                      child: Center(
+                        child: objCommonWidgets.customText(
+                          context,
+                          'Save',
+                          15,
+                          Colors.white,
+                          objConstantFonts.montserratSemiBold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15.dp),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
+      return result;
+    });
+  }
+
+
 
 }

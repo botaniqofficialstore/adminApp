@@ -260,13 +260,11 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                               color: objConstantColor.redd,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: Text(
+                            child: objCommonWidgets.customText(
+                              context,
                               '1235',
-                              style: TextStyle(
-                                fontSize: 10.dp,
-                                color: Colors.white,
-                                fontFamily: objConstantFonts.montserratBold,
-                              ),
+                              10, Colors.white,
+                              objConstantFonts.montserratBold,
                             ),
                           ),
                         ),

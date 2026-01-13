@@ -51,7 +51,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 15.dp,
                     crossAxisSpacing: 15.dp,
-                    childAspectRatio: 0.65,
+                    childAspectRatio: 0.58,
                   ),
                   itemCount: state.filteredProducts.length,
                   itemBuilder: (context, index) {
@@ -165,28 +165,17 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
           Expanded(
             child: Stack(
               children: [
-                NetworkImageLoader(
-                  imageUrl: product['image'],
-                  placeHolder: objConstantAssest.placeholderImage,
-                  size: 80.dp,
-                  imageSize: double.infinity,
+                Padding(
+                  padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+                  child: NetworkImageLoader(
+                    imageUrl: product['image'],
+                    placeHolder: objConstantAssest.placeholderImage,
+                    size: 80.dp,
+                    imageSize: double.infinity,
+                  ),
                 ),
 
-                Positioned(
-                  top: 8, right: 8,
-                  child: CupertinoButton(
-                    onPressed: (){
 
-                    },
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    child: Container(
-                      padding: EdgeInsets.all(6.dp),
-                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                      child: Icon(Icons.mode_edit_rounded, color: Colors.brown, size: 13.dp),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -195,23 +184,55 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                objCommonWidgets.customText(context, product['name'], 10.5, Colors.black, objConstantFonts.montserratMedium),
+                objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
                 SizedBox(height: 4.dp),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    objCommonWidgets.customText(context, "₹${product['price']}/_", 12, Colors.brown, objConstantFonts.montserratSemiBold),
-                    objCommonWidgets.customText(context, product['quantity'], 10, Colors.black54, objConstantFonts.montserratMedium)
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 13, Color(
+                        0xFF5E910E), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
                   ],
                 ),
-                SizedBox(height: 15.dp),
+
+                SizedBox(height: 4.dp),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                  decoration: BoxDecoration(
+                    color: (product['stock_count'] ?? 0) <= 25 ?
+                    Colors.red.withAlpha(25) : Colors.green.withAlpha(25),
+                    borderRadius: BorderRadius.circular(15.dp)
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.inventory_2_sharp, size: 12.dp, color: Colors.black),
+                      SizedBox(width: 4.dp),
+                      objCommonWidgets.customText(
+                          context,
+                          "Stock: ", // Assuming 'stock_count' is the key
+                          11,
+                          Colors.black,
+                          objConstantFonts.montserratMedium
+                      ),
+                      objCommonWidgets.customText(
+                          context,
+                          "${product['stock_count'] ?? '0'}", // Assuming 'stock_count' is the key
+                          11,
+                          (product['stock_count'] ?? 0) <= 25 ? Colors.red : Colors.green,
+                          objConstantFonts.montserratSemiBold
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10.dp),
                 SizedBox(
                   width: double.infinity,
                   child: CupertinoButton(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
-                    color: Colors.brown,
+                    color: Color(0xFF301212),
                     borderRadius: BorderRadius.circular(5.dp),
                     onPressed: () {
                       var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);

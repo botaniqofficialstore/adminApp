@@ -5,8 +5,14 @@ class RatedProduct {
   final String image;
   final double rating;
   final int reviewCount;
+  final int newCount;
 
-  RatedProduct({required this.name, required this.image, required this.rating, required this.reviewCount});
+  RatedProduct({
+    required this.name,
+    required this.image,
+    required this.rating,
+    required this.reviewCount,
+    required this.newCount});
 }
 
 class SellerRatingScreenState {
@@ -38,24 +44,28 @@ class SellerRatingScreenStateNotifier extends StateNotifier<SellerRatingScreenSt
         image: 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
         rating: 4.9,
         reviewCount: 124,
+          newCount: 165
       ),
       RatedProduct(
         name: "Beetroot",
         image: 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/betroot_Micro.png',
         rating: 4.7,
         reviewCount: 89,
+          newCount: 15
       ),
       RatedProduct(
         name: "Sun Flower",
         image: 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/sunflower_Micro.png',
         rating: 4.7,
         reviewCount: 1452,
+          newCount: 0
       ),
       RatedProduct(
         name: "Broccoli",
         image: 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/broccoli_Micro.png',
         rating: 4.2,
         reviewCount: 458,
+          newCount: 0
       ),
     ]);
   }

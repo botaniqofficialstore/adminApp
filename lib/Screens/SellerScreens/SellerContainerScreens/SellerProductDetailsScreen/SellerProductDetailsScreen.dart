@@ -1,10 +1,13 @@
+import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
+import 'package:botaniq_admin/CommonViews/CommonWidget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../../../Constants/Constants.dart';
+import '../../../../Utility/PreferencesManager.dart';
+import '../../../../Utility/ProductBenefitScreen.dart';
 import '../../../../constants/ConstantVariables.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductDetailsScreenState.dart';
@@ -30,10 +33,19 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
     'https://app-1q5g.onrender.com/uploads/1761994675928.png'
   ];
 
+  final List<Map<String, String>> vitamins = const [
+    {"name": "Vitamin A", "benefit": "Vision, Immune System, Skin Health"},
+    {"name": "Vitamin B12", "benefit": "Nerve Function, Red Blood Cells"},
+    {"name": "Vitamin C", "benefit": "Antioxidant, Tissue Repair, Scurvy Prevention"},
+    {"name": "Vitamin D", "benefit": "Bone Health, Calcium Absorption"},
+    {"name": "Vitamin E", "benefit": "Skin Health, Protects cells from damage"},
+    {"name": "Vitamin K", "benefit": "Blood Clotting, Bone Metabolism"},
+  ];
+
+
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -42,150 +54,359 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
     super.dispose();
   }
 
-  void scrollToTop() {
-    _scrollController.animateTo(
-      0, // scroll offset (0 = top)
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var detailsScreenState = ref.watch(sellerProductDetailsScreenStateProvider);
 
 
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: objConstantColor.white,
-        body: /* detailsScreenState.isLoading
-            ? buildProductDetailShimmer(context)
-            : */CustomScrollView(
-          slivers: [
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.transparent,
+          body: CustomScrollView(
+            slivers: [
 
-            /// 🔰 1. CAROUSEL + TOP PART
-            SliverToBoxAdapter(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  carousalSlider(context),
-
-                  Positioned(
-                    bottom: -18.dp,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 40.dp,
-                      decoration: BoxDecoration(
-                        color: objConstantColor.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25.dp),
-                          topRight: Radius.circular(25.dp),
-                        ),
-                      ),
-                      child: Center(
-                        child: Container(
-                          width: 50.dp,
-                          height: 5.dp,
-                          decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(50),
-                              borderRadius: BorderRadius.circular(20.dp)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            /// 🔰 2. BODY CONTENT SECTION
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.dp),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              /// 🔰 1. CAROUSEL + TOP PART
+              SliverToBoxAdapter(
+                child: Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    SizedBox(height: 15.dp),
+                    carousalSlider(context),
 
-                    objCommonWidgets.customText(
-                      context, 'Microgreens', 14,
-                      objConstantColor.gray, objConstantFonts.montserratSemiBold,
-                    ),
-
-                    SizedBox(height: 5.dp),
-
-                    Row(
-                      children: [
-                        objCommonWidgets.customText(
-                          context,
-                          'Red Amaranthus',
-                          22,
-                          objConstantColor.navyBlue,
-                          objConstantFonts.montserratBold,
+                    Positioned(
+                      bottom: -18.dp,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 40.dp,
+                        decoration: BoxDecoration(
+                          color: objConstantColor.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.dp),
+                            topRight: Radius.circular(25.dp),
+                          ),
                         ),
-                        const Spacer(),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(width: 1.5.dp, color: Colors
-                                .green),
-                          ),
-                          padding: EdgeInsets.all(2.8.dp),
+                        child: Center(
                           child: Container(
-                            width: 8.dp,
-                            height: 8.dp,
-                            decoration: const BoxDecoration(
-                              color: Colors.green,
-                              shape: BoxShape.circle,
-                            ),
+                            width: 50.dp,
+                            height: 5.dp,
+                            decoration: BoxDecoration(
+                                color: Colors.black.withAlpha(50),
+                                borderRadius: BorderRadius.circular(20.dp)),
                           ),
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-
-                    SizedBox(height: 20.dp),
-
-                    customSectionTitle(context, "About"),
-                    objCommonWidgets.customText(context,
-                        'Red Amaranthus Microgreens are the young, vibrant shoots of the red amaranth plant, harvested at their early growth stage when nutrient concentration is highest. With their striking red-purple leaves and mild, earthy flavor, they add a splash of color and a burst of nutrition to salads, wraps, smoothies, and gourmet dishes. Known for their exceptional vitamin, mineral, and antioxidant content, these microgreens are both a culinary delight and a health-boosting superfood.',
-                        12, objConstantColor.navyBlue,
-                        objConstantFonts.montserratMedium,
-                        textAlign: TextAlign.justify),
-
-                    SizedBox(height: 20.dp),
-
-                    customSectionTitle(context, "Delivery Details"),
-
-
-                    SizedBox(height: 20.dp),
-
-                    customSectionTitle(context, "Price Details"),
-                    SizedBox(height: 5.dp),
-                    priceDetails(context),
-
-
-
                   ],
                 ),
               ),
-            ),
+
+              /// 🔰 2. BODY CONTENT SECTION
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.dp),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 25.dp),
+
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context, 'Microgreens', 12,
+                              objConstantColor.black.withAlpha(125), objConstantFonts.montserratMedium,
+                            ),
+                            SizedBox(width: 5.dp),
+                            CupertinoButton(
+                              onPressed: () async {
+                                final result = await CodeReusability().showTextFieldBottomView(
+                                  context,
+                                  'Update Product Type',
+                                  'Enter here...',
+                                );
+
+                                if (result != null && result.isNotEmpty) {
+                                  print('Entered text: $result');
+                                }
+
+                              },
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              child: Container(
+                                padding: EdgeInsets.all(2),
+                                  child: Icon(Icons.edit, size: 16.dp, color: Colors.black,)),
+                            )
+                          ],
+                        ),
+
+                        SizedBox(height: 5.dp),
+
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Red Amaranthus',
+                              18,
+                              objConstantColor.navyBlue,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            SizedBox(width: 5.dp),
+                            CupertinoButton(
+                              onPressed: () async {
+                                final result = await CodeReusability().showTextFieldBottomView(
+                                  context,
+                                  'Update Product Name',
+                                  'Enter here...',
+                                );
+
+                                if (result != null && result.isNotEmpty) {
+                                  print('Entered text: $result');
+                                }
+                              },
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              child: Container(
+                                  padding: EdgeInsets.all(2),
+                                  child: Icon(Icons.edit, size: 16.dp, color: Colors.black,)),
+                            ),
+                            const Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(width: 1.5.dp, color: Colors
+                                    .green),
+                              ),
+                              padding: EdgeInsets.all(2.8.dp),
+                              child: Container(
+                                width: 8.dp,
+                                height: 8.dp,
+                                decoration: const BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+
+                        SizedBox(height: 20.dp),
+
+                        customSectionTitle(context, "About", () async {
+                          final result = await CodeReusability().showTextViewBottomView(
+                            context,
+                            'Update About Product',
+                            'Enter here...',
+                          );
+
+                          if (result != null && result.isNotEmpty) {
+                            print('Entered text: $result');
+                          }
+                        }),
+                        objCommonWidgets.customText(context,
+                            'Red Amaranthus Microgreens are the young, vibrant shoots of the red amaranth plant, harvested at their early growth stage when nutrient concentration is highest. With their striking red-purple leaves and mild, earthy flavor, they add a splash of color and a burst of nutrition to salads, wraps, smoothies, and gourmet dishes. Known for their exceptional vitamin, mineral, and antioxidant content, these microgreens are both a culinary delight and a health-boosting superfood.',
+                            11.5, Colors.black,
+                            objConstantFonts.montserratRegular,
+                            textAlign: TextAlign.justify),
+
+                        SizedBox(height: 20.dp),
+
+                        customSectionTitle(context, "Price Details", () async {
+                          final result = await CodeReusability().showPriceTextFieldBottomView(
+                            context,
+                            'Update Price Details',
+                            'Enter amount',
+                            'Enter amount',
+                          );
+
+                          if (result != null) {
+                            print('Entered text: ${result.$1}');
+                            print('Entered text: ${result.$2}');
+                          }
+
+                        }),
+                        priceDetails(context),
+                        SizedBox(height: 30.dp),
 
 
-            SliverToBoxAdapter(
-              child: SizedBox(height: 15.dp),
-            )
-          ],
+
+                        deliveryDay(context),
+                        SizedBox(height: 30.dp),
+
+                        stockDetails(context),
+
+
+                        SizedBox(height: 30.dp),
+                        nutritionWidget(context),
+
+                        SizedBox(height: 15.dp),
+
+
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+
+            ],
+          ),
         ),
       ),
     );
   }
 
 
+  void _openBenefitPicker(BuildContext context) async {
+    // This receives the array of benefits from the popup
+    final List<Map<String, String>>? results = await showGeneralDialog<List<Map<String, String>>>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Benefits',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, anim1, anim2) {
+        return const ModernBenefitPopup();
+      },
+    );
+
+    if (results != null) {
+      print("Collected Benefits: $results");
+      // Handle your data here
+    }
+  }
+
+  Widget deliveryDay(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Logistics Timeline',
+          14,
+          objConstantColor.navyBlue,
+          objConstantFonts.montserratSemiBold,
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 8.dp),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.dp), // Softer, more modern corners
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(20),
+                blurRadius: 20,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(15.dp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                // Information Row: Processing Time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        objCommonWidgets.customText(
+                            context, "Handover Duration", 10.dp, Colors.black.withAlpha(150), objConstantFonts.montserratMedium
+                        ),
+                        SizedBox(height: 4.dp),
+                        Row(
+                          children: [
+                            Icon(Icons.timer_outlined, size: 16.dp, color: Color(
+                                0xFF032968)),
+                            SizedBox(width: 4.dp),
+                            objCommonWidgets.customText(
+                                context, "2-3 Business Days", 12.dp, Colors.black, objConstantFonts.montserratSemiBold
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // The Modern Update Button
+                    CupertinoButton(
+                      onPressed: () async {
+                        final result = await CodeReusability().showSpinnerUpdateBottomView(
+                          context,
+                          'Update Handover Duration',
+                          1,
+                          15,
+                          placeHolder: 'Days'
+                        );
+
+                        if (result != null) {
+                          print('Selected value: $result');
+                        }
+                      },
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 6.dp, horizontal: 10.dp),
+                        decoration: BoxDecoration(
+                          color: Colors.deepOrange,
+                          borderRadius: BorderRadius.circular(20.dp),
+                        ),
+                        child: objCommonWidgets.customText(
+                            context, "Update", 10.dp, Colors.white, objConstantFonts.montserratSemiBold
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 15.dp),
+
+                // Tooltip/Definition Note
+                Container(
+                  padding: EdgeInsets.all(12.dp),
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrange.withAlpha(15),
+                    borderRadius: BorderRadius.circular(12.dp),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.info_outline, size: 16.dp, color: Colors.deepOrange),
+                      SizedBox(width: 8.dp),
+                      Expanded(
+                        child: objCommonWidgets.customText(
+                            context,
+                            "This is the estimated time required to hand over the product "
+                                "to the delivery partner after order confirmation. It helps "
+                                "ensure smooth logistics and avoids delivery delays.",
+                            9.dp,
+                            Colors.deepOrange,
+                            objConstantFonts.montserratRegular
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
 
   Widget carousalSlider(BuildContext context){
-
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -212,7 +433,7 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CupertinoActivityIndicator(
-                    color: objConstantColor.gray,
+                    color: objConstantColor.green,
                   ),
                 );
               },
@@ -243,7 +464,7 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
                 height: 8.dp,
                 decoration: BoxDecoration(
                   color: isActive
-                      ? objConstantColor.white
+                      ? objConstantColor.green
                       : objConstantColor.gray.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20.dp),
                 ),
@@ -333,55 +554,413 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
 
 
   Widget priceDetails(BuildContext context){
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(5.dp),
-                topLeft: Radius.circular(5.dp),
-              ),
-            ),
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(vertical: 10.dp),
-            child: Center(
-              child: objCommonWidgets.customText(
-                context, '₹189/_',
-                17,
-                Colors.white,
-                objConstantFonts.montserratSemiBold,
-              ),
+
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withAlpha(35),
+            borderRadius: BorderRadius.circular(5.dp),
+          ),
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 12.dp),
+          child: Center(
+            child: Column(
+              children: [
+                objCommonWidgets.customText(
+                  context, '30% OFF',
+                  15,
+                  Colors.black,
+                  objConstantFonts.montserratSemiBold,
+                ),
+              ],
             ),
           ),
         ),
-        SizedBox(width: 2.5.dp),
-        Expanded(
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(5.dp),
-                topRight: Radius.circular(5.dp),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(vertical: 10.dp),
-            child: Center(
-              child: Text(
-                "₹229/_",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 17.dp,
-                  fontFamily: objConstantFonts.montserratSemiBold,
-                  decoration: TextDecoration.lineThrough,
-                  decorationColor: Colors.black,
-                  decorationThickness: 1,
+
+        SizedBox(height: 2.5.dp),
+
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(5.dp),
+                    topLeft: Radius.circular(5.dp),
+                  ),
+                ),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 5.dp),
+                child: Center(
+                  child: Column(
+                    children: [
+                      objCommonWidgets.customText(
+                        context, '₹189/_',
+                        17,
+                        Colors.white,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                      objCommonWidgets.customText(
+                        context, 'Selling Price',
+                        10,
+                        Colors.white,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+            SizedBox(width: 2.5.dp),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(5.dp),
+                    topRight: Radius.circular(5.dp),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 5.dp),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        "₹229/_",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 17.dp,
+                          fontFamily: objConstantFonts.montserratSemiBold,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: Colors.black,
+                          decorationThickness: 1,
+                        ),
+                      ),
+                      objCommonWidgets.customText(
+                        context, 'Actual Price',
+                        10,
+                        Colors.black,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+
+      ],
+    );
+  }
+
+
+  Widget stockDetails(BuildContext context) {
+    // Mock data
+    double stockLevel = 0.75;
+    int totalStock = 150;
+    int soldUnits = 97;
+
+    Color statusColor = getStockColor(stockLevel);
+    String statusText = getStockStatusText(stockLevel);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Stock Details',
+          14,
+          objConstantColor.navyBlue,
+          objConstantFonts.montserratSemiBold,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Color(0xFF000000),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 15, offset: const Offset(0, 8)),
+            ],
           ),
+          child: Column(
+            children: [
+              // ================= HEADER =================
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              'Current Inventory',
+                              12,
+                              Colors.white,
+                              objConstantFonts.montserratMedium,
+                            ),
+
+                            const Spacer(),
+
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.dp,
+                                vertical: 4.5.dp,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: objCommonWidgets.customText(
+                                context,
+                                statusText,
+                                10,
+                                statusColor,
+                                objConstantFonts.montserratSemiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 10.dp),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            objCommonWidgets.customText(
+                              context,
+                              '$totalStock',
+                              22,
+                              Colors.white,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            objCommonWidgets.customText(
+                              context,
+                              ' units',
+                              12,
+                              Colors.white.withAlpha(240),
+                              objConstantFonts.montserratMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // ================= PROGRESS =================
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                tween: Tween<double>(begin: 0, end: stockLevel),
+                builder: (context, value, child) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      objCommonWidgets.customText(
+                        context,
+                        "${(value * 100).toInt()}%",
+                        13,
+                        Colors.white,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                      SizedBox(height: 5.dp),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: value,
+                          minHeight: 6.dp,
+                          backgroundColor: Colors.grey[200],
+                          valueColor:
+                          AlwaysStoppedAnimation<Color>(statusColor),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              SizedBox(height: 25.dp),
+
+              // ================= FOOTER =================
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildMiniStat("Sold", "$soldUnits", Icons.trending_up),
+
+                  Column(
+                    children: [
+                      objCommonWidgets.customText(context, 'Last Update :', 10, Colors.white.withAlpha(200), objConstantFonts.montserratMedium),
+                      objCommonWidgets.customText(context, '10 DEC 2025', 10, Colors.white, objConstantFonts.montserratSemiBold),
+                    ],
+                  ),
+
+                  CupertinoButton(
+                    onPressed: () async {
+                      final result = await CodeReusability().showSpinnerUpdateBottomView(
+                        context,
+                        'Update Stock Count',
+                        10,
+                        500,
+                      );
+
+                      if (result != null) {
+                        print('Selected value: $result');
+                      }
+                    },
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.dp, horizontal: 15.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(85),
+                        borderRadius: BorderRadius.circular(15.dp),
+                      ),
+                      child: objCommonWidgets.customText(
+                        context,
+                        'Update Stock',
+                        11,
+                        Colors.white,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+// ================= MINI STAT =================
+  Widget _buildMiniStat(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 20.dp, color: Colors.white),
+        SizedBox(width: 4.dp),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            objCommonWidgets.customText(
+                context, value, 13, Colors.white.withAlpha(200), objConstantFonts.montserratSemiBold),
+            objCommonWidgets.customText(
+                context, label, 10, Colors.white, objConstantFonts.montserratMedium),
+          ],
+        ),
+      ],
+    );
+  }
+
+// ================= HELPERS =================
+  Color getStockColor(double stockLevel) {
+    if (stockLevel <= 0.15) {
+      return const Color(0xFFE53935);
+    } else if (stockLevel <= 0.40) {
+      return Colors.deepOrange;
+    } else {
+      return const Color(0xFF43A047);
+    }
+  }
+
+  String getStockStatusText(double stockLevel) {
+    if (stockLevel <= 0.15) return "CRITICAL";
+    if (stockLevel <= 0.40) return "LOW STOCK";
+    return "IN STOCK";
+  }
+
+  Widget nutritionWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Nutritional Benefits',
+          14,
+          objConstantColor.navyBlue,
+          objConstantFonts.montserratSemiBold,
+        ),
+        SizedBox(height: 5.dp),
+
+        Stack(
+          children: [
+
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withAlpha(25),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8)
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    // --- ADJUST THESE PROPERTIES ---
+                    headingRowHeight: 60.0,      // Decreases header height
+                    dataRowMinHeight: 30.0,      // Optional: Decreases row height
+                    dataRowMaxHeight: 45.0,      // Optional: Limits row height
+                    columnSpacing: 25.0,         // Adjusts horizontal space between columns
+                    horizontalMargin: 20.0,      // Adjusts space at the start/end of the table
+                    dividerThickness: 0.5,
+                    // ------------------------------
+                    headingRowColor: WidgetStateProperty.all(Colors.black),
+                    columns: [
+                      DataColumn(
+                          label: objCommonWidgets.customText(
+                              context, 'Vitamin', 13, Colors.white, objConstantFonts.montserratSemiBold
+                          )
+                      ),
+                      DataColumn(
+                          label: objCommonWidgets.customText(
+                              context, 'Benefits', 13, Colors.white, objConstantFonts.montserratSemiBold
+                          )
+                      ),
+                    ],
+                    rows: vitamins.map((v) => DataRow(cells: [
+                      DataCell(objCommonWidgets.customText(
+                          context, v['name']!, 10, Colors.black.withAlpha(200), objConstantFonts.montserratMedium
+                      )),
+                      DataCell(objCommonWidgets.customText(
+                          context, v['benefit']!, 10, Colors.black.withAlpha(200), objConstantFonts.montserratMedium
+                      )),
+                    ])).toList(),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(right: 20.dp,
+                top: 20.dp,
+                child: CupertinoButton(
+                  onPressed: (){
+                    _openBenefitPicker(context);
+                  },
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  child: Icon(Icons.edit, size: 16.dp, color: Colors.white,),
+                ),
+            )
+          ],
         ),
       ],
     );
@@ -389,288 +968,51 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
 
 
 
-
-  Widget customSectionTitle(BuildContext context, String title) {
-    return objCommonWidgets.customText(
-      context, title, 16,
-      objConstantColor.navyBlue, objConstantFonts.montserratSemiBold,
-    );
-  }
-
-
-
-
-
-
-
-  Widget buildProductDetailShimmer(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 📌 Top Image Carousel
-            Container(
-              height: 300.dp,
-              width: double.infinity,
-              color: Colors.grey.shade300,
-              child: Stack(
-                children: [
-                  // Back button
-                  Positioned(
-                    top: 40.dp,
-                    left: 20.dp,
-                    child: Container(
-                      width: 38.dp,
-                      height: 38.dp,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  // Wishlist button
-                  Positioned(
-                    top: 40.dp,
-                    right: 20.dp,
-                    child: Container(
-                      width: 38.dp,
-                      height: 38.dp,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  // Dot indicator
-                  Positioned(
-                    bottom: 10.dp,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        5,
-                            (index) => Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4.dp),
-                          width: 10.dp,
-                          height: 4.dp,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade400,
-                            borderRadius: BorderRadius.circular(10.dp),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-            SizedBox(height: 16.dp),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.dp),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 📌 Category shimmer
-                  Container(
-                    width: 120.dp,
-                    height: 16.dp,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4.dp),
-                    ),
-                  ),
-                  SizedBox(height: 8.dp),
-
-                  // 📌 Title + Verified
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 22.dp,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(4.dp),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.dp),
-                      Container(
-                        width: 18.dp,
-                        height: 18.dp,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(4.dp),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 20.dp),
-
-                  // 📌 About heading
-                  Container(
-                    width: 80.dp,
-                    height: 18.dp,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4.dp),
-                    ),
-                  ),
-                  SizedBox(height: 12.dp),
-
-                  // 📌 Paragraph shimmer
-                  ...List.generate(
-                    6,
-                        (index) => Padding(
-                      padding: EdgeInsets.only(bottom: 8.dp),
-                      child: Container(
-                        height: 12.dp,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(4.dp),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 20.dp),
-
-                  // 📌 Price Details heading
-                  Container(
-                    width: 120.dp,
-                    height: 18.dp,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4.dp),
-                    ),
-                  ),
-                  SizedBox(height: 16.dp),
-
-                  // 📌 Price buttons (Green + Yellow)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 45.dp,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(6.dp),
-                              bottomLeft: Radius.circular(6.dp),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 45.dp,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(6.dp),
-                              bottomRight: Radius.circular(6.dp),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 30.dp),
-          ],
-        ),
-      ),
-    );
-  }
-
-
-
-  /*Widget productDetails(BuildContext context) {
-    var detailsScreenState = ref.watch(productDetailScreenGlobalStateProvider);
-    var nutrients = detailsScreenState.productData?.nutrients ?? [];
-
-    return nutrients.isEmpty
-        ? Padding(
-      padding: EdgeInsets.only(top: 25.dp),
-      child: objCommonWidgets.customText(
-        context,
-        'No nutrients information available.',
-        14,
-        objConstantColor.gray,
-        objConstantFonts.montserratMedium,
-      ),
-    )
-        : Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.dp), // 👈 Rounded corners
-        border: Border.all(color: Colors.black.withAlpha(50), width: 0.6),
-      ),
-      clipBehavior: Clip.hardEdge, // 👈 Needed to clip internal child corners
-      child: Table(
-        columnWidths: const {
-          0: FlexColumnWidth(1.5),
-          1: FlexColumnWidth(3),
-        },
+  Widget customSectionTitle(BuildContext context, String title, VoidCallback onEditPressed) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.dp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          /// Header Row
-          TableRow(
-            decoration: BoxDecoration(color: Colors.grey.shade200),
+          // The Title with a subtle vertical accent line
+          Row(
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                child: objCommonWidgets.customText(
-                    context,
-                    'Vitamin',
-                    15,
-                    objConstantColor.navyBlue,
-                    objConstantFonts.montserratSemiBold),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                child: objCommonWidgets.customText(
-                    context,
-                    'Benefit',
-                    15,
-                    objConstantColor.navyBlue,
-                    objConstantFonts.montserratSemiBold),
+              objCommonWidgets.customText(
+                context,
+                title,
+                14,
+                objConstantColor.navyBlue,
+                objConstantFonts.montserratSemiBold,
               ),
             ],
           ),
 
-          /// Dynamic rows
-          for (var n in nutrients)
-            TableRow(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                  child: objCommonWidgets.customText(context, n.vitamin, 12,
-                      objConstantColor.navyBlue, objConstantFonts.montserratSemiBold),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
-                  child: objCommonWidgets.customText(context, n.benefit, 11,
-                      objConstantColor.navyBlue, objConstantFonts.montserratMedium),
-                ),
-              ],
+          // The Modern Edit Button
+          CupertinoButton(
+            onPressed: onEditPressed,
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 4.dp, horizontal: 8.dp),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(5.dp)
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 13.dp, color: Colors.white,),
+                  objCommonWidgets.customText(context, 'Edit', 13, Colors.white, objConstantFonts.montserratMedium)
+                ],
+              ),
             ),
+          ),
         ],
       ),
     );
-  }*/
-
-
-
+  }
 
 
 
 }
+
+

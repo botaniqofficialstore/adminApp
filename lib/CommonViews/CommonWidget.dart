@@ -77,6 +77,7 @@ class CommonTextField extends StatefulWidget {
   final bool isShowIcon;
   final ValueChanged<String>? onChanged;
   final FocusNode? focusNode;
+  final bool onFocus;
 
   const CommonTextField({
     super.key,
@@ -91,6 +92,7 @@ class CommonTextField extends StatefulWidget {
     this.isShowIcon = false,
     this.onChanged,
     this.focusNode,
+    this.onFocus = false,
   });
 
   @override
@@ -136,6 +138,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
           // ⭐ TEXT FIELD
           Expanded(
             child: CupertinoTextField(
+              autofocus: widget.onFocus,
               focusNode: widget.focusNode,
               controller: widget.controller,
               padding: EdgeInsets.symmetric(
@@ -195,6 +198,8 @@ class CommonTextView extends StatefulWidget {
   final int maxLength;
   final double height;
   final TextEditingController controller;
+  final bool isDarkView;
+  final bool onFocus;
 
   const CommonTextView({
     super.key,
@@ -202,6 +207,8 @@ class CommonTextView extends StatefulWidget {
     required this.maxLength,
     required this.height,
     required this.controller,
+    this.isDarkView = false,
+    this.onFocus = false,
   });
 
   @override
@@ -219,6 +226,7 @@ class _CommonTextViewState extends State<CommonTextView> {
         color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(7.dp),
         boxShadow: [
+          if (widget.isDarkView)
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 5,
@@ -226,7 +234,7 @@ class _CommonTextViewState extends State<CommonTextView> {
           ),
         ],
         border: Border.all(
-          color: Colors.white.withOpacity(0.75),
+          color: widget.isDarkView ? Colors.white.withOpacity(0.75) : Colors.black,
           width: 1,
         ),
       ),
@@ -236,17 +244,18 @@ class _CommonTextViewState extends State<CommonTextView> {
           // ⭐ TEXT FIELD AREA
           Expanded(
             child: CupertinoTextField(
+              autofocus: widget.onFocus,
               controller: widget.controller,
               maxLines: null,
               expands: true,
               padding: EdgeInsets.zero,
               placeholder: widget.placeholder,
               textAlignVertical: TextAlignVertical.top,
-              placeholderStyle: TextStyle(color: objConstantColor.white.withOpacity(0.7)),
-              style: TextStyle(color: Colors.white, fontSize: 15.dp, fontFamily: objConstantFonts.montserratMedium),
+              placeholderStyle: TextStyle(color: widget.isDarkView ? objConstantColor.white.withOpacity(0.7) : Colors.black.withAlpha(65)),
+              style: TextStyle(color: widget.isDarkView ? Colors.white : Colors.black, fontSize: 15.dp, fontFamily: objConstantFonts.montserratMedium),
               decoration: null,
               inputFormatters: [
-                LengthLimitingTextInputFormatter(widget.maxLength),
+                LengthLimitingTextInputFormatter(widget.maxLength - 1),
               ],
               onChanged: (_) => setState(() {}),
             ),
@@ -260,9 +269,9 @@ class _CommonTextViewState extends State<CommonTextView> {
             child: Text(
               "${widget.controller.text.length}/${widget.maxLength}",
               style: TextStyle(
-                color: widget.controller.text.length > widget.maxLength
+                color: widget.controller.text.length >= widget.maxLength
                     ? Colors.red
-                    : Colors.grey,
+                    :  widget.isDarkView ? Colors.grey : Colors.black,
                 fontSize: 12.dp,
                 fontFamily: objConstantFonts.montserratMedium
               ),
