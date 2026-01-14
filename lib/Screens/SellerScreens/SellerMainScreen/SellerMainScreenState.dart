@@ -172,7 +172,6 @@ class SellerMainScreenGlobalStateNotifier
         module == ScreenName.revenue ||
         module == ScreenName.advertisement ||
         module == ScreenName.changePassword ||
-        module == ScreenName.products ||
         module == ScreenName.contracts ||
         module == ScreenName.reels ||
         module == ScreenName.deliveryPartner ||

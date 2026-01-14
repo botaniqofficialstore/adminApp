@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
-import '../../../../Utility/ProductBenefitScreen.dart';
+import '../../../../Utility/ModernBenefitPopup.dart';
 import '../../../../constants/ConstantVariables.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductDetailsScreenState.dart';
@@ -262,24 +262,6 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
     );
   }
 
-
-  void _openBenefitPicker(BuildContext context) async {
-    // This receives the array of benefits from the popup
-    final List<Map<String, String>>? results = await showGeneralDialog<List<Map<String, String>>>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Benefits',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return const ModernBenefitPopup();
-      },
-    );
-
-    if (results != null) {
-      print("Collected Benefits: $results");
-      // Handle your data here
-    }
-  }
 
   Widget deliveryDay(BuildContext context) {
     return Column(
@@ -1009,6 +991,26 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
         ],
       ),
     );
+  }
+
+
+  void _openBenefitPicker(BuildContext context) async {
+
+    // This receives the array of benefits from the popup
+    final List<Map<String, String>>? results = await showGeneralDialog<List<Map<String, String>>>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Benefits',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, anim1, anim2) {
+        return const ModernBenefitPopup();
+      },
+    );
+
+    if (results != null) {
+      print("Collected Benefits: $results");
+      // Handle your data here
+    }
   }
 
 
