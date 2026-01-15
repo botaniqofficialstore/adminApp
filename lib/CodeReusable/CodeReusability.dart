@@ -1062,5 +1062,25 @@ class CodeReusability {
   }
 
 
+  bool isNotValidUrl(String url) {
+    // 1. Try to parse the string into a Uri object
+    final uri = Uri.tryParse(url);
+
+    // 2. Check if parsing was successful and if it contains necessary components
+    if (uri != null && uri.hasAbsolutePath && uri.scheme.startsWith('http')) {
+      // Optional: Ensure there is a dot in the host (e.g., "google.com" vs "localhost")
+      if (uri.host.contains('.')) {
+        return false;
+      }
+
+      // Allow 'localhost' for development purposes if needed
+      if (uri.host == 'localhost') {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
 
 }

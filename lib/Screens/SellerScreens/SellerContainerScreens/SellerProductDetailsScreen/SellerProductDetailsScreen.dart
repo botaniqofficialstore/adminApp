@@ -1,12 +1,12 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
-import 'package:botaniq_admin/CommonViews/CommonWidget.dart';
+import 'package:botaniq_admin/Utility/ProductImageUploadPopup.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/Constants.dart';
-import '../../../../Utility/PreferencesManager.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import '../../../../Utility/ModernBenefitPopup.dart';
 import '../../../../constants/ConstantVariables.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
@@ -397,28 +397,11 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
           itemBuilder: (context, index, realIndex) {
             String imagePath = sample[index];
 
-            return Image.network(
-              imagePath,
-              width: double.infinity,
-              height: 250.dp,
-              fit: BoxFit.fill,
-              errorBuilder: (context, error, stackTrace) {
-                return Image.asset(
-                  objConstantAssest.placeholderImage,
-                  // fallback image from assets
-                  width: double.infinity,
-                  height: 180.dp,
-                  fit: BoxFit.cover,
-                );
-              },
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CupertinoActivityIndicator(
-                    color: objConstantColor.green,
-                  ),
-                );
-              },
+            return NetworkImageLoader(
+              imageUrl: imagePath,
+              placeHolder: objConstantAssest.placeholderImage,
+              size: 80.dp,
+              imageSize: double.infinity,
             );
           },
           options: CarouselOptions(
@@ -468,13 +451,12 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: CupertinoButton(
-                    padding: EdgeInsets.all(4.dp),
-                    minSize: 35.dp,
+                    padding: EdgeInsets.all(8.dp),
+                    minimumSize: Size.zero,
                     borderRadius: BorderRadius.circular(30),
                     child: Icon(Icons.edit, color: Colors.white,),
                     onPressed: () {
-                      var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
-                      userScreenNotifier.callNavigation(ScreenName.addProduct);
+                      openImageUpload(context);
                     },
                   ),
                 ),
@@ -487,8 +469,8 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: CupertinoButton(
-                    padding: EdgeInsets.all(4.dp),
-                    minSize: 35.dp,
+                    padding: EdgeInsets.all(8.dp),
+                    minimumSize: Size.zero,
                     borderRadius: BorderRadius.circular(30),
                     child: const Icon(Icons.share, color: Colors.white),
                     onPressed: () {
@@ -995,15 +977,22 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
 
 
   void _openBenefitPicker(BuildContext context) async {
-
     // This receives the array of benefits from the popup
     final List<Map<String, String>>? results = await showGeneralDialog<List<Map<String, String>>>(
       context: context,
       barrierDismissible: false,
       barrierLabel: 'Benefits',
       transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, anim1, anim2) {
-        return const ModernBenefitPopup();
+      pageBuilder: (context, anim1, anim2) => ModernBenefitPopup(),
+      transitionBuilder: (context, anim1, anim2, child) {
+        // Slides from bottom to top
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.easeOutCubic)),
+          child: child,
+        );
       },
     );
 
@@ -1012,6 +1001,28 @@ class SellerProductDetailsScreenState extends ConsumerState<SellerProductDetails
       // Handle your data here
     }
   }
+
+  void openImageUpload(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Upload',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, anim1, anim2) => ProductImageUploadPopup(initialImages: sample.skip(1).toList(), mainPhoto: sample[0]),
+      transitionBuilder: (context, anim1, anim2, child) {
+        // Slides from bottom to top
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.easeOutCubic)),
+          child: child,
+        );
+      },
+    );
+  }
+  
+  
 
 
 

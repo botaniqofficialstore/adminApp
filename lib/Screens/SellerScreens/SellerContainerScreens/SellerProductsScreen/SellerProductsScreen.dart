@@ -116,7 +116,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
           child: Row(
             children: [
               Icon(Icons.gpp_maybe_rounded, color: Colors.deepOrange, size: 50.dp),
-              SizedBox(width: 5.dp),
+              SizedBox(width: 2.5.dp),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +124,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
                     objCommonWidgets.customText(context, "Under Verification (${products.length})", 12, Colors.deepOrange, objConstantFonts.montserratSemiBold),
                     SizedBox(height: 2.dp),
                     objCommonWidgets.customText(context,
-                        "You products is currently under review. Once approved, they will be live for customers.",
+                        "Your products is currently under review. Once approved, they will be live for customers.",
                         9, Colors.black, objConstantFonts.montserratMedium),
                   ],
                 ),
@@ -135,7 +135,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
 
         // Horizontal List for Pending Products
         SizedBox(
-          height: 180.dp,
+          height: 200.dp,
           child: AnimationLimiter(
             child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 15.dp),
@@ -226,6 +226,24 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
                     objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
                   ],
                 ),
+
+                SizedBox(height: 10.dp),
+                SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    color: Colors.deepOrange,
+                    borderRadius: BorderRadius.circular(5.dp),
+                    onPressed: () {
+                      var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+                      userScreenNotifier.callNavigation(ScreenName.productDetails);
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.all(8.dp),
+                        child: objCommonWidgets.customText(context, 'View Details', 10, Colors.white, objConstantFonts.montserratSemiBold)),
+                  ),
+                )
               ],
             ),
           ),
@@ -286,7 +304,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
                     objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
                   ],
                 ),
-                SizedBox(height: 4.dp),
+                SizedBox(height: 8.dp),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
                   decoration: BoxDecoration(
@@ -310,7 +328,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
                   child: CupertinoButton(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
-                    color: const Color(0xFF301212),
+                    color: const Color(0xFF0B1F37),
                     borderRadius: BorderRadius.circular(5.dp),
                     onPressed: () {
                       var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
@@ -412,7 +430,7 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.eco_outlined, size: 60.dp, color: Colors.green.withOpacity(0.2)),
+          Icon(Icons.eco, size: 60.dp, color: Colors.green.withAlpha(65)),
           SizedBox(height: 15.dp),
           objCommonWidgets.customText(context, 'No matching products', 14, Colors.grey, objConstantFonts.montserratMedium),
         ],
