@@ -10,6 +10,7 @@ import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/Selle
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerLegalScreen/SellerLegalScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerNewOrderScreen/SellerNewOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerPackedOrderScreen/SellerPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductAddScreen/SellerProductAddScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductDetailsScreen/SellerProductDetailsScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductFeebackScreen/SellerProductFeedbackScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductsScreen/SellerProductsScreen.dart';
@@ -105,6 +106,8 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerProductsScreen();
     } else if (state.currentModule == ScreenName.productDetails) {
       return const SellerProductDetailsScreen();
+    } else if (state.currentModule == ScreenName.addProduct) {
+      return const SellerProductAddScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -204,7 +207,8 @@ class SellerMainScreenGlobalStateNotifier
       onScreen = ScreenName.rating;
     } else if (state.currentModule == ScreenName.returnedOrderHistory) {
       onScreen = ScreenName.returnedOrder;
-    } else if (state.currentModule == ScreenName.productDetails){
+    } else if (state.currentModule == ScreenName.productDetails ||
+        state.currentModule == ScreenName.addProduct){
       onScreen = ScreenName.products;
     }
 
