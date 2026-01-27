@@ -206,29 +206,34 @@ class SellerBusinessHourScreenStateUI extends ConsumerState<SellerBusinessHourSc
 
     return Container(
       color: objConstantColor.white,
-      padding: EdgeInsets.symmetric(vertical: 18.dp, horizontal: 15.dp),
+      padding: EdgeInsets.symmetric(vertical: 18.dp, horizontal: 5.dp),
       child: Row(
         children: [
           Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                objCommonWidgets.customText(context, day, 12, data.isClosed ? Colors.grey : Colors.black, objConstantFonts.montserratSemiBold),
-                objCommonWidgets.customText(context, data.isClosed ? "Closed / Holiday" : "Open", 10, data.isClosed ? Colors.red.shade300 : Colors.green.shade600, objConstantFonts.montserratSemiBold),
-              ],
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  objCommonWidgets.customText(context, day, 12, data.isClosed ? Colors.grey : Colors.black, objConstantFonts.montserratSemiBold),
+                  objCommonWidgets.customText(context, data.isClosed ? "Closed / Holiday" : "Open", 10, data.isClosed ? Colors.red.shade300 : Colors.green.shade600, objConstantFonts.montserratSemiBold),
+                ],
+              ),
             ),
           ),
           if (!data.isClosed) ...[
             _timeSelector(context, data.open, (t) => notifier.updateDay(day, open: t)),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 8.dp), child: objCommonWidgets.customText(context, 'to', 12, Colors.grey.shade400, objConstantFonts.montserratSemiBold)),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3.dp), child: objCommonWidgets.customText(context, 'to', 12, Colors.red.shade400, objConstantFonts.montserratSemiBold)),
             _timeSelector(context, data.close, (t) => notifier.updateDay(day, close: t), hasError: isInvalid),
           ],
-          SizedBox(width: 10.dp),
-          CupertinoSwitch(
-            activeTrackColor: Colors.green,
-            value: !data.isClosed,
-            onChanged: (val) => notifier.updateDay(day, isClosed: !val),
+          SizedBox(width: 5.dp),
+          Transform.scale(
+            scale: 0.85,
+            child: CupertinoSwitch(
+              activeTrackColor: Colors.green,
+              value: !data.isClosed,
+              onChanged: (val) => notifier.updateDay(day, isClosed: !val),
+            ),
           ),
         ],
       ),

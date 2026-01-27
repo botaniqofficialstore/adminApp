@@ -1,4 +1,3 @@
-import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,9 +8,11 @@ import 'package:im_stepper/stepper.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
+import '../../../../Utility/ConfirmClosePopup.dart';
 import '../../../../Utility/NetworkImageLoader.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductAddScreenState.dart';
+
 
 class SellerProductAddScreen extends ConsumerStatefulWidget {
   const SellerProductAddScreen({super.key});
@@ -20,7 +21,7 @@ class SellerProductAddScreen extends ConsumerStatefulWidget {
   SellerProductAddScreenState createState() => SellerProductAddScreenState();
 }
 
-class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> {
+class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen>  {
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
@@ -55,10 +56,11 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
           child: Column(
             children: [
               _buildHeader(context),
-
-              _buildStepper(state),
-              SizedBox(height: 15.dp,),
+              SizedBox(height: 5.dp,),
               objCommonWidgets.customText(context, 'Complete all the requirements.', 12, Colors.black, objConstantFonts.montserratMedium),
+              SizedBox(height: 5.dp,),
+              _buildStepper(state),
+
 
               Expanded(
                 child: PageView(
@@ -82,6 +84,8 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
                 ),
               ),
               _buildBottomBar(state, notifier),
+
+              SizedBox(height: 20.dp,)
             ],
           ),
         ),
@@ -98,7 +102,14 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CupertinoButton(
-            onPressed: () => ref.read(SellerMainScreenGlobalStateProvider.notifier).callNavigation(ScreenName.products),
+            onPressed: () async {
+              final bool shouldPop = await ConfirmClosePopup.show(context) ?? false;
+
+              if (shouldPop && context.mounted) {
+                ref.read(SellerMainScreenGlobalStateProvider.notifier)
+                    .callNavigation(ScreenName.products);
+              }
+            },
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
             child: Icon(Icons.arrow_back_rounded, size: 25.dp, color: Colors.black,),
@@ -171,8 +182,6 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
 
 
   Widget _stepWrapper(int index, String title, String desc, Widget child) {
-    final state = ref.watch(sellerProductAddScreenStateProvider);
-    final notifier = ref.read(sellerProductAddScreenStateProvider.notifier);
 
     return RawScrollbar(
       thumbColor: objConstantColor.black.withAlpha(45),
@@ -751,7 +760,7 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
       children: [
         objCommonWidgets.customText(context, hint, 14, Colors.black, objConstantFonts.montserratSemiBold),
 
-        SizedBox(height: 10.dp),
+        SizedBox(height: 5.dp),
 
         TextField(
           controller: controller,
@@ -814,7 +823,7 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
           objConstantFonts.montserratSemiBold,
         ),
 
-        SizedBox(height: 10.dp),
+        SizedBox(height: 5.dp),
 
         // ⭐ Dropdown container
         Container(

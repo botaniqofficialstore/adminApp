@@ -262,7 +262,7 @@ class SellerDashboardScreenState extends ConsumerState<SellerDashboardScreen> wi
                     SizedBox(height: 4.dp),
                     objCommonWidgets.customText(context, subtitle, 10, Colors.grey.shade500, objConstantFonts.montserratMedium),
                     const Spacer(),
-                    objCommonWidgets.customText(context, count, 25, accentColor, objConstantFonts.montserratBold),
+                    objCommonWidgets.customText(context, count, 20, accentColor, objConstantFonts.montserratBold),
                   ],
                 ),
               ),

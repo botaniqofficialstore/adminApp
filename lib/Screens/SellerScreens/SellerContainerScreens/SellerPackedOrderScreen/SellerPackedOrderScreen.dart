@@ -55,26 +55,30 @@ class _SellerPackedOrderScreenState extends ConsumerState<SellerPackedOrderScree
             ),
 
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 15.dp),
+              child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                clipBehavior: Clip.none,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  // Stagger order cards
-                  final cardStart = (0.2 + (index * 0.15)).clamp(0.0, 0.8);
-                  final cardEnd = (cardStart + 0.4).clamp(0.0, 1.0);
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 15.dp),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  clipBehavior: Clip.none,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    // Stagger order cards
+                    final cardStart = (0.2 + (index * 0.15)).clamp(0.0, 0.8);
+                    final cardEnd = (cardStart + 0.4).clamp(0.0, 1.0);
 
-                  return _buildAnimatedSection(
-                    intervalStart: cardStart,
-                    intervalEnd: cardEnd,
-                    beginOffset: const Offset(0, 0.1),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 20.dp),
-                      child: _orderCard(context, ref),
-                    ),
-                  );
-                },
+                    return _buildAnimatedSection(
+                      intervalStart: cardStart,
+                      intervalEnd: cardEnd,
+                      beginOffset: const Offset(0, 0.1),
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 20.dp),
+                        child: _orderCard(context, ref),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],

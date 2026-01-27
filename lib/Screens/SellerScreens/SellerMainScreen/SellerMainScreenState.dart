@@ -2,6 +2,7 @@ import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/
 import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/LoginScreen/LoginScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/ConfirmPackedOrderScreen/ConfirmPackedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerAccountScreen/SellerAccountScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerBusinessHourScreen/SellerBusinessHourScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCancelledOrderScreen/SellerCancelledOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerCompletedDeliveryScreen/SellerCompletedDeliveryScreen.dart';
@@ -25,6 +26,7 @@ import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/PushNotificationService/NotificationService.dart';
+import '../../../Utility/ConfirmClosePopup.dart';
 import '../../CommonScreens/NotificationScreen/NotificationScreen.dart';
 
 
@@ -108,6 +110,8 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerProductDetailsScreen();
     } else if (state.currentModule == ScreenName.addProduct) {
       return const SellerProductAddScreen();
+    } else if (state.currentModule == ScreenName.account) {
+      return const SellerAccountScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -151,6 +155,9 @@ class SellerMainScreenGlobalStateNotifier
     state = state.copyWith(currentModule: ScreenName.returnedOrder);
   }
 
+  bool isHideFooter(){
+    return state.currentModule == ScreenName.addProduct;
+  }
 
 
 
@@ -194,21 +201,25 @@ class SellerMainScreenGlobalStateNotifier
     } else if (module == ScreenName.addReel){
       onScreen = ScreenName.reels;
     } else if (module == ScreenName.addProduct){
-      onScreen = ScreenName.products;
+      final bool shouldPop = await ConfirmClosePopup.show(context) ?? false;
+
+      if (shouldPop && context.mounted) {
+        onScreen = ScreenName.products;
+      }
     } else if (state.currentModule == ScreenName.confirmPacked) {
       onScreen = ScreenName.confirmOrder;
     } else if (state.currentModule == ScreenName.settings ||
         state.currentModule == ScreenName.legal ||
         state.currentModule == ScreenName.rating ||
         state.currentModule == ScreenName.businessHours ||
-        state.currentModule == ScreenName.products) {
+        state.currentModule == ScreenName.products ||
+        state.currentModule == ScreenName.account) {
       onScreen = ScreenName.profile;
     } else if (state.currentModule == ScreenName.productReview) {
       onScreen = ScreenName.rating;
     } else if (state.currentModule == ScreenName.returnedOrderHistory) {
       onScreen = ScreenName.returnedOrder;
-    } else if (state.currentModule == ScreenName.productDetails ||
-        state.currentModule == ScreenName.addProduct){
+    } else if (state.currentModule == ScreenName.productDetails){
       onScreen = ScreenName.products;
     }
 

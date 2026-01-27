@@ -57,43 +57,46 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
               children: [
                 _buildHeader(context),
                 SizedBox(height: 15.dp),
-
+        
                 /// THE ANIMATED LIST
                 Expanded(
-                  child: ListView.builder(
-                    // Critical: Clip.none prevents the "cut-off" look during slide-in
-                    clipBehavior: Clip.none,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      // Staggering Logic
-                      final itemStart = (index * 0.1).clamp(0.0, 0.6);
-                      final itemEnd = (itemStart + 0.4).clamp(0.0, 1.0);
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      clipBehavior: Clip.none,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        // Staggering Logic
+                        final itemStart = (index * 0.1).clamp(0.0, 0.6);
+                        final itemEnd = (itemStart + 0.4).clamp(0.0, 1.0);
 
-                      final itemAnimation = CurvedAnimation(
-                        parent: _controller,
-                        curve: Interval(itemStart, itemEnd, curve: Curves.easeOutCubic),
-                      );
+                        final itemAnimation = CurvedAnimation(
+                          parent: _controller,
+                          curve: Interval(itemStart, itemEnd, curve: Curves.easeOutCubic),
+                        );
 
-                      return AnimatedBuilder(
-                        animation: itemAnimation,
-                        builder: (context, child) {
-                          return Opacity(
-                            opacity: itemAnimation.value,
-                            child: Transform.translate(
-                              // Using 40.dp instead of 100 for a more stable/smooth feel
-                              offset: Offset((1 - itemAnimation.value) * 40.dp, 0),
-                              child: child,
-                            ),
-                          );
-                        },
-                        // RepaintBoundary isolates the card so it doesn't trigger
-                        // a full list rebuild on every animation frame.
-                        child: RepaintBoundary(
-                          child: cellView(context),
-                        ),
-                      );
-                    },
+                        return AnimatedBuilder(
+                          animation: itemAnimation,
+                          builder: (context, child) {
+                            return Opacity(
+                              opacity: itemAnimation.value,
+                              child: Transform.translate(
+                                // Using 40.dp instead of 100 for a more stable/smooth feel
+                                offset: Offset((1 - itemAnimation.value) * 40.dp, 0),
+                                child: child,
+                              ),
+                            );
+                          },
+                          // RepaintBoundary isolates the card so it doesn't trigger
+                          // a full list rebuild on every animation frame.
+                          child: RepaintBoundary(
+                            child: cellView(context),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

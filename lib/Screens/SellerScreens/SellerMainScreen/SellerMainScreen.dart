@@ -55,6 +55,7 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SafeArea(
+            bottom: false,
             top: false,
             child: Scaffold(
               key: mainSellerScaffoldKey,
@@ -84,7 +85,7 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
               ),
         
               /// FOOTER
-              bottomNavigationBar: UserFooterView(
+              bottomNavigationBar: userScreenNotifier.isHideFooter() ? SizedBox.shrink() : UserFooterView(
                 currentModule: userScreenState.currentModule,
                 notificationCount: userScreenState.notificationCount,
                 selectedFooterIndex: (index) {
@@ -210,21 +211,20 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
       ),
       child: Padding(
         padding: EdgeInsets.only(top: 15.dp, left: 10.dp, right: 10.dp),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(inactiveIcons.length, (index) {
-                final isSelected = currentIndex == index;
-
-                return Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 10.dp),
-                        child: CupertinoButton(
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(inactiveIcons.length, (index) {
+                  final isSelected = currentIndex == index;
+          
+                  return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        CupertinoButton(
                           onPressed: () => widget.selectedFooterIndex(index),
                           padding: EdgeInsets.zero,
                           minimumSize: Size(0, 0),
@@ -246,33 +246,33 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                             ],
                           ),
                         ),
-                      ),
-
-                      //Badge for Cart
-                      if (index == 1 && widget.notificationCount <= 0)
-                        Positioned(
-                          left: 33.dp,
-                          top: -10.dp,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.dp, horizontal: 6.dp),
-                            decoration: BoxDecoration(
-                              color: objConstantColor.redd,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: objCommonWidgets.customText(
-                              context,
-                              '1235',
-                              10, Colors.white,
-                              objConstantFonts.montserratBold,
+          
+                        //Badge for Cart
+                        if (index == 1 && widget.notificationCount <= 0)
+                          Positioned(
+                            left: 33.dp,
+                            top: -10.dp,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2.dp, horizontal: 6.dp),
+                              decoration: BoxDecoration(
+                                color: objConstantColor.redd,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: objCommonWidgets.customText(
+                                context,
+                                '1235',
+                                10, Colors.white,
+                                objConstantFonts.montserratBold,
+                              ),
                             ),
                           ),
-                        ),
-                    ]
-                );
-              }),
-            ),
-          ],
+                      ]
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

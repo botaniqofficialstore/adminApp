@@ -1,6 +1,4 @@
 import 'dart:ui';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +25,6 @@ class MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
-    BackButtonInterceptor.add(mainInterceptor);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
@@ -38,50 +35,11 @@ class MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(mainInterceptor);
+
     super.dispose();
   }
 
-  bool mainInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    if (kDebugMode) {
-      debugPrint("Back button intercepted!");
-    }
 
-    final state = ref.read(MainScreenGlobalStateProvider);
-    final notifier = ref.read(MainScreenGlobalStateProvider.notifier);
-
-    PreferencesManager.getInstance().then((prefs) {
-
-      if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
-        return;
-      }
-
-      if (prefs.getBooleanValue(PreferenceKeys.isCommonPopup) == true) {
-        notifier.closeCommonPopup(context);
-        prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
-        return;
-      }
-
-      if (prefs.getBooleanValue(PreferenceKeys.isBottomSheet) == true) {
-        notifier.closeBottomSheet(context);
-        prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
-        return;
-      }
-
-      if (mainScaffoldKey.currentState?.isDrawerOpen ?? false) {
-        mainScaffoldKey.currentState?.closeDrawer();
-        return;
-      }
-
-      if (prefs.getBooleanValue(PreferenceKeys.isLoadingBarStarted) == true) {
-        return;
-      }
-
-      notifier.callBackNavigation(context, state.currentModule);
-    });
-
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,96 +47,103 @@ class MainScreenState extends ConsumerState<MainScreen> {
     final userScreenNotifier =
     ref.watch(MainScreenGlobalStateProvider.notifier);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light, // ANDROID → WHITE ICONS
-        statusBarBrightness: Brightness.dark, // iOS → WHITE ICONS
-      ),
-      child: SafeArea(
-        top: false,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Scaffold(
-            key: mainScaffoldKey,
-            backgroundColor: objConstantColor.white,
-            extendBodyBehindAppBar: true,
-            drawer: SideMenu(
-              onMenuClick: (module) {
-                final notifier =
-                ref.read(MainScreenGlobalStateProvider.notifier);
+    return PopScope(
+      canPop: false, // 🔥 We fully control back navigation
+      onPopInvokedWithResult: (didPop, dynamic) {
+        if (didPop) return;
+        _handleBack(context);
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light, // ANDROID → WHITE ICONS
+          statusBarBrightness: Brightness.dark, // iOS → WHITE ICONS
+        ),
+        child: SafeArea(
+          top: false,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Scaffold(
+              key: mainScaffoldKey,
+              backgroundColor: objConstantColor.white,
+              extendBodyBehindAppBar: true,
+              drawer: SideMenu(
+                onMenuClick: (module) {
+                  final notifier =
+                  ref.read(MainScreenGlobalStateProvider.notifier);
 
-                if (module == ScreenName.logout) {
-                  notifier.callLogoutNavigation(context);
-                } else {
-                  notifier.callNavigation(module);
-                }
+                  if (module == ScreenName.logout) {
+                    notifier.callLogoutNavigation(context);
+                  } else {
+                    notifier.callNavigation(module);
+                  }
 
-                mainScaffoldKey.currentState?.closeDrawer();
-              },
-            ),
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF1E0033),
-                    Color(0xFF0A0A0A),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                  mainScaffoldKey.currentState?.closeDrawer();
+                },
               ),
-              child: Stack(
-                children: [
-
-                  NotificationListener<ScrollNotification>(
-                    onNotification: (scroll) {
-                      if (scroll is UserScrollNotification) {
-                        if (scroll.direction == ScrollDirection.reverse) {
-                          userScreenNotifier.hideFooter();
-                        } else if (scroll.direction ==
-                            ScrollDirection.forward) {
-                          userScreenNotifier.showFooter();
-                        }
-                      }
-                      return true;
-                    },
-                    child: userScreenNotifier.getChildContainer(),
+              body: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF1E0033),
+                      Color(0xFF0A0A0A),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                ),
+                child: Stack(
+                  children: [
 
-                  /// BLUR FOOTER BACKGROUND
-                  if (_showFooter(userScreenState.currentModule))
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      bottom: userScreenState.isFooterVisible
-                          ? 15.dp
-                          : -120.dp,
-                      left: 35.dp,
-                      right: 35.dp,
-                      child: const _BlurFooterContainer(),
+                    NotificationListener<ScrollNotification>(
+                      onNotification: (scroll) {
+                        if (scroll is UserScrollNotification) {
+                          if (scroll.direction == ScrollDirection.reverse) {
+                            userScreenNotifier.hideFooter();
+                          } else if (scroll.direction ==
+                              ScrollDirection.forward) {
+                            userScreenNotifier.showFooter();
+                          }
+                        }
+                        return true;
+                      },
+                      child: userScreenNotifier.getChildContainer(),
                     ),
 
-                  /// FOOTER CONTENT
-                  if (_showFooter(userScreenState.currentModule))
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      bottom: userScreenState.isFooterVisible
-                          ? 15.dp
-                          : -120.dp,
-                      left: 25.dp,
-                      right: 25.dp,
-                      child: UserFooterView(
-                        currentModule: userScreenState.currentModule,
-                        notificationCount:
-                        userScreenState.notificationCount,
-                        selectedFooterIndex: (index) {
-                          userScreenNotifier.setFooterSelection(index);
-                        },
+                    /// BLUR FOOTER BACKGROUND
+                    if (_showFooter(userScreenState.currentModule))
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        bottom: userScreenState.isFooterVisible
+                            ? 15.dp
+                            : -120.dp,
+                        left: 35.dp,
+                        right: 35.dp,
+                        child: const _BlurFooterContainer(),
                       ),
-                    ),
-                ],
+
+                    /// FOOTER CONTENT
+                    if (_showFooter(userScreenState.currentModule))
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        bottom: userScreenState.isFooterVisible
+                            ? 15.dp
+                            : -120.dp,
+                        left: 25.dp,
+                        right: 25.dp,
+                        child: UserFooterView(
+                          currentModule: userScreenState.currentModule,
+                          notificationCount:
+                          userScreenState.notificationCount,
+                          selectedFooterIndex: (index) {
+                            userScreenNotifier.setFooterSelection(index);
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -192,6 +157,56 @@ class MainScreenState extends ConsumerState<MainScreen> {
         module == ScreenName.notification ||
         module == ScreenName.revenue ||
         module == ScreenName.profile;
+  }
+
+
+  /// 🔥 SAFE BACK HANDLER
+  Future<void> _handleBack(BuildContext context) async {
+    if (!context.mounted) return;
+
+    final state = ref.read(MainScreenGlobalStateProvider);
+    final notifier = ref.read(MainScreenGlobalStateProvider.notifier);
+
+    final prefs = await PreferencesManager.getInstance();
+
+    /// 1️⃣ Dialog open → block back
+    if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
+      return;
+    }
+
+    /// 2️⃣ Common popup
+    if (prefs.getBooleanValue(PreferenceKeys.isCommonPopup) == true) {
+      notifier.closeCommonPopup(context);
+      prefs.setBooleanValue(PreferenceKeys.isCommonPopup, false);
+      return;
+    }
+
+    /// 3️⃣ Bottom sheet
+    if (prefs.getBooleanValue(PreferenceKeys.isBottomSheet) == true) {
+      notifier.closeBottomSheet(context);
+      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
+      return;
+    }
+
+    /// 4️⃣ Drawer
+    if (mainScaffoldKey.currentState?.isDrawerOpen ?? false) {
+      mainScaffoldKey.currentState?.closeDrawer();
+      return;
+    }
+
+    /// 5️⃣ Loading state → block back
+
+    if (prefs.getBooleanValue(
+        PreferenceKeys.isLoadingBarStarted) ==
+        true) {
+      return;
+    }
+
+    /// 6️⃣ Custom back navigation
+    notifier.callBackNavigation(
+      context,
+      state.currentModule,
+    );
   }
 }
 

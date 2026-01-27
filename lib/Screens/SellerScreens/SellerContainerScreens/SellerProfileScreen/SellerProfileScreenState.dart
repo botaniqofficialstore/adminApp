@@ -26,7 +26,7 @@ class SellerProfileScreenStateNotifier extends StateNotifier<SellerProfileScreen
 
   void callNavigation(int index, SellerMainScreenGlobalStateNotifier userScreenNotifier){
     if (index == 0){
-      userScreenNotifier.callNavigation(ScreenName.profile);
+      userScreenNotifier.callNavigation(ScreenName.account);
     } else if (index == 1){
       userScreenNotifier.callNavigation(ScreenName.location);
     } else if (index == 2){

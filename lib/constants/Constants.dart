@@ -71,7 +71,8 @@ enum ScreenName {
   businessHours,
   editProfile,
   productReview,
-  productDetails
+  productDetails,
+  account
 }
 
 

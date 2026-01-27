@@ -1,5 +1,4 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
-import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';

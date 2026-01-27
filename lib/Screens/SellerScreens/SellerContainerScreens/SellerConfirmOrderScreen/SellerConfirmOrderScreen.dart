@@ -50,7 +50,6 @@ class SellerConfirmOrderScreenState extends ConsumerState<SellerConfirmOrderScre
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
-        bottom: false,
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.transparent,
@@ -71,13 +70,17 @@ class SellerConfirmOrderScreenState extends ConsumerState<SellerConfirmOrderScre
 
                 // 🔹 3. Staggered List Entrance
                 Expanded(
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    clipBehavior: Clip.none, // Avoid layout clipping during slide
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return _buildStaggeredItem(index);
-                    },
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      clipBehavior: Clip.none, // Avoid layout clipping during slide
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return _buildStaggeredItem(index);
+                      },
+                    ),
                   ),
                 ),
               ],
