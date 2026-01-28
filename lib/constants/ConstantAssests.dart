@@ -7,6 +7,7 @@ class ConstantAssests{
 
    ///Splash Icons
    String logo = '${splashAssets}logo.png';
+   String loginPic = '${splashAssets}loginPic.png';
 
    ///Footer Icons
    String homeIcon = '${footerAssets}home.png';

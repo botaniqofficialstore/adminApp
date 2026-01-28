@@ -1,15 +1,14 @@
-import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'dart:ui';
+import 'package:botaniq_admin/Screens/Authentication/AccountRegisterScreen/AccountRegisterScreen.dart';
+import 'package:botaniq_admin/Screens/Authentication/OtpScreen/OtpScreen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import '../../../../constants/ConstantVariables.dart';
 import '../../../CodeReusable/CodeReusability.dart';
-import '../../../CommonViews/CommonWidget.dart';
-import '../../../Constants/Constants.dart';
-import '../../../Utility/PreferencesManager.dart';
 import 'LoginScreenState.dart';
+import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -19,47 +18,309 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class LoginScreenState extends ConsumerState<LoginScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  bool _lights = true;
-
   @override
-  void initState() {
-    super.initState();
-    BackButtonInterceptor.add(loginInterceptor);
+  Widget build(BuildContext context) {
+    final state = ref.watch(loginScreenProvider);
+    final notifier = ref.read(loginScreenProvider.notifier);
+
+    return PopScope(
+      canPop: false, // 🔥 We fully control back navigation
+      onPopInvokedWithResult: (didPop, dynamic) {
+        if (didPop) return;
+
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent, // optional
+          statusBarIconBrightness: Brightness.light, // ANDROID → black icons
+          statusBarBrightness: Brightness.dark, // iOS → black icons
+        ),
+        child: GestureDetector(
+          onTap: () => CodeReusability.hideKeyboard(context),
+          child: Scaffold(
+            backgroundColor: Color(0xFFF9FAFB),
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+
+                          /// 🔹 TOP IMAGE SECTION
+                          Stack(
+                            children: [
+                              Image.asset(
+                                objConstantAssest.loginPic,
+                                width: double.infinity,
+                                height: 58.h,
+                                fit: BoxFit.fitHeight,
+                              ),
+                              Positioned.fill(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                  child: Container(
+                                    color: Colors.black.withAlpha(30),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 45.dp,
+                                left: 15.dp,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    objCommonWidgets.customText(
+                                      context,
+                                      'Welcome Back',
+                                      30,
+                                      Colors.white,
+                                      objConstantFonts.montserratSemiBold,
+                                    ),
+                                    SizedBox(height: 2.h),
+                                    objCommonWidgets.customText(
+                                      context,
+                                      'Sell organic. We’ll handle the rest.',
+                                      14,
+                                      Colors.white,
+                                      objConstantFonts.montserratSemiBold,
+                                    ),
+                                    objCommonWidgets.customText(
+                                      context,
+                                      'Orders, collection, and delivery made simple.',
+                                      10,
+                                      Colors.white,
+                                      objConstantFonts.montserratMedium,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+
+                          /// 🔹 FORM SECTION
+                          Transform.translate(
+                            offset: const Offset(0, -30),
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF9FAFB),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(35.dp),
+                                  topRight: Radius.circular(35.dp),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+
+                                  objCommonWidgets.customText(
+                                    context,
+                                    'Login',
+                                    25,
+                                    Colors.black,
+                                    objConstantFonts.montserratSemiBold,
+                                  ),
+
+                                  SizedBox(height: 2.h),
+
+                                  _customTextField(
+                                    "Enter Mobile Number",
+                                    "Enter your reg. mobile number",
+                                    state.emailController,
+                                    keyboardType: TextInputType.number,
+                                    prefixText: "+91",
+                                    maxLength: 10,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                  ),
+
+
+                                  SizedBox(height: 3.h),
+
+                                  CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OtpScreen(loginWith: '7985648975')));
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(vertical: 15.dp),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(25.dp),
+                                      ),
+                                      child: Center(
+                                        child: objCommonWidgets.customText(
+                                          context,
+                                          'Get OTP',
+                                          16,
+                                          Colors.white,
+                                          objConstantFonts.montserratSemiBold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          /// 🔥 THIS PUSHES FOOTER TO BOTTOM
+                          const Spacer(),
+
+                          /// 🔹 FOOTER
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 30.dp),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                objCommonWidgets.customText(
+                                  context,
+                                  'New to Botaniq? ',
+                                  10,
+                                  Colors.black,
+                                  objConstantFonts.montserratRegular,
+                                ),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size.zero,
+                                  onPressed: () {
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AccountRegisterScreen()));
+                                  },
+                                  child: objCommonWidgets.customText(
+                                    context,
+                                    'Register Now!',
+                                    12,
+                                    Colors.deepOrange,
+                                    objConstantFonts.montserratSemiBold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+
+          ),
+        ),
+      ),
+    );
   }
 
-
-  @override
-  void dispose() {
-    BackButtonInterceptor.remove(loginInterceptor);
-    super.dispose();
+  /// 🔹 CUSTOM TEXT FIELD
+  Widget _customTextField(
+      String hint,
+      String label,
+      TextEditingController? controller, {
+        int maxLines = 1,
+        TextInputType keyboardType = TextInputType.text,
+        void Function(String)? onChanged,
+        List<TextInputFormatter>? inputFormatters,
+        String? prefixText,
+        int? maxLength,
+      }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          hint,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+        SizedBox(height: 5.dp),
+        TextField(
+          controller: controller,
+          onChanged: onChanged,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          cursorColor: Colors.black,
+          style: TextStyle(
+            fontSize: 13.dp,
+            fontFamily: objConstantFonts.montserratMedium,
+            color: Colors.black87,
+          ),
+          decoration: InputDecoration(
+            counterText: "", // hides maxLength counter
+            prefixIcon: prefixText != null
+                ? Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.dp),
+              child: Center(
+                widthFactor: 0.0,
+                child: Text(
+                  prefixText,
+                  style: TextStyle(
+                    fontSize: 15.dp,
+                    fontFamily: objConstantFonts.montserratMedium,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            )
+                : null,
+            hintText: label,
+            hintStyle: TextStyle(
+              fontSize: 12.dp,
+              fontFamily: objConstantFonts.montserratRegular,
+              color: Colors.black.withAlpha(150),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.dp),
+              borderSide: BorderSide(color: Colors.black.withAlpha(65)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.dp),
+              borderSide: BorderSide(
+                color: controller!.text.trim().isNotEmpty
+                    ? Colors.black
+                    : Colors.black.withAlpha(65),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.dp),
+              borderSide: const BorderSide(color: Colors.black),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 10.dp,
+              vertical: 15.dp,
+            ),
+          ),
+          maxLength: maxLength,
+        ),
+      ],
+    );
   }
 
-
-  //MARK: - METHODS
-  /// Return true to prevent default behavior (app exit)
-  /// Return false to allow default behavior
-  bool loginInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    if (kDebugMode) {
-      print("Back button intercepted!");
-    }
-    PreferencesManager.getInstance().then((prefs) {
-      if (prefs.getBooleanValue(PreferenceKeys.isDialogOpened) == true) {
-        return false;
-      } else if ((prefs.getBooleanValue(PreferenceKeys.isLoadingBarStarted) ==
-          true)) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    return true;
-  }
+}
 
 
-  //MARK: - Widget
-  @override
+
+
+
+
+
+//MARK: - Widget
+  /*@override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => CodeReusability.hideKeyboard(context),
@@ -378,6 +639,5 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
+  }*/
 
-
-}

@@ -44,6 +44,10 @@ class LoginScreenGlobalStateNotifier
     super.dispose();
   }
 
+  void onChanged() {
+    state = state.copyWith();
+  }
+
   ///This Method used to check login field validation and call API
   void checkLoginFieldValidation(BuildContext context) {
     if (!context.mounted) return;
@@ -145,7 +149,7 @@ class LoginScreenGlobalStateNotifier
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => OtpScreen(loginWith: state.emailController.text, isEmail: CodeReusability().isEmail(state.emailController.text),)),
+                      builder: (context) => OtpScreen(loginWith: state.emailController.text)),
                 );
               });
 

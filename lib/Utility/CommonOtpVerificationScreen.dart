@@ -2,107 +2,95 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import '../../../../constants/ConstantVariables.dart';
-import '../../../CodeReusable/CodeReusability.dart';
-import '../LoginScreen/LoginScreen.dart';
-import 'OtpScreenState.dart';
+import '../CodeReusable/CodeReusability.dart';
+import '../Constants/ConstantVariables.dart';
 
-class OtpScreen extends ConsumerStatefulWidget {
-  final String loginWith;
+class CommonOtpVerificationScreen extends StatefulWidget {
+  final bool isEmail;
+  final String value;
 
-  const OtpScreen({
+  const CommonOtpVerificationScreen({
     super.key,
-    required this.loginWith,
+    required this.isEmail,
+    required this.value,
   });
 
   @override
-  OtpScreenState createState() => OtpScreenState();
+  State<CommonOtpVerificationScreen> createState() =>
+      _CommonOtpVerificationScreenState();
 }
 
-class OtpScreenState extends ConsumerState<OtpScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class _CommonOtpVerificationScreenState
+    extends State<CommonOtpVerificationScreen> {
 
   int remainingSeconds = 60;
   Timer? timer;
 
+  late final List<TextEditingController> controllers;
+  late final List<FocusNode> focusNodes;
+  late final List<String> otpValues;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final otpScreenNotifier = ref.read(otpScreenGlobalStateProvider.notifier);
-      otpScreenNotifier.updateUserData(widget.loginWith);
-      startTimer();
 
-      // ✅ Auto focus first text field after small delay
-      Future.delayed(const Duration(milliseconds: 300), () {
-        final otpState = ref.read(otpScreenGlobalStateProvider);
-        if (otpState.focusNodes.isNotEmpty) {
-          otpState.focusNodes[0].requestFocus();
-        }
-      });
+    controllers = List.generate(6, (_) => TextEditingController());
+    focusNodes = List.generate(6, (_) => FocusNode());
+    otpValues = List.filled(6, '');
 
+    startTimer();
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      focusNodes.first.requestFocus();
     });
   }
 
   @override
   void dispose() {
+    timer?.cancel();
+    for (final c in controllers) c.dispose();
+    for (final f in focusNodes) f.dispose();
     super.dispose();
   }
+
+  // 🔹 Handle Android back swipe & button
+  Future<bool> _onWillPop() async {
+    Navigator.of(context).pop(false);
+    return false;
+  }
+
 
 
   //MARK: - Widget
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false, // 🔥 We fully control back navigation
-      onPopInvokedWithResult: (didPop, dynamic) {
-        if (didPop) return;
-        if (!context.mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
-      },
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent, // optional
-          statusBarIconBrightness: Brightness.dark, // ANDROID → black icons
-          statusBarBrightness: Brightness.light, // iOS → black icons
-        ),
-        child: GestureDetector(
-          onTap: () => CodeReusability.hideKeyboard(context),
-          child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: Color(0xFFF9FAFB),
-            body: SafeArea(
-                bottom: false,
-                child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight, // important
-                            ),
-                            child: IntrinsicHeight(
-                                child: otpView(context))
+    return GestureDetector(
+      onTap: () => CodeReusability.hideKeyboard(context),
+      child: Scaffold(
+        backgroundColor: Color(0xFFF9FAFB),
+        body: SafeArea(
+            bottom: false,
+            child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight, // important
                         ),
-                      );
-                    })),
-          ),
-        ),
+                        child: IntrinsicHeight(
+                            child: otpView(context))
+                    ),
+                  );
+                })),
       ),
     );
   }
 
 
+
   Widget otpView(BuildContext context) {
-    final otpState = ref.watch(otpScreenGlobalStateProvider);
-    final otpNotifier = ref.read(otpScreenGlobalStateProvider.notifier);
 
     return Column(
       children: [
@@ -116,12 +104,8 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
+                  //Close action
+                  Navigator.of(context).pop(false);
                 },
                 child: Icon(Icons.arrow_back_ios, size: 20.dp, color: Colors.black,),
               ),
@@ -158,8 +142,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
 
                 objCommonWidgets.customText(
                   context,
-                  'Enter the OTP sended to the Mobile Number '
-                      '${CodeReusability().maskEmailOrMobile(widget.loginWith)}',
+                  'Enter the OTP sent to the ${widget.isEmail ? 'Email' : 'Mobile Number'} ${CodeReusability().maskEmailOrMobile(widget.value)}',
                   13,
                   objConstantColor.black,
                   objConstantFonts.montserratMedium,
@@ -180,9 +163,8 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                         child: otpBox(
                           context,
                           index,
-                          otpState.controllers[index],
-                          otpState.focusNodes[index],
-                          otpState,
+                          controllers[index],
+                          focusNodes[index],
                         ),
                       ),
                     ),
@@ -197,16 +179,18 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                       CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () async {
-                          bool otpSend =
+                          
+                          /*bool otpSend =
                           await otpNotifier.callReSendOtpAPI(context);
                           if (otpSend) {
-                            otpNotifier.clearOtpFields();
+                            clearOtpFields();
                             setState(() {
                               remainingSeconds = 60;
                             });
                             startTimer();
-                            otpState.focusNodes[0].requestFocus();
-                          }
+                            focusNodes[0].requestFocus();
+                          }*/
+                          
                         },
                         child: objCommonWidgets.customText(
                           context,
@@ -222,7 +206,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                         child: objCommonWidgets.customText(
                           context,
                           'Get new one after '
-                              '${otpNotifier.formatTime(remainingSeconds)}',
+                              '${formatTime(remainingSeconds)}',
                           10,
                           Colors.black.withAlpha(180),
                           objConstantFonts.montserratMedium,
@@ -237,7 +221,7 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
                 CupertinoButton(
                   padding: EdgeInsets.zero,
                   onPressed: () {
-                    otpNotifier.checkEmptyValidation(context);
+                    checkEmptyValidation(context);
                   },
                   child: Container(
                     width: double.infinity,
@@ -261,48 +245,12 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
             ),
           ),
         ),
-
-        /// 🔻 Bottom Fixed "Back to Login"
-        Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom + 10.dp,
-            top: 10.dp,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              objCommonWidgets.customText(
-                context,
-                'Back to Login?',
-                10,
-                Colors.black,
-                objConstantFonts.montserratRegular,
-              ),
-              SizedBox(width: 4.dp),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
-                child: objCommonWidgets.customText(
-                  context,
-                  'Login',
-                  13,
-                  Colors.deepOrange,
-                  objConstantFonts.montserratSemiBold,
-                ),
-              ),
-            ],
-          ),
-        ),
+        
+        
       ],
     );
   }
+
 
 
   ///This method used to start OTP Timer
@@ -330,11 +278,9 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
       int index,
       TextEditingController controller,
       FocusNode focusNode,
-      OtpScreenGlobalState otpState,
       ) {
-    final otpStateWatch = ref.watch(otpScreenGlobalStateProvider);
 
-    final bool hasText = otpStateWatch.otpValues[index].isNotEmpty;
+    final bool hasText = otpValues[index].isNotEmpty;
     final bool hasFocus = focusNode.hasFocus;
 
     Color getBorderColor() {
@@ -355,11 +301,11 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
 
           /// If current box is empty → move back
           if (controller.text.isEmpty && index > 0) {
-            otpStateWatch.otpValues[index - 1] = '';
-            otpStateWatch.controllers[index - 1].clear();
+            otpValues[index - 1] = '';
+            controllers[index - 1].clear();
 
             FocusScope.of(context)
-                .requestFocus(otpStateWatch.focusNodes[index - 1]);
+                .requestFocus(focusNodes[index - 1]);
           }
         }
       },
@@ -375,16 +321,16 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
         ],
         onChanged: (value) {
           if (value.isNotEmpty) {
-            otpStateWatch.otpValues[index] = value;
+            otpValues[index] = value;
 
-            if (index < otpStateWatch.focusNodes.length - 1) {
+            if (index < focusNodes.length - 1) {
               FocusScope.of(context)
-                  .requestFocus(otpStateWatch.focusNodes[index + 1]);
+                  .requestFocus(focusNodes[index + 1]);
             } else {
               FocusScope.of(context).unfocus();
             }
           } else {
-            otpStateWatch.otpValues[index] = '';
+            otpValues[index] = '';
           }
         },
         style: TextStyle(
@@ -408,8 +354,69 @@ class OtpScreenState extends ConsumerState<OtpScreen> {
       ),
     );
   }
+  
+  
+  
+  
+  ///MARK:-  Methods
+  ///This method used to dispose values
+  void clearValues() {
+    for (final controller in controllers) {
+      controller.dispose();
+    }
+    for (final focusNode in focusNodes) {
+      focusNode.dispose();
+    }
+  }
 
+  ///This method is used to format from the timer value
+  ///
+  /// [seconds] - This param used to pass the seconds value
+  String formatTime(int seconds) {
+    final int minutes = seconds ~/ 60;
+    final int remainingSeconds = seconds % 60;
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
 
+  ///This method used to clear OTP Fields
+  void clearOtpFields() {
+    for (var controller in controllers) {
+      controller.clear();
+    }
+    otpValues.fillRange(0, otpValues.length, "");
+  }
+
+  ///This Method used to Auto-fill OTP fields
+  void updateFieldsWithAutoFill(String otp) {
+    for (int i = 0; i < otp.length; i++) {
+      if (i < 6) {
+        controllers[i].text = "*";
+        otpValues[i] = otp[i];
+      }
+    }
+  }
+
+  void updateUserData(String user){
+    user = user;
+  }
+
+  ///This method is used to for empty validation
+  void checkEmptyValidation(BuildContext context) {
+    if (!context.mounted) return;
+    CodeReusability.hideKeyboard(context);
+
+    // Check if any OTP field is empty
+    bool anyEmpty = otpValues.any((value) => value.trim().isEmpty);
+
+    if (anyEmpty) {
+      CodeReusability().showAlert(context, 'Please enter the OTP');
+    } else {
+      // OTP is fully entered, proceed with verification
+      Navigator.of(context).pop(true);
+      String otp = otpValues.join();
+      //callOTPVerifyAPI(context, otp);
+    }
+  }
 
 
 }
