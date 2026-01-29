@@ -62,9 +62,9 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               Positioned.fill(
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                                   child: Container(
-                                    color: Colors.black.withAlpha(30),
+                                    color: Colors.black.withAlpha(80),
                                   ),
                                 ),
                               ),
@@ -200,7 +200,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                                   },
                                   child: objCommonWidgets.customText(
                                     context,
-                                    'Register Now!',
+                                    'Register Now',
                                     12,
                                     Colors.deepOrange,
                                     objConstantFonts.montserratSemiBold,

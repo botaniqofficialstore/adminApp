@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_alert/flutter_platform_alert.dart';
@@ -1082,5 +1083,776 @@ class CodeReusability {
     return true;
   }
 
+///Custom TextField Widget
+  Widget customTextField(BuildContext context,
+      String hint,
+      String label,
+      IconData icon,
+      TextEditingController? controller, {
+        int maxLines = 1,
+        TextInputType keyboardType = TextInputType.text,
+        void Function(String)? onChanged,
+        List<TextInputFormatter>? inputFormatters,
+        String? prefixText,
+        Widget? suffixWidget,
+      }) {
+    // 👉 Apply only when number keyboard is used
+    final List<TextInputFormatter>? finalInputFormatters =
+    keyboardType == TextInputType.number
+        ? <TextInputFormatter>[
+      FilteringTextInputFormatter.digitsOnly, // 1. Only numbers
+      LengthLimitingTextInputFormatter(10),    // 2. Max length 10
+      ...?inputFormatters,                     // keep existing ones
+    ]
+        : inputFormatters;
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          hint,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        AnimatedBuilder(
+          animation: controller ?? TextEditingController(),
+          builder: (context, _) {
+            final text = controller?.text ?? '';
+
+            return TextField(
+              controller: controller,
+              maxLines: maxLines,
+              keyboardType: keyboardType,
+              inputFormatters: finalInputFormatters,
+              cursorColor: Colors.black,
+              onChanged: (value) {
+                onChanged?.call(value);
+
+                if (keyboardType == TextInputType.number && value.length == 10) {
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              style: TextStyle(
+                fontSize: _getFontSize(text),
+                fontFamily: objConstantFonts.montserratMedium,
+                color: Colors.black,
+              ),
+              decoration: InputDecoration(
+                hintText: label,
+                hintStyle: TextStyle(
+                  fontSize: 12.dp,
+                  fontFamily: objConstantFonts.montserratRegular,
+                  color: Colors.black.withAlpha(150),
+                ),
+                prefixIcon: prefixText != null
+                    ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, color: Colors.black, size: 20.dp,),
+                      SizedBox(width: 5.dp),
+                      Text(
+                        prefixText,
+                        style: TextStyle(
+                          fontSize: 15.dp,
+                          fontFamily: objConstantFonts.montserratMedium,
+                          color: Colors.black,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+                    : Icon(icon, color: Colors.black, size: 20.dp,),
+                suffixIconConstraints: const BoxConstraints(
+                  minWidth: 0,
+                  minHeight: 0,
+                ),
+                suffixIcon: suffixWidget != null
+                    ? Padding(
+                  padding: EdgeInsets.only(right: 10.dp),
+                  child: suffixWidget,
+                )
+                    : null,
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.dp),
+                  borderSide: const BorderSide(color: Colors.black, width: 0.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.dp),
+                  borderSide: const BorderSide(color: Colors.deepOrange, width: 1),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: _getPadding(text)),
+              ),
+            );
+          },
+        ),
+
+      ],
+    );
+  }
+
+
+  double _getFontSize(String text) {
+    if (text.length <= 10) return 15.dp;
+    if (text.length <= 20) return 13.dp;
+    return 12.dp;
+  }
+
+  double _getPadding(String text){
+    if (text.length <= 10) return 16.dp;
+    if (text.length <= 20) return 17.dp;
+    return 18.dp;
+  }
+
+
+  Widget verified(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.green,
+        shape: BoxShape.circle,
+      ),
+      padding: EdgeInsets.all(3.dp), // 👈 reduce padding
+      child: Icon(
+        Icons.check_rounded,
+        color: Colors.white,
+        size: 10.dp, // 👈 reduce icon size
+      ),
+    );
+  }
+
+
+  Widget customTextView(
+      BuildContext context,
+      String hint,
+      String label,
+      IconData icon,
+      TextEditingController controller, {
+        int maxLength = 400,
+        double initialHeight = 120,
+        Widget? suffixWidget,
+        void Function(String)? onChanged,
+      }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          hint,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        Stack(
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                minHeight: initialHeight.dp,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15.dp),
+                border: Border.all(color: Colors.black, width: 0.5),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // 🔥 icon stays top
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 12.dp,
+                      top: 14.dp,
+                    ),
+                    child: Icon(
+                      icon,
+                      color: Colors.black,
+                      size: 20.dp,
+                    ),
+                  ),
+
+                  Expanded(
+                    child: AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, _) {
+                        return TextField(
+                          controller: controller,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(maxLength),
+                          ],
+                          cursorColor: Colors.black,
+                          onChanged: onChanged,
+                          style: TextStyle(
+                            fontSize: 14.dp,
+                            fontFamily: objConstantFonts.montserratMedium,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: label,
+                            hintStyle: TextStyle(
+                              fontSize: 12.dp,
+                              fontFamily: objConstantFonts.montserratRegular,
+                              color: Colors.black.withAlpha(150),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.fromLTRB(
+                              10.dp,
+                              12.dp,
+                              15.dp,
+                              30.dp, // space for counter
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  if (suffixWidget != null)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        right: 10.dp,
+                        top: 10.dp,
+                      ),
+                      child: suffixWidget,
+                    ),
+                ],
+              ),
+            ),
+
+            /// 🔢 Counter
+            Positioned(
+              right: 8.dp,
+              bottom: 5.dp,
+              child: AnimatedBuilder(
+                animation: controller,
+                builder: (context, _) {
+                  final length = controller.text.length;
+                  return Text(
+                    '$length / $maxLength',
+                    style: TextStyle(
+                      fontSize: 11.dp,
+                      fontFamily: objConstantFonts.montserratMedium,
+                      color: length >= maxLength ? Colors.red : Colors.black54,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+
+
+
+
+  ///Date Picker TextField
+  Widget datePickerTextField(BuildContext context,
+      String hint,
+      String label,
+      IconData icon,
+      TextEditingController controller, {
+        void Function(String)? onChanged,
+        int minimumAge = 18,
+      }){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          hint,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        TextField(
+          controller: controller,
+          maxLines: 1,
+          readOnly: true, // 👈 Disable keyboard
+          keyboardType: TextInputType.none,
+          cursorColor: Colors.black,
+          onTap: () => pickDateOfBirth(
+            context: context,
+            controller: controller,
+            minimumAge: minimumAge
+          ),
+          style: TextStyle(
+            fontSize: 15.dp,
+            fontFamily: objConstantFonts.montserratMedium,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+            hintText: label,
+            hintStyle: TextStyle(
+              fontSize: 12.dp,
+              fontFamily: objConstantFonts.montserratRegular,
+              color: Colors.black.withAlpha(150),
+            ),
+            prefixIcon: Icon(Icons.calendar_today_rounded, color: Colors.black, size: 20.dp),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.dp),
+              borderSide: const BorderSide(color: Colors.black, width: 0.5),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.dp),
+              borderSide: const BorderSide(color: Colors.black, width: 0.5),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 18.dp),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+///Date Picker for DOB Widget...
+  Future<void> pickDateOfBirth({
+    required BuildContext context,
+    required TextEditingController controller,
+    int minimumAge = 18,
+  }) async {
+    final DateTime today = DateTime.now();
+
+    final DateTime initialDate = DateTime(
+      today.year - minimumAge,
+      today.month,
+      today.day,
+    );
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: initialDate,
+      helpText: "Select Date of Birth",
+      cancelText: "Cancel",
+      confirmText: "Confirm",
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.deepOrange,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+
+            // 👇 Font styling (SUPPORTED)
+            textTheme: TextTheme(
+              headlineSmall: TextStyle(
+                fontFamily: objConstantFonts.montserratSemiBold,
+                fontSize: 18,
+              ),
+              titleMedium: TextStyle(
+                fontFamily: objConstantFonts.montserratMedium,
+                fontSize: 14,
+              ),
+              bodyMedium: TextStyle(
+                fontFamily: objConstantFonts.montserratRegular,
+                fontSize: 14,
+              ),
+            ),
+
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.deepOrange,
+                textStyle: TextStyle(
+                  fontFamily: objConstantFonts.montserratMedium,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      controller.text =
+      "${pickedDate.day.toString().padLeft(2, '0')}-"
+          "${pickedDate.month.toString().padLeft(2, '0')}-"
+          "${pickedDate.year}";
+    }
+  }
+
+
+
+  Widget customSingleDropdownField({
+    required BuildContext context,
+    required String placeholder,
+    required List<String> items,
+    required String? selectedValue,
+    required Function(String?) onChanged,
+    IconData? prefixIcon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ⭐ Label
+        objCommonWidgets.customText(
+          context,
+          placeholder,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        // ⭐ Dropdown container
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.dp),
+            border:  BoxBorder.all(color: Colors.black, width: 0.5),
+          ),
+          child: Row(
+            children: [
+              // Optional prefix icon
+              if (prefixIcon != null)
+                Padding(
+                  padding: EdgeInsets.only(right: 8.dp),
+                  child: Icon(prefixIcon, color: Colors.black, size: 20.dp,),
+                ),
+
+              SizedBox(width: 5.dp,),
+
+              // Dropdown
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedValue,
+                    icon: const SizedBox.shrink(),
+                    dropdownColor: Colors.white,
+
+                    hint: objCommonWidgets.customText(
+                      context,
+                      placeholder,
+                      13,
+                      Colors.grey,
+                      objConstantFonts.montserratMedium,
+                    ),
+
+                    items: items.map((value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            fontSize: 15.dp,
+                            color: (selectedValue == value) ? Colors.black : Colors.black.withAlpha(200),
+                            fontFamily: (selectedValue == value) ? objConstantFonts.montserratMedium : objConstantFonts.montserratRegular,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+
+                    onChanged: onChanged,
+                  ),
+                ),
+              ),
+
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.black,
+              ),
+
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  Widget commonDropdownTextField<T>({
+    required BuildContext context,
+    required String hint,
+    required String label,
+    required IconData icon,
+    required String value,
+    required List<T> items,
+    required String Function(T) displayText,
+    required void Function(T) onSelected,
+    required VoidCallback onTapValidation,
+    bool isLoading = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          hint,
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+        SizedBox(height: 5.dp),
+
+        GestureDetector(
+          onTap: () {
+            if (isLoading) return;
+            if (items.isEmpty) {
+              onTapValidation();
+              return;
+            }
+
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.white,
+              isScrollControlled: true,
+              useSafeArea: true,
+              shape:  RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.dp)),
+              ),
+              builder: (_) {
+                return _SearchableBottomSheet<T>(
+                  label: label,
+                  items: items,
+                  displayText: displayText,
+                  onSelected: onSelected,
+                );
+              },
+            );
+          },
+
+          child: AbsorbPointer(
+            child: InputDecorator(
+              decoration: InputDecoration(
+                hintText: label,
+                prefixIcon: Icon(icon, color: Colors.black, size: 20.dp),
+                suffixIcon: isLoading
+                    ? Padding(
+                  padding: EdgeInsets.all(12.dp),
+                  child: const CircularProgressIndicator(strokeWidth: 2),
+                )
+                    : const Icon(Icons.keyboard_arrow_down),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.dp),
+                  borderSide: const BorderSide(color: Colors.black, width: 0.5),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 12.dp),
+              ),
+              child: Text(
+                value.isEmpty ? label : value,
+                style: TextStyle(
+                  fontSize: value.isEmpty ? 13.dp : 15.dp,
+                  fontFamily: objConstantFonts.montserratMedium,
+                  color: value.isEmpty ? Colors.grey : Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+}
+
+
+class _SearchableBottomSheet<T> extends StatefulWidget {
+  final String label;
+  final List<T> items;
+  final String Function(T) displayText;
+  final void Function(T) onSelected;
+
+  const _SearchableBottomSheet({
+    required this.label,
+    required this.items,
+    required this.displayText,
+    required this.onSelected,
+  });
+
+  @override
+  State<_SearchableBottomSheet<T>> createState() =>
+      _SearchableBottomSheetState<T>();
+}
+
+class _SearchableBottomSheetState<T>
+    extends State<_SearchableBottomSheet<T>> {
+
+  late List<T> filteredItems;
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredItems = widget.items;
+  }
+
+  void _filter(String query) {
+    setState(() {
+      if (query.trim().isEmpty) {
+        filteredItems = widget.items; // ✅ show all
+      } else {
+        filteredItems = widget.items
+            .where((item) => widget
+            .displayText(item)
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+
+          SizedBox(height: 10.dp,),
+
+          /// 🔹 Header
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.dp, vertical: 12.dp),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      fontSize: 16.dp,
+                      fontFamily: objConstantFonts.montserratSemiBold,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(Icons.close, size: 22.dp),
+                ),
+              ],
+            ),
+          ),
+
+          /// 🔍 Search Field
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.dp),
+            child: TextField(
+              controller: searchController,
+              onChanged: _filter,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Search',
+                prefixIcon: Icon(Icons.search, size: 25.dp,),
+                suffixIcon: searchController.text.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    searchController.clear();
+                    _filter('');
+                  },
+                )
+                    : null,
+                filled: true,
+                fillColor: Colors.grey.shade100,
+
+                /// 🔹 Black Border
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.black, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.black, width: 1),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.black, width: 1),
+                ),
+              ),
+            ),
+          ),
+
+
+          SizedBox(height: 5.dp,),
+
+
+
+          /// 📋 List
+          Expanded(
+            child: filteredItems.isEmpty
+                ? Center(
+              child: Text(
+                'No results found',
+                style: TextStyle(
+                  fontFamily: objConstantFonts.montserratMedium,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+                : ListView.separated(
+              padding: EdgeInsets.only(
+                left: 16.dp,
+                right: 16.dp,
+                bottom:
+                5.dp,
+              ),
+              itemCount: filteredItems.length,
+              separatorBuilder: (_, __) =>
+                  Divider(height: 1.dp),
+              itemBuilder: (_, index) {
+                final item = filteredItems[index];
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  minVerticalPadding: 0,
+                  title: Text(
+                    widget.displayText(item),
+                    style: TextStyle(
+                      fontFamily: objConstantFonts.montserratMedium,
+                      fontSize: 13.dp
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onSelected(item);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

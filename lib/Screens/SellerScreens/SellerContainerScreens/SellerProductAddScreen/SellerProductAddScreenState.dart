@@ -150,8 +150,7 @@ class SellerProductAddScreenStateNotifier extends StateNotifier<SellerProductAdd
   }
 
 
-  void updateProductCategory(String category) =>
-      state = state.copyWith(productCategory: category);
+  void updateProductCategory(String category) => state = state.copyWith(productCategory: category);
 
   void onChanged() {
     state = state.copyWith();

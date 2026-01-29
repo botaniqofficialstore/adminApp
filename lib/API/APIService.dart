@@ -1,12 +1,16 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../Constants/Constants.dart';
 import '../Utility/Logger.dart';
 import '../Utility/PreferencesManager.dart';
 import 'CommonAPI.dart';
 
 typedef ApiCompletionHandler = void Function(
-    int statuscode, Map<String, dynamic> response);
+    int statusCode,
+    dynamic response,
+    );
+
 
 class APIService {
   static const Duration timeOutDuration =  Duration(seconds: 30);
@@ -155,12 +159,13 @@ class APIService {
   ///This method used to handle GET API.
   Future<void> callCommonGETApi(
       String url, ApiCompletionHandler completionHandler,
-      {bool isAccessTokenNeeded = true}) async {
+      {bool isAccessTokenNeeded = true, bool isGoogleAPI = false}) async {
     final manager = await PreferencesManager.getInstance();
     final accessToken = manager.getStringValue(PreferenceKeys.accessToken);
     final headers = {
       'Content-Type': 'application/json',
-      if(isAccessTokenNeeded) 'Authorization': 'Bearer $accessToken'
+      if(isAccessTokenNeeded) 'Authorization': 'Bearer $accessToken',
+      if(isGoogleAPI) 'X-CSCAPI-KEY': ConstantURLs.googleApiKey
     };
     var request = http.Request('GET', Uri.parse(url))..headers.addAll(headers);
 

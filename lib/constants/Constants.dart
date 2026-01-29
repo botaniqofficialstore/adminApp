@@ -2,6 +2,7 @@ import 'ConstantVariables.dart';
 
 class ConstantURLs {
   static String baseUrl = 'https://app-1q5g.onrender.com'; //'http://192.168.43.216:5000'; // //
+  static String googleApiKey = '7e1891d8ee863d4f71ace6a2028503c0661b02ae26f308b65a55b0e6c98f942d';
 
   ///Authentication API URL's
   static String loginUrl = '$baseUrl/api/admin/login';
@@ -17,6 +18,12 @@ class ConstantURLs {
 
   ///Reels API URL
   static String reelListUrl = '$baseUrl/api/admin/reels/list';
+
+
+  ///Google API URL
+  static String countryListUrl = 'https://api.countrystatecity.in/v1/countries';
+  static String stateListUrl = 'https://api.countrystatecity.in/v1/countries/';
+  static String cityListUrl = 'https://api.countrystatecity.in/v1/countries/';
 
 }
 

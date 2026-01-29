@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,8 +8,8 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
-import '../../../../Utility/NetworkImageLoader.dart';
 import '../LoginScreen/LoginScreen.dart';
+import 'AccountRegisterModel.dart';
 import 'AccountRegisterScreenState.dart';
 
 
@@ -21,9 +23,20 @@ class AccountRegisterScreen extends ConsumerStatefulWidget {
 class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
   final PageController _pageController = PageController();
 
+  final List<String> businessType = [
+    'Individual / Proprietorship',
+    'Partnership',
+    'LLP / Private Limited',
+  ];
+
 
   @override
   void initState() {
+    Future.microtask((){
+      var userScreenNotifier = ref.read(accountRegisterScreenStateProvider.notifier);
+      userScreenNotifier.callCountryListGepAPI(context);
+    });
+    
     super.initState();
   }
 
@@ -54,7 +67,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           onTap: () => CodeReusability.hideKeyboard(context),
           child: Scaffold(
             backgroundColor: Color(0xFFF9FAFB),
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             body: SafeArea(
               child: Column(
                 children: [
@@ -73,12 +86,12 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                       children: [
                         _stepWrapper(0, "Account Setup", "Create your seller account using a verified mobile number and email address. This will be used for login, order updates, important notifications, and secure communication related to your seller account.",
                             _buildStepOne(notifier)),
-
-
-                        _stepWrapper(1, "Pricing Strategy", "Set transparent and competitive pricing for your product. Enter the actual price and the selling price to clearly highlight savings and build customer trust.",
+                        _stepWrapper(1, "Personal Details", "Provide your basic personal information to verify your identity as a seller. These details help us comply with Indian KYC regulations and ensure secure payouts and legal communication when required.",
                             _buildStepTwo(state, notifier)),
-                        _stepWrapper(2, "Visual Showcase", "Showcase your product with high-quality images. Upload a main product image along with additional photos from different angles to give customers a complete and confident view of your organic product.",
+                        _stepWrapper(2, "Business Profile", "Tell us about your business or brand. Add your store name, business type, and the kind of organic or homemade products you sell so customers can easily recognize and trust your store.",
                             _buildStepThree()),
+
+
                         _stepWrapper(3, "Health Benefits", "Highlight the nutritional value of your product. Add details about vitamins and their benefits to help customers understand how your product supports a healthy lifestyle.",
                             _buildStepFour()),
                         _stepWrapper(4, "Inventory", "Manage availability efficiently. Enter the current stock quantity to ensure accurate inventory tracking and avoid overselling.",
@@ -90,6 +103,8 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                   ),
 
 
+                  ///Hide this view when keyboard appear
+                  if (MediaQuery.of(context).viewInsets.bottom == 0)
                   _buildBottomBar(state, notifier),
 
                   SizedBox(height: 20.dp,)
@@ -235,7 +250,8 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
         child: Column(
           children: [
 
-            _customTextField(
+            CodeReusability().customTextField(
+              context,
               "Mobile Number",
               "enter valid mobile number",
               Icons.phone,
@@ -246,7 +262,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                 notifier.onChanged();
                 notifier.updateVerification(OtpVerifyType.mobile, false);
               },
-              suffixWidget: state.verifiedMobile == true ? verified(context) :  notifier.showVerifyButtonForMobileNumber() ? CupertinoButton(
+              suffixWidget: state.verifiedMobile == true ? CodeReusability().verified(context) :  notifier.showVerifyButtonForMobileNumber() ? CupertinoButton(
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 onPressed: () {
@@ -272,13 +288,15 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
 
             SizedBox(height: 20.dp),
-            _customTextField("Email Address", "enter valid email address",
+            CodeReusability().customTextField(
+              context,
+              "Email Address", "enter valid email address",
                 Icons.mail_outline_rounded,
                 state.emailController,onChanged: (_){
                 notifier.onChanged();
                 notifier.updateVerification(OtpVerifyType.email, false);
               },
-              suffixWidget: state.verifiedEmail == true ? verified(context) :  notifier.showVerifyButtonForEmail() ? CupertinoButton(
+              suffixWidget: state.verifiedEmail == true ? CodeReusability().verified(context) :  notifier.showVerifyButtonForEmail() ? CupertinoButton(
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 onPressed: () {
@@ -312,15 +330,207 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
     return Column(
       children: [
+        CodeReusability().customTextField(
+          context,
+          "Full Name",
+          "enter your name as per PAN",
+          Icons.person_2_outlined,
+          state.fullNameController,
+          onChanged: (_) => notifier.onChanged()
+        ),
 
+        SizedBox(height: 20.dp),
+
+        CodeReusability().datePickerTextField(
+          context,
+          "Date of birth",
+          "select your date of birth",
+          Icons.calendar_today,
+          state.dobController,
+        ),
+
+        SizedBox(height: 20.dp),
+
+        /// COUNTRY
+        CodeReusability().commonDropdownTextField<CountryModel>(
+          context: context,
+          hint: "Country",
+          label: "select country",
+          icon: Icons.public,
+          value: state.country,
+          items: state.countryList,
+          isLoading: state.isLoading,
+          displayText: (c) => c.name,
+          onTapValidation: () {},
+          onSelected: (country) {
+            notifier.callStatesListGepAPI(context, country.iso2);
+            notifier.updateCountry(country.name, country.iso2);
+          },
+        ),
+
+        SizedBox(height: 20.dp),
+
+        /// STATE
+        CodeReusability().commonDropdownTextField<StateModel>(
+          context: context,
+          hint: "State",
+          label: "select state",
+          icon: Icons.map,
+          value: state.state,
+          items: state.stateList,
+          onTapValidation: () {
+            if (state.country.isEmpty) {
+              CodeReusability().showAlert(
+                context,
+                'Please select country first',
+              );
+            }
+          },
+          displayText: (s) => s.name,
+          onSelected: (stateModel) {
+            notifier.callCityListGepAPI(
+              context,
+              state.selectedCountryCode,
+              stateModel.iso2,
+            );
+            notifier.updateState(stateModel.name, stateModel.iso2);
+          },
+        ),
+
+
+        SizedBox(height: 20.dp),
+
+        /// CITY
+        CodeReusability().commonDropdownTextField<CityModel>(
+          context: context,
+          hint: "District / City",
+          label: "select district",
+          icon: Icons.location_city,
+          value: state.city,
+          items: state.cityList,
+          onTapValidation: () {
+            if (state.country.isEmpty) {
+              CodeReusability().showAlert(context,
+                'Please select country first',
+              );
+            } else  if (state.state.isEmpty){
+              CodeReusability().showAlert(context,
+                'Please select state',
+              );
+            }
+          },
+          displayText: (c) => c.name,
+          onSelected: (city) {
+            notifier.updateCity(city.name, city.id);
+          },
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customTextField(
+            context,
+            "Pin code",
+            "enter your pin code",
+            Icons.markunread_mailbox,
+            state.pinCodeController,
+            keyboardType: TextInputType.number,
+            onChanged: (_) => notifier.onChanged()
+        ),
+
+
+
+        SizedBox(height: 20.dp),
+        
+        Row(
+          children: [
+
+            CircleAvatar(
+              radius: 30.dp,
+              backgroundColor: Colors.black,
+              child: CircleAvatar(
+                radius: 29.dp,
+                backgroundImage: state.profileImage.isEmpty
+                    ? AssetImage(objConstantAssest.defaultProfileImage)
+                    : FileImage(File(state.profileImage)),
+              ),
+            ),
+
+            SizedBox(width: 15.dp),
+
+            CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 13.dp),
+              decoration: BoxDecoration(
+                color: Colors.deepOrange,
+                borderRadius: BorderRadius.circular(20.dp)
+              ),
+              child: Center(
+                child: objCommonWidgets.customText(context, 'Upload Photo', 10, Colors.white, objConstantFonts.montserratSemiBold),
+              ),
+            ), onPressed: (){
+                  notifier.uploadImage(context);
+            })
+          ],
+        )
       ],
     );
   }
 
+
   Widget _buildStepThree() {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
 
     return Column(
       children: [
+        CodeReusability().customTextField(
+            context,
+            "Store / Brand Name",
+            "enter your store or brand name",
+            Icons.person,
+            state.brandNameController,
+            onChanged: (_) => notifier.onChanged()
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customSingleDropdownField(
+          context: context,
+          placeholder: "Select Business Type",
+          items: businessType,
+          selectedValue: state.businessType,
+          prefixIcon: Icons.business_center,
+          onChanged: (value) {
+            setState(() {
+              notifier.updateBusinessType(value!);
+            });
+          },
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().datePickerTextField(
+          context,
+          "Date of business started",
+          "select date",
+          Icons.calendar_today,
+          state.businessStartedDateController,
+          minimumAge: 0
+        ),
+
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customTextView(
+          context,
+          "Tell us about your business",
+          "Enter your description",
+          Icons.description_outlined,
+          state.businessDescriptionController,
+            onChanged: (_) => notifier.onChanged()
+        )
 
       ],
     );
@@ -333,24 +543,6 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
       children: [
 
       ],
-    );
-  }
-
-  Widget _buildBenefitAnimatedProgressBar() {
-    final state = ref.watch(accountRegisterScreenStateProvider);
-
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.dp)
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-        ],
-      ),
     );
   }
 
@@ -480,154 +672,8 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     );
   }
 
-  // --- REUSABLE WIDGETS ---
-  Widget _customTextField(
-      String hint,
-      String label,
-      IconData icon,
-      TextEditingController? controller, {
-        int maxLines = 1,
-        TextInputType keyboardType = TextInputType.text,
-        void Function(String)? onChanged,
-        List<TextInputFormatter>? inputFormatters,
-        String? prefixText,
-        Widget? suffixWidget,
-      }) {
-    // 👉 Apply only when number keyboard is used
-    final List<TextInputFormatter>? finalInputFormatters =
-    keyboardType == TextInputType.number
-        ? <TextInputFormatter>[
-      FilteringTextInputFormatter.digitsOnly, // 1. Only numbers
-      LengthLimitingTextInputFormatter(10),    // 2. Max length 10
-      ...?inputFormatters,                     // keep existing ones
-    ]
-        : inputFormatters;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        objCommonWidgets.customText(
-          context,
-          hint,
-          14,
-          Colors.black,
-          objConstantFonts.montserratSemiBold,
-        ),
-
-        SizedBox(height: 5.dp),
-
-        AnimatedBuilder(
-          animation: controller ?? TextEditingController(),
-          builder: (context, _) {
-            final text = controller?.text ?? '';
-
-            return TextField(
-              controller: controller,
-              maxLines: maxLines,
-              keyboardType: keyboardType,
-              inputFormatters: finalInputFormatters,
-              cursorColor: Colors.black,
-              onChanged: (value) {
-                onChanged?.call(value);
-
-                if (keyboardType == TextInputType.number && value.length == 10) {
-                  FocusScope.of(context).unfocus();
-                }
-              },
-              style: TextStyle(
-                fontSize: _getFontSize(text),
-                fontFamily: objConstantFonts.montserratMedium,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                hintText: label,
-                hintStyle: TextStyle(
-                  fontSize: 12.dp,
-                  fontFamily: objConstantFonts.montserratRegular,
-                  color: Colors.black.withAlpha(150),
-                ),
-                prefixIcon: prefixText != null
-                    ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.dp),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, color: Colors.black),
-                      SizedBox(width: 5.dp),
-                      Text(
-                        prefixText,
-                        style: TextStyle(
-                          fontSize: 17.dp,
-                          fontFamily: objConstantFonts.montserratMedium,
-                          color: Colors.black,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-                    : Icon(icon, color: Colors.black),
-                suffixIconConstraints: const BoxConstraints(
-                  minWidth: 0,
-                  minHeight: 0,
-                ),
-                suffixIcon: suffixWidget != null
-                    ? Padding(
-                  padding: EdgeInsets.only(right: 6.dp),
-                  child: suffixWidget,
-                )
-                    : null,
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.dp),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.dp),
-                  borderSide: const BorderSide(color: Colors.deepOrange, width: 1),
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: _getPadding(text)),
-              ),
-            );
-          },
-        ),
-
-      ],
-    );
-  }
 
 
-  double _getFontSize(String text) {
-    if (text.length <= 10) return 15.dp;
-    if (text.length <= 20) return 13.dp;
-    return 12.dp;
-  }
-
-  double _getPadding(String text){
-    if (text.length <= 10) return 16.dp;
-    if (text.length <= 20) return 17.dp;
-    return 18.dp;
-  }
-
-
-  Widget verified(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.green,
-        shape: BoxShape.circle,
-      ),
-      padding: EdgeInsets.all(3.dp), // 👈 reduce padding
-      child: Icon(
-        Icons.check_rounded,
-        color: Colors.white,
-        size: 10.dp, // 👈 reduce icon size
-      ),
-    );
-  }
 
 
 
