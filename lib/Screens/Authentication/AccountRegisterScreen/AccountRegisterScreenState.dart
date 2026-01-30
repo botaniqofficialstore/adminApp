@@ -1,8 +1,10 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
+import 'package:botaniq_admin/CommonViews/MapScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/AccountRegisterScreen/AccountRegisterRepository.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Utility/MediaHandler.dart';
 import '../../../Utility/CommonOtpVerificationScreen.dart';
@@ -47,6 +49,10 @@ class AccountRegisterScreenState {
   final TextEditingController businessDescriptionController;
   final TextEditingController businessStartedDateController;
 
+  //Step 4
+  final LatLng? selectedLocation;
+  final String selectPickupAddress;
+
   AccountRegisterScreenState({
     this.isLoading = false,
     this.currentStep = 0,
@@ -79,6 +85,10 @@ class AccountRegisterScreenState {
     required this.businessDescriptionController,
     required this.businessStartedDateController,
 
+    //Step 4
+    required this.selectedLocation,
+    this.selectPickupAddress = ''
+
   });
 
 
@@ -107,6 +117,8 @@ class AccountRegisterScreenState {
     String? businessType,
     TextEditingController? businessDescriptionController,
     TextEditingController? businessStartedDateController,
+    LatLng? selectedLocation,
+    String? selectPickupAddress
 
   }) {
     return AccountRegisterScreenState(
@@ -134,6 +146,8 @@ class AccountRegisterScreenState {
       businessType: businessType ?? this.businessType,
       businessDescriptionController: businessDescriptionController ?? this.businessDescriptionController,
       businessStartedDateController: businessStartedDateController ?? this.businessStartedDateController,
+      selectedLocation: selectedLocation ?? this.selectedLocation,
+      selectPickupAddress: selectPickupAddress ?? this.selectPickupAddress,
     );
   }
 }
@@ -149,6 +163,7 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     brandNameController: TextEditingController(),
     businessDescriptionController: TextEditingController(),
     businessStartedDateController: TextEditingController(),
+    selectedLocation: null,
   ));
 
 
@@ -199,6 +214,16 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     state = state.copyWith(verifiedEmail: isVerified);
   }
 
+  /// Call this when location is selected from map/autocomplete
+  void setSelectedLocation(LatLng location, String address) {
+    state = state.copyWith(selectedLocation: location, selectPickupAddress: address);
+  }
+
+  /// Optional: clear location
+  void clearSelectedLocation() {
+    state = state.copyWith(selectedLocation: null, selectPickupAddress: '');
+  }
+
 
   ///Mark:- Empty Validation for Pages
   bool canMoveToNext(int step) {
@@ -236,7 +261,9 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     }
 
     if (step == 3) {
-      return false;
+      //return state.selectedLocation != null;
+
+      return true;
     }
 
     if (step == 4) {
@@ -282,6 +309,40 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     }
 
   }
+
+
+  void callMapPopup(BuildContext context) async {
+    final Map<String, dynamic>? result =
+    await showGeneralDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Map',
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (_, __, ___) => MapScreen(),
+      transitionBuilder: (_, anim, __, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: anim,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        );
+      },
+    );
+
+    if (result != null) {
+      final LatLng? selectedLocation = result['location'];
+      final String selectedAddress = result['address'] ?? '';
+
+      setSelectedLocation(selectedLocation!, selectedAddress);
+    }
+
+    CodeReusability.hideKeyboard(context);
+  }
+
 
   /// 🔹 Updates correct boolean in state
   void updateVerification(OtpVerifyType type, bool isVerified) {

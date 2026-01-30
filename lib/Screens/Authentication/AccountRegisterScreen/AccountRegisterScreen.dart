@@ -90,10 +90,10 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                             _buildStepTwo(state, notifier)),
                         _stepWrapper(2, "Business Profile", "Tell us about your business or brand. Add your store name, business type, and the kind of organic or homemade products you sell so customers can easily recognize and trust your store.",
                             _buildStepThree()),
-
-
-                        _stepWrapper(3, "Health Benefits", "Highlight the nutritional value of your product. Add details about vitamins and their benefits to help customers understand how your product supports a healthy lifestyle.",
+                        _stepWrapper(3, "Pickup location", "Please provide the correct pickup location where your products will be handed over for delivery. This address helps us ensure smooth order pickup, faster deliveries, and accurate service availability.",
                             _buildStepFour()),
+
+
                         _stepWrapper(4, "Inventory", "Manage availability efficiently. Enter the current stock quantity to ensure accurate inventory tracking and avoid overselling.",
                             _buildStepFive(notifier)),
                         _stepWrapper(5, "Delivery Timeline", "Specify how many days it will take for the order to reach the customer. Clear delivery timelines improve trust and reduce order-related queries.",
@@ -107,7 +107,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                   if (MediaQuery.of(context).viewInsets.bottom == 0)
                   _buildBottomBar(state, notifier),
 
-                  SizedBox(height: 20.dp,)
+                  SizedBox(height: 5.dp,)
                 ],
               ),
             ),
@@ -329,6 +329,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CodeReusability().customTextField(
           context,
@@ -440,6 +441,17 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
 
         SizedBox(height: 20.dp),
+
+
+        objCommonWidgets.customText(
+          context,
+          'Add your profile picture',
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
         
         Row(
           children: [
@@ -527,6 +539,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           context,
           "Tell us about your business",
           "Enter your description",
+          description: 'This information will be visible to customers and helps them make confident purchase decisions. Please ensure all details are accurate and genuine.',
           Icons.description_outlined,
           state.businessDescriptionController,
             onChanged: (_) => notifier.onChanged()
@@ -538,9 +551,86 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
   Widget _buildStepFour() {
     final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+    String btnText = state.selectedLocation == null ? 'Pick Location' : 'Change Location';
 
     return Column(
       children: [
+
+        if (state.selectedLocation != null)
+          Padding(
+            padding: EdgeInsets.only(bottom: 15.dp),
+            child: Container(
+              padding: EdgeInsets.all(14.dp),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14.dp),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(5.dp),
+                    decoration: BoxDecoration(
+                      color: Colors.deepOrange.withAlpha(20),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.deepOrange,
+                      size: 20.dp,
+                    ),
+                  ),
+                  SizedBox(width: 10.dp),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        objCommonWidgets.customText(context, 'Selected location', 10, Colors.black, objConstantFonts.montserratRegular),
+                        SizedBox(height: 4.dp),
+                        objCommonWidgets.customText(context, state.selectPickupAddress, 12, Colors.black, objConstantFonts.montserratMedium),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+
+
+        Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 10.dp),
+                    decoration: BoxDecoration(
+                        color: Color(0xFF4D7BFA),
+                        borderRadius: BorderRadius.circular(20.dp)
+                    ),
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Icon(Icons.my_location, color: Colors.white, size: 15.dp),
+                          SizedBox(width: 5.dp,),
+                          objCommonWidgets.customText(context, btnText, 10, Colors.white, objConstantFonts.montserratSemiBold),
+                        ],
+                      ),
+                    ),
+                  ), onPressed: ()=> notifier.callMapPopup(context)),
+            ],
+          )
+
 
       ],
     );
@@ -599,7 +689,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 12.dp),
                       decoration: BoxDecoration(
-                        color: Colors.black54,
+                        color: Colors.transparent,
                         borderRadius: BorderRadius.circular(25.dp),
                       ),
                       child: Center(
@@ -607,7 +697,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                           context,
                           "Back",
                           14,
-                          Colors.white,
+                          Colors.black,
                           objConstantFonts.montserratSemiBold,
                         ),
                       ),

@@ -1130,6 +1130,8 @@ class CodeReusability {
               keyboardType: keyboardType,
               inputFormatters: finalInputFormatters,
               cursorColor: Colors.black,
+              textAlignVertical: TextAlignVertical.center,
+
               onChanged: (value) {
                 onChanged?.call(value);
 
@@ -1204,6 +1206,7 @@ class CodeReusability {
   }
 
 
+
   double _getFontSize(String text) {
     if (text.length <= 10) return 15.dp;
     if (text.length <= 20) return 13.dp;
@@ -1211,9 +1214,9 @@ class CodeReusability {
   }
 
   double _getPadding(String text){
-    if (text.length <= 10) return 16.dp;
-    if (text.length <= 20) return 17.dp;
-    return 18.dp;
+    if (text.length <= 10) return 12.dp;
+    if (text.length <= 20) return 13.dp;
+    return 14.dp;
   }
 
 
@@ -1243,6 +1246,7 @@ class CodeReusability {
         double initialHeight = 120,
         Widget? suffixWidget,
         void Function(String)? onChanged,
+        String description = ''
       }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1256,6 +1260,17 @@ class CodeReusability {
         ),
 
         SizedBox(height: 5.dp),
+
+        if (description.isNotEmpty)...{
+          objCommonWidgets.customText(
+            context,
+            description,
+            10,
+            Colors.black,
+            objConstantFonts.montserratRegular,
+          ),
+          SizedBox(height: 10.dp),
+        },
 
         Stack(
           children: [
@@ -1422,7 +1437,7 @@ class CodeReusability {
               borderRadius: BorderRadius.circular(12.dp),
               borderSide: const BorderSide(color: Colors.black, width: 0.5),
             ),
-            contentPadding: EdgeInsets.symmetric(vertical: 18.dp),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.dp),
           ),
         ),
       ],
@@ -1526,10 +1541,10 @@ class CodeReusability {
 
         // ⭐ Dropdown container
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+          padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 2.dp),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(15.dp),
+            borderRadius: BorderRadius.circular(13.dp),
             border:  BoxBorder.all(color: Colors.black, width: 0.5),
           ),
           child: Row(
@@ -1663,7 +1678,7 @@ class CodeReusability {
                   borderRadius: BorderRadius.circular(15.dp),
                   borderSide: const BorderSide(color: Colors.black, width: 0.5),
                 ),
-                contentPadding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 12.dp),
+                contentPadding: EdgeInsets.symmetric(vertical: 13.dp, horizontal: 10.dp),
               ),
               child: Text(
                 value.isEmpty ? label : value,
