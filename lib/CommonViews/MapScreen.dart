@@ -258,9 +258,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                     color: Colors.black,
                                     borderRadius: BorderRadius.circular(20.dp)
                                   ),
-                              padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
+                              padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 15.dp),
                               child: Center(
-                                child: objCommonWidgets.customText(context, 'Confirm Location', 12, Colors.white, objConstantFonts.montserratMedium),
+                                child: objCommonWidgets.customText(context, 'Confirm', 12, Colors.white, objConstantFonts.montserratMedium),
                               ),
                             ), onPressed: (){
                                   Navigator.pop(context, {

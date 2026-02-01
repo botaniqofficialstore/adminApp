@@ -8,6 +8,8 @@ class ConstantAssests{
    ///Splash Icons
    String logo = '${splashAssets}logo.png';
    String loginPic = '${splashAssets}loginPic.png';
+   String loginPicOne = '${splashAssets}sampleOne.png';
+   String loginPicTwo = '${splashAssets}sampleTwo.png';
 
    ///Footer Icons
    String homeIcon = '${footerAssets}home.png';

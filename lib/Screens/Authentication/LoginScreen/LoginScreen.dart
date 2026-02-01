@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/MainScreen/MainScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/AccountRegisterScreen/AccountRegisterScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/OtpScreen/OtpScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerMainScreen/SellerMainScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class LoginScreenState extends ConsumerState<LoginScreen> {
+
+  bool isAdmin = true;
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(loginScreenProvider);
@@ -123,12 +128,38 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                                 children: [
 
 
-                                  objCommonWidgets.customText(
-                                    context,
-                                    'Login',
-                                    25,
-                                    Colors.black,
-                                    objConstantFonts.montserratSemiBold,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      objCommonWidgets.customText(
+                                        context,
+                                        'Login',
+                                        25,
+                                        Colors.black,
+                                        objConstantFonts.montserratSemiBold,
+                                      ),
+
+                                      Row(
+                                        children: [
+                                          objCommonWidgets.customText(context, 'Login as Admin?', 12, Colors.black, objConstantFonts.montserratMedium),
+                                          SizedBox(
+                                            width: 36,
+                                            child: Transform.scale(
+                                              scale: 0.6,
+                                              child: CupertinoSwitch(
+                                                activeTrackColor: Colors.green,
+                                                value: isAdmin,
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    isAdmin = val;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
 
                                   SizedBox(height: 2.h),
@@ -148,10 +179,20 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
 
                                   SizedBox(height: 3.h),
 
+
+
                                   CupertinoButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: () {
-                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OtpScreen(loginWith: '7985648975')));
+
+                                      if (isAdmin){
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+                                      } else {
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SellerMainScreen()));
+                                      }
+
+
+                                      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OtpScreen(loginWith: '7985648975')));
                                     },
                                     child: Container(
                                       width: double.infinity,

@@ -6,10 +6,18 @@ import 'dart:ui';
 import 'package:flutter_sizer/flutter_sizer.dart';
 
 class ConfirmClosePopup extends StatelessWidget {
-  const ConfirmClosePopup({super.key});
+  final String title;
+  final String description;
+
+  const ConfirmClosePopup({
+    super.key,
+    required this.title,
+    required this.description,
+  });
+
 
   /// Static method to show the popup and return the user's choice
-  static Future<bool?> show(BuildContext context) async {
+  static Future<bool?> show(BuildContext context, {required String title, required String description}) async {
     return await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -19,9 +27,9 @@ class ConfirmClosePopup extends StatelessWidget {
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: const PopScope(
+          child: PopScope(
             canPop: false,
-            child: ConfirmClosePopup(),
+            child: ConfirmClosePopup(title: title, description: description,),
           ),
         );
       },
@@ -52,37 +60,40 @@ class ConfirmClosePopup extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Premium Illustration/Icon
+            SizedBox(height: 20.dp),
             Container(
-              height: 80.dp,
-              width: 80.dp,
+              padding: EdgeInsets.only(left: 15.dp, right: 10.dp, top: 12.dp, bottom: 12.dp),
               decoration: BoxDecoration(
-                color: Color(0xFF636362),
-                shape: BoxShape.circle,
+                color: Colors.black.withAlpha(30),
+                borderRadius: BorderRadius.circular(10.dp)
               ),
-              child: Icon(
-                Icons.exit_to_app_rounded,
-                size: 30.dp,
-                color: Colors.white,
+              child: SizedBox(
+                height: 35.dp,
+                width: 35.dp,
+                child: Image.asset(
+                  objConstantAssest.logout,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
 
-            SizedBox(height: 20.dp),
+
+            SizedBox(height: 15.dp),
 
             objCommonWidgets.customText(context, "Confirm Exit?",
-                18, Colors.black, objConstantFonts.montserratSemiBold),
+                15, Colors.black, objConstantFonts.montserratSemiBold),
+
+            SizedBox(height: 25.dp),
+
+            objCommonWidgets.customText(context, title,
+                11, Colors.black, objConstantFonts.montserratMedium, textAlign: TextAlign.center),
 
             SizedBox(height: 10.dp),
 
-            objCommonWidgets.customText(context, "You're in the middle of adding a new organic product. If you go back now, the details you've entered won’t be saved.",
-                10.5, Colors.black, objConstantFonts.montserratMedium, textAlign: TextAlign.justify),
+            objCommonWidgets.customText(context, description,
+                11, Colors.black, objConstantFonts.montserratSemiBold, textAlign: TextAlign.center),
 
-            SizedBox(height: 10.dp),
-
-            objCommonWidgets.customText(context, "Would you like to continue adding the product or exit for now?",
-                10.5, Colors.black, objConstantFonts.montserratMedium, textAlign: TextAlign.justify),
-
-            SizedBox(height: 30.dp),
+            SizedBox(height: 40.dp),
 
             // Action Buttons
             Row(
@@ -96,7 +107,7 @@ class ConfirmClosePopup extends StatelessWidget {
                       child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              color: Colors.deepOrange,
+                              color: Colors.red,
                               borderRadius: BorderRadius.circular(20.dp)
                           ),
                           padding: EdgeInsets.symmetric(vertical: 13.dp),
@@ -115,7 +126,7 @@ class ConfirmClosePopup extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(20.dp)
                       ),
                       padding: EdgeInsets.symmetric(vertical: 13.dp),

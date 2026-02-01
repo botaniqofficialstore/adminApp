@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
+import '../../../Utility/ConfirmClosePopup.dart';
 import '../LoginScreen/LoginScreen.dart';
 import 'AccountRegisterModel.dart';
 import 'AccountRegisterScreenState.dart';
@@ -40,6 +40,44 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     super.initState();
   }
 
+
+  Future<void> backAction() async {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+    final bool filledFields = notifier.canMoveToNext(state.currentStep);
+
+    if (state.currentStep > 0) {
+      //Previous page
+      _pageController.previousPage(
+        duration: 300.ms,
+        curve: Curves.easeInOut,
+      );
+      notifier.setStep(state.currentStep - 1);
+    } else if (state.currentStep == 0 && filledFields) {
+
+      final bool shouldPop = await ConfirmClosePopup.show(context, title: "You're currently registering your business. If you exit now, all the information you've entered will be lost.",
+          description: 'Would you like to continue registration or exit for now?') ?? false;
+
+      if (shouldPop && context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      }
+
+    } else {
+      //Back to Login Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(accountRegisterScreenStateProvider);
@@ -50,12 +88,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
       onPopInvokedWithResult: (didPop, dynamic) {
         if (didPop) return;
         if (!context.mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
+        backAction();
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
@@ -90,14 +123,18 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                             _buildStepTwo(state, notifier)),
                         _stepWrapper(2, "Business Profile", "Tell us about your business or brand. Add your store name, business type, and the kind of organic or homemade products you sell so customers can easily recognize and trust your store.",
                             _buildStepThree()),
-                        _stepWrapper(3, "Pickup location", "Please provide the correct pickup location where your products will be handed over for delivery. This address helps us ensure smooth order pickup, faster deliveries, and accurate service availability.",
+                        _stepWrapper(3, "Legal Information", "Upload your required Indian legal documents such as PAN, GST (if applicable), and FSSAI registration. These documents are mandatory to sell food and organic products legally in India.",
                             _buildStepFour()),
-
-
-                        _stepWrapper(4, "Inventory", "Manage availability efficiently. Enter the current stock quantity to ensure accurate inventory tracking and avoid overselling.",
-                            _buildStepFive(notifier)),
-                        _stepWrapper(5, "Delivery Timeline", "Specify how many days it will take for the order to reach the customer. Clear delivery timelines improve trust and reduce order-related queries.",
+                        _stepWrapper(4, "Bank Details", "Enter your bank account information to receive payments for the orders you fulfill. These details are used to securely transfer your earnings directly to your account. Please ensure the account holder name, account number, and IFSC code are accurate to avoid payment delays.",
+                          _buildStepFive(notifier),),
+                        _stepWrapper(5, "Pickup location", "Please provide the correct pickup location where your products will be handed over for delivery. This address helps us ensure smooth order pickup, faster deliveries, and accurate service availability.",
                             _buildStepSix(notifier)),
+                        _stepWrapper(6, "Working Days & Pickup Timings", "Select the days and time slots during which your store is operational and orders can be picked up. This helps our delivery partners schedule pickups efficiently and ensures timely order fulfillment without disruptions.",
+                          _buildStepSeven(),),
+                        _stepWrapper(7, "User Agreements", "Before you start selling organic products on our platform, please carefully read and accept the Seller User Agreement. "
+                            "This agreement explains your legal responsibilities, payment terms, food safety obligations, delivery process, and compliance "
+                            "with Indian laws such as FSSAI, GST, and Consumer Protection rules.",
+                          _buildStepEight(),),
                       ],
                     ),
                   ),
@@ -105,7 +142,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
                   ///Hide this view when keyboard appear
                   if (MediaQuery.of(context).viewInsets.bottom == 0)
-                  _buildBottomBar(state, notifier),
+                  _buildBottomBar(),
 
                   SizedBox(height: 5.dp,)
                 ],
@@ -127,12 +164,9 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
         children: [
           CupertinoButton(
             onPressed: () async {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginScreen(),
-                ),
-              );
+              backAction();
+
+
             },
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
@@ -147,7 +181,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
   Widget _buildStepper(state) {
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
-    const int totalSteps = 6;
+    const int totalSteps = 8;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -181,7 +215,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeInOut,
-              width: isCurrent ? 65.dp : 25.dp,
+              width: isCurrent ? 65.dp : 20.dp,
               height: 6.dp,
               decoration: BoxDecoration(
                 color: stepColor,
@@ -252,11 +286,44 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
             CodeReusability().customTextField(
               context,
+              "Email Address", "enter valid email address",
+                Icons.mail_outline_rounded,
+                state.emailController,onChanged: (_){
+                notifier.onChanged();
+                notifier.updateVerification(OtpVerifyType.email, false);
+              },
+              suffixWidget: state.verifiedEmail == true ? CodeReusability().verified(context) :  notifier.showVerifyButtonForEmail() ? CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                onPressed: () {
+                  notifier.callOTPVerifyPopup(context, state.emailController.text.trim(), true, OtpVerifyType.email);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrange,
+                    borderRadius: BorderRadius.circular(6.dp),
+                  ),
+                  child: objCommonWidgets.customText(
+                    context,
+                    'Verify',
+                    10,
+                    Colors.white,
+                    objConstantFonts.montserratMedium,
+                  ),
+                ),
+              ) : null,),
+
+            SizedBox(height: 20.dp),
+
+
+            CodeReusability().customTextField(
+              context,
               "Mobile Number",
               "enter valid mobile number",
               Icons.phone,
               state.mobileNumberController,
-              keyboardType: TextInputType.number,
+              inputType: CustomInputType.mobile,
               prefixText: '+91',
               onChanged: (_){
                 notifier.onChanged();
@@ -286,37 +353,84 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
             ),
 
 
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.dp),
+              child: Divider(thickness: 0.5, color: Colors.black, height: 2.dp,),
+            ),
 
-            SizedBox(height: 20.dp),
-            CodeReusability().customTextField(
+
+
+            objCommonWidgets.customText(
               context,
-              "Email Address", "enter valid email address",
-                Icons.mail_outline_rounded,
-                state.emailController,onChanged: (_){
-                notifier.onChanged();
-                notifier.updateVerification(OtpVerifyType.email, false);
+              'Please Provide your WhatsApp number to get direct messages on orders and etc. ',
+              10,
+              Colors.black,
+              objConstantFonts.montserratMedium,
+            ),
+
+            SizedBox(height: 5.dp),
+
+            CodeReusability().commonRadioTextItem(
+              context: context,
+              text: 'My WhatsApp number is same as above.',
+              value: state.isWhatsApp,
+              onChanged: (bool newValue) {
+                notifier.updateIsWhatApp(newValue);
               },
-              suffixWidget: state.verifiedEmail == true ? CodeReusability().verified(context) :  notifier.showVerifyButtonForEmail() ? CupertinoButton(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                onPressed: () {
-                  notifier.callOTPVerifyPopup(context, state.emailController.text.trim(), true, OtpVerifyType.email);
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
-                  decoration: BoxDecoration(
-                    color: Colors.deepOrange,
-                    borderRadius: BorderRadius.circular(6.dp),
-                  ),
-                  child: objCommonWidgets.customText(
-                    context,
-                    'Verify',
-                    10,
-                    Colors.white,
-                    objConstantFonts.montserratMedium,
-                  ),
+            ),
+
+            CodeReusability().commonRadioTextItem(
+              context: context,
+              text: 'I have a different WhatsApp number.',
+              value: !state.isWhatsApp,
+              onChanged: (bool newValue) {
+                notifier.updateIsWhatApp(!newValue);
+              },
+            ),
+
+
+            if (!state.isWhatsApp)
+              Padding(
+                padding: EdgeInsets.only(top: 15.dp),
+                child: CodeReusability().customTextField(
+                  context,
+                  "WhatsApp Number",
+                  "enter your WhatsApp number",
+                  Icons.phone,
+                  state.mobileNumberWhatsappController,
+                  inputType: CustomInputType.mobile,
+                  prefixText: '+91',
+                  onChanged: (_){
+                    notifier.onChanged();
+                    notifier.updateVerification(OtpVerifyType.whatsApp, false);
+                  },
+                  suffixWidget: state.verifiedWhatsApp == true ? CodeReusability().verified(context) :  notifier.showVerifyButtonForMobileNumberWhatsApp() ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      notifier.callOTPVerifyPopup(context, state.mobileNumberWhatsappController.text.trim(), false, OtpVerifyType.whatsApp);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange,
+                        borderRadius: BorderRadius.circular(6.dp),
+                      ),
+                      child: objCommonWidgets.customText(
+                        context,
+                        'Verify',
+                        10,
+                        Colors.white,
+                        objConstantFonts.montserratMedium,
+                      ),
+                    ),
+                  ) : null,
                 ),
-              ) : null,),
+              ),
+
+
+
+
 
           ],
         ),
@@ -334,7 +448,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
         CodeReusability().customTextField(
           context,
           "Full Name",
-          "enter your name as per PAN",
+          "enter your name",
           Icons.person_2_outlined,
           state.fullNameController,
           onChanged: (_) => notifier.onChanged()
@@ -434,7 +548,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
             "enter your pin code",
             Icons.markunread_mailbox,
             state.pinCodeController,
-            keyboardType: TextInputType.number,
+            inputType: CustomInputType.pincode,
             onChanged: (_) => notifier.onChanged()
         ),
 
@@ -552,6 +666,82 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
   Widget _buildStepFour() {
     final state = ref.watch(accountRegisterScreenStateProvider);
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+
+    return Column(
+      children: [
+        CodeReusability().customTextField(
+          context,
+          "PAN Number",
+          "eg. ABCDE1234F",
+          Icons.badge_outlined,
+          state.panNumberController,
+          inputType: CustomInputType.pan,
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customTextField(
+          context,
+          "GST (Optional)",
+          "eg. 22ABCDE1234F1Z5",
+          description: 'GST registration is required for certain businesses under Indian tax laws. If you have a GST number, please add it here to ensure compliance and enable invoicing support.',
+          Icons.receipt_long,
+          state.gstNumberController,
+          inputType: CustomInputType.pan,
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customTextField(
+          context,
+          "FSSAI License (Optional)",
+          "Enter fssai number",
+          description: 'FSSAI registration is issued by the Food Safety and Standards Authority of India. Providing this helps verify food safety compliance and increases customer confidence.',
+          Icons.food_bank,
+          state.fssAiController,
+          inputType: CustomInputType.fssai,
+        )
+      ],
+    );
+  }
+
+
+  Widget _buildStepFive(notifier) {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+
+    return Column(
+      children: [
+
+        /// Bank Account Number
+        CodeReusability().customTextField(
+          context,
+          "Account Number",
+          "eg. 123456789012",
+          Icons.account_balance_outlined,
+          state.bankAccountNumberController,
+          inputType: CustomInputType.bankAccount,
+        ),
+
+        SizedBox(height: 20.dp),
+
+        /// IFSC Code
+        CodeReusability().customTextField(
+          context,
+          "IFSC Code",
+          "eg. HDFC0001234",
+          Icons.confirmation_number_outlined,
+          state.bankIFSCCodeController,
+          inputType: CustomInputType.ifsc,
+        ),
+      ],
+    );
+  }
+
+
+  Widget _buildStepSix(notifier) {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
     String btnText = state.selectedLocation == null ? 'Pick Location' : 'Change Location';
 
     return Column(
@@ -607,133 +797,359 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
 
         Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 10.dp),
-                    decoration: BoxDecoration(
-                        color: Color(0xFF4D7BFA),
-                        borderRadius: BorderRadius.circular(20.dp)
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 10.dp),
+                  decoration: BoxDecoration(
+                      color: Color(0xFF4D7BFA),
+                      borderRadius: BorderRadius.circular(20.dp)
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Icon(Icons.my_location, color: Colors.white, size: 15.dp),
+                        SizedBox(width: 5.dp,),
+                        objCommonWidgets.customText(context, btnText, 10, Colors.white, objConstantFonts.montserratSemiBold),
+                      ],
                     ),
-                    child: Center(
+                  ),
+                ), onPressed: ()=> notifier.callMapPopup(context)),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _buildStepSeven() {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+    final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(20.dp)
+                  ),
+              padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+              child: Row(
+                children: [
+                  Icon(Icons.copy_all, size: 15.dp, color: Colors.white),
+                  SizedBox(width: 2.5.dp),
+                  objCommonWidgets.customText(context, 'Apply Monday to all', 10, Colors.white, objConstantFonts.montserratMedium)
+                ],
+              ),
+            ), onPressed: () => notifier.copyMondayToAll())
+          ],
+        ),
+
+        SizedBox(height: 10.dp),
+
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: days.length,
+          separatorBuilder: (_, __) => Divider(height: 0, color: Colors.black, thickness: 0.3,),
+          itemBuilder: (context, index) {
+            final day = days[index];
+            final schedule = state.weeklySchedule[day]!;
+            final inValidCloseTime = (schedule.closeTime.hour * 60 + schedule.closeTime.minute) <=
+                (schedule.openTime.hour * 60 + schedule.openTime.minute);
+
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 5.dp),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: objCommonWidgets.customText(context,
+                            day, 13,
+                            schedule.isOpen ? Colors.black : Colors.black.withAlpha(100),
+                            objConstantFonts.montserratMedium),
+                      ),
+                      Transform.scale(
+                        scale: 0.8,
+                        child: CupertinoSwitch(
+                          activeTrackColor: Colors.green,
+                          value: schedule.isOpen,
+                          onChanged: (val) => notifier.toggleDay(day),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (schedule.isOpen) ...[
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.dp, bottom: 15.dp),
                       child: Row(
                         children: [
-                          Icon(Icons.my_location, color: Colors.white, size: 15.dp),
-                          SizedBox(width: 5.dp,),
-                          objCommonWidgets.customText(context, btnText, 10, Colors.white, objConstantFonts.montserratSemiBold),
+                          _timePickerBox(
+                            context,
+                            label: "Opens at",
+                            time: schedule.openTime,
+                            onTap: () async {
+                              final picked = await showTimePicker(context: context, initialTime: schedule.openTime);
+                              if (picked != null) notifier.updateTime(day, true, picked);
+                            },
+                          ),
+                           Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.dp),
+                            child: objCommonWidgets.customText(context,
+                                'to', 13,
+                                Colors.black,
+                                objConstantFonts.montserratMedium),
+                          ),
+                          _timePickerBox(
+                            context,
+                            label: "Closes at",
+                            time: schedule.closeTime,
+                            error: inValidCloseTime,
+                            onTap: () async {
+                              final picked = await showTimePicker(context: context, initialTime: schedule.closeTime);
+                              if (picked != null) notifier.updateTime(day, false, picked);
+                            },
+                          ),
                         ],
                       ),
                     ),
-                  ), onPressed: ()=> notifier.callMapPopup(context)),
-            ],
-          )
 
-
+                    if (inValidCloseTime)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10.dp),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.red.withAlpha(35),
+                                  borderRadius: BorderRadius.circular(20.dp)
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.warning_rounded, size: 12.dp, color: Colors.red),
+                                  SizedBox(width: 2.5.dp),
+                                  objCommonWidgets.customText(context, 'Please enter valid closing time!', 8, Colors.red, objConstantFonts.montserratMedium),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                  ]
+                ],
+              ),
+            );
+          },
+        ),
       ],
     );
   }
 
-
-  Widget _buildStepFive(notifier) {
-    final state = ref.watch(accountRegisterScreenStateProvider);
-
-    return Column(
-      children: [
-
-      ],
-    );
-  }
-
-  Widget _buildStepSix(notifier) {
+  Widget _buildStepEight() {
     final state = ref.watch(accountRegisterScreenStateProvider);
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+    final agreements = state.sellerAgreementSections;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
-      ],
-    );
-  }
-
-
-  Widget _buildBottomBar(state, notifier) {
-    final bool isLastStep = state.currentStep == 5;
-    final bool canProceed = notifier.canMoveToNext(state.currentStep);
-    final bool showBack = state.currentStep > 0;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.dp, vertical: 10.dp),
-      child: Row(
-        children: [
-          /// BACK BUTTON
-          if (showBack)
-            Expanded(
-              flex: showBack ? 1 : 0,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: showBack ? 1 : 0,
-                child: IgnorePointer(
-                  ignoring: !showBack,
-                  child: CupertinoButton(
-                    onPressed: () {
-                      _pageController.previousPage(
-                        duration: 300.ms,
-                        curve: Curves.easeInOut,
-                      );
-                      notifier.setStep(state.currentStep - 1);
-                    },
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 12.dp),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(25.dp),
-                      ),
-                      child: Center(
-                        child: objCommonWidgets.customText(
-                          context,
-                          "Back",
-                          14,
-                          Colors.black,
-                          objConstantFonts.montserratSemiBold,
-                        ),
-                      ),
-                    ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: agreements.map((section) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  objCommonWidgets.customText(
+                    context,
+                    section.title,
+                    10,
+                    Colors.black,
+                    objConstantFonts.montserratSemiBold,
                   ),
+
+                  SizedBox(height: 4.dp),
+
+                  ...section.points.map((point) {
+                    return Padding(
+                      padding: EdgeInsets.only(left: 10.dp, bottom: 4.dp),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start, // ✅ KEY FIX
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 4.dp), // fine-tune alignment
+                            child: Icon(
+                              Icons.circle,
+                              size: 5.dp,
+                              color: Colors.black.withAlpha(150),
+                            ),
+                          ),
+                          SizedBox(width: 4.dp),
+                          Expanded(
+                            child: objCommonWidgets.customText(
+                              context,
+                              point,
+                              10,
+                              Colors.black87,
+                              objConstantFonts.montserratRegular,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+
+
+
+        /// Checkbox
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Checkbox(
+              value: state.isAgreementAccepted,
+              checkColor: Colors.white, // ✔ color
+              fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.green;
+                }
+                return Colors.transparent;
+              }),
+              onChanged: (value) {
+                notifier.updateReadedAgreement(value ?? false);
+              },
+            ),
+
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  notifier.updateReadedAgreement(!state.isAgreementAccepted);
+                },
+                child: Padding(
+                  padding:  EdgeInsets.only(top: 10.dp),
+                  child: objCommonWidgets.customText(context, "I have read, understood, and agree to the Seller User Agreement, "
+                      "Privacy Policy, and applicable Indian laws.", 10, Colors.black, objConstantFonts.montserratMedium),
                 ),
               ),
             ),
+          ],
+        ),
 
-          /// GAP
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            width: showBack ? 12.dp : 0,
+        SizedBox(height: 10.dp),
+
+        /// Validation Message
+        if (!state.isAgreementAccepted)
+          objCommonWidgets.customText(context, "You must accept the agreement to continue.",
+              10, Colors.red, objConstantFonts.montserratMedium)
+
+      ],
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+  Widget _timePickerBox(BuildContext context, {
+    required String label,
+    required TimeOfDay time,
+    required VoidCallback onTap,
+    bool error = false,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5.dp),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: error ? Colors.red : Colors.black.withAlpha(100)),
           ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              objCommonWidgets.customText(context,
+                  label, 9,
+                  Colors.black,
+                  objConstantFonts.montserratMedium),
+              SizedBox(height: 2.dp),
+              objCommonWidgets.customText(context,
+                  time.format(context), 13,
+                  Colors.black,
+                  objConstantFonts.montserratSemiBold),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildBottomBar() {
+    final state = ref.watch(accountRegisterScreenStateProvider);
+    final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
+    final bool isLastStep = state.currentStep == 7;
+    final bool canProceed = notifier.canMoveToNext(state.currentStep);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.dp, vertical: 5.dp),
+      child: Row(
+        children: [
+
+
 
           /// NEXT / FINISH BUTTON
           Expanded(
-            flex: showBack ? 1 : 2,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               child: CupertinoButton(
-                onPressed: !canProceed
+                onPressed: (!canProceed || state.isPageAnimating)
                     ? null
-                    : () {
+                    : () async {
                   CodeReusability.hideKeyboard(context);
+
                   if (isLastStep) {
-                    notifier.showVerificationPopup(context);
-                    ///Completed
-                  } else {
-                    _pageController.nextPage(
-                      duration: 300.ms,
-                      curve: Curves.easeInOut,
-                    );
-                    notifier.setStep(state.currentStep + 1);
+                    notifier.callRegistrationAPI(context);
+                    return;
                   }
+
+                  notifier.startPageAnimation();
+
+                  await _pageController.nextPage(
+                    duration: 300.ms,
+                    curve: Curves.easeInOut,
+                  );
+
+                  notifier.setStep(state.currentStep + 1);
+                  notifier.endPageAnimation();
                 },
                 padding: EdgeInsets.zero,
                 child: Container(
@@ -747,7 +1163,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                   child: Center(
                     child: objCommonWidgets.customText(
                       context,
-                      isLastStep ? "Submit" : "Next Step",
+                      isLastStep ? "Confirm & Submit" : "Next Step",
                       14,
                       Colors.white,
                       objConstantFonts.montserratBold,
@@ -761,16 +1177,5 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
       ),
     );
   }
-
-
-
-
-
-
-
-
-
-
-
 
 }

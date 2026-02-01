@@ -29,6 +29,7 @@ class CodeReusability {
     return string.trim().isEmpty;
   }
 
+
   ///This method used to check internet Connection.
   Future<bool> isConnectedToNetwork() async {
     return await InternetConnection().hasInternetAccess;
@@ -1084,31 +1085,104 @@ class CodeReusability {
   }
 
 ///Custom TextField Widget
-  Widget customTextField(BuildContext context,
+  Widget customTextField(
+      BuildContext context,
       String hint,
       String label,
       IconData icon,
       TextEditingController? controller, {
         int maxLines = 1,
-        TextInputType keyboardType = TextInputType.text,
         void Function(String)? onChanged,
         List<TextInputFormatter>? inputFormatters,
         String? prefixText,
         Widget? suffixWidget,
+        CustomInputType inputType = CustomInputType.normal,
+        description = ''
       }) {
-    // 👉 Apply only when number keyboard is used
-    final List<TextInputFormatter>? finalInputFormatters =
-    keyboardType == TextInputType.number
-        ? <TextInputFormatter>[
-      FilteringTextInputFormatter.digitsOnly, // 1. Only numbers
-      LengthLimitingTextInputFormatter(10),    // 2. Max length 10
-      ...?inputFormatters,                     // keep existing ones
-    ]
-        : inputFormatters;
+
+    /// 🔹 Keyboard type decision
+    TextInputType keyboardType = TextInputType.text;
+
+    /// 🔹 Input formatters decision
+    List<TextInputFormatter> finalInputFormatters = [];
+
+    switch (inputType) {
+      case CustomInputType.mobile:
+        keyboardType = TextInputType.number;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(10),
+        ];
+        break;
+
+      case CustomInputType.pincode:
+        keyboardType = TextInputType.number;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(6),
+        ];
+        break;
+
+      case CustomInputType.aadhaar:
+        keyboardType = TextInputType.number;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(12),
+        ];
+        break;
+
+      case CustomInputType.bankAccount:
+        keyboardType = TextInputType.number;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(18),
+        ];
+        break;
+
+      case CustomInputType.fssai:
+        keyboardType = TextInputType.number;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(14),
+        ];
+        break;
+
+      case CustomInputType.pan:
+        keyboardType = TextInputType.visiblePassword; // Prevents unwanted suggestions
+        finalInputFormatters = [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+          UpperCaseTextFormatter(),
+          LengthLimitingTextInputFormatter(10),
+        ];
+        break;
+
+      case CustomInputType.gst:
+        keyboardType = TextInputType.visiblePassword;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+          UpperCaseTextFormatter(),
+          LengthLimitingTextInputFormatter(15),
+        ];
+        break;
+
+      case CustomInputType.ifsc:
+        keyboardType = TextInputType.visiblePassword;
+        finalInputFormatters = [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+          UpperCaseTextFormatter(),
+          LengthLimitingTextInputFormatter(11),
+        ];
+        break;
+
+      case CustomInputType.normal:
+      keyboardType = TextInputType.text;
+        if (inputFormatters != null) finalInputFormatters.addAll(inputFormatters);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Label text using your custom text widget
         objCommonWidgets.customText(
           context,
           hint,
@@ -1118,6 +1192,17 @@ class CodeReusability {
         ),
 
         SizedBox(height: 5.dp),
+
+        if (description.isNotEmpty)...{
+          objCommonWidgets.customText(
+            context,
+            description,
+            10,
+            Colors.black,
+            objConstantFonts.montserratRegular,
+          ),
+          SizedBox(height: 10.dp),
+        },
 
         AnimatedBuilder(
           animation: controller ?? TextEditingController(),
@@ -1135,52 +1220,63 @@ class CodeReusability {
               onChanged: (value) {
                 onChanged?.call(value);
 
-                if (keyboardType == TextInputType.number && value.length == 10) {
+                /// 🔹 Auto close keyboard only when max length reached for numeric IDs
+                bool isFullLength =
+                    (inputType == CustomInputType.mobile && value.length == 10) ||
+                        (inputType == CustomInputType.pincode && value.length == 6) ||
+                        (inputType == CustomInputType.aadhaar && value.length == 12) ||
+                        (inputType == CustomInputType.fssai && value.length == 14);
+
+                if (isFullLength) {
                   FocusScope.of(context).unfocus();
                 }
               },
+
               style: TextStyle(
                 fontSize: _getFontSize(text),
                 fontFamily: objConstantFonts.montserratMedium,
                 color: Colors.black,
               ),
+
               decoration: InputDecoration(
                 hintText: label,
                 hintStyle: TextStyle(
-                  fontSize: 12.dp,
-                  fontFamily: objConstantFonts.montserratRegular,
-                  color: Colors.black.withAlpha(150),
-                ),
+            fontSize: 12.dp,
+            fontFamily: objConstantFonts.montserratRegular,
+            color: Colors.black.withAlpha(150)),
+
                 prefixIcon: prefixText != null
                     ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.dp),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(icon, color: Colors.black, size: 20.dp,),
-                      SizedBox(width: 5.dp),
+                      Icon(icon, color: Colors.black, size: 20),
+                      const SizedBox(width: 5),
                       Text(
                         prefixText,
                         style: TextStyle(
-                          fontSize: 15.dp,
+                          fontSize: 15,
                           fontFamily: objConstantFonts.montserratMedium,
                           color: Colors.black,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 )
-                    : Icon(icon, color: Colors.black, size: 20.dp,),
+                    : Icon(icon, color: Colors.black, size: 20),
+
                 suffixIconConstraints: const BoxConstraints(
                   minWidth: 0,
                   minHeight: 0,
                 ),
                 suffixIcon: suffixWidget != null
                     ? Padding(
-                  padding: EdgeInsets.only(right: 10.dp),
+                  padding: const EdgeInsets.only(right: 10),
                   child: suffixWidget,
                 )
                     : null,
+
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -1188,11 +1284,11 @@ class CodeReusability {
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.dp),
+                  borderRadius: BorderRadius.circular(15),
                   borderSide: const BorderSide(color: Colors.black, width: 0.5),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.dp),
+                  borderRadius: BorderRadius.circular(15),
                   borderSide: const BorderSide(color: Colors.deepOrange, width: 1),
                 ),
                 contentPadding: EdgeInsets.symmetric(vertical: _getPadding(text)),
@@ -1200,22 +1296,22 @@ class CodeReusability {
             );
           },
         ),
-
       ],
     );
   }
 
 
 
+
   double _getFontSize(String text) {
-    if (text.length <= 10) return 15.dp;
-    if (text.length <= 20) return 13.dp;
+    if (text.length <= 20) return 15.dp;
+    if (text.length <= 30) return 13.dp;
     return 12.dp;
   }
 
   double _getPadding(String text){
-    if (text.length <= 10) return 12.dp;
-    if (text.length <= 20) return 13.dp;
+    if (text.length <= 20) return 12.dp;
+    if (text.length <= 30) return 13.dp;
     return 14.dp;
   }
 
@@ -1605,6 +1701,50 @@ class CodeReusability {
     );
   }
 
+  Widget commonRadioTextItem({
+    required BuildContext context,
+    required String text,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    Color activeColor = Colors.green,
+  }) {
+    return RadioGroup<bool>(
+      groupValue: value,
+      onChanged: (val) {
+        if (val != null) {
+          onChanged(val);
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 2.dp),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Radio<bool>(
+              value: true,
+              activeColor: activeColor,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+
+            SizedBox(width: 4.dp),
+
+            Expanded(
+              child: objCommonWidgets.customText(
+                context,
+                text,
+                10,
+                Colors.black,
+                objConstantFonts.montserratMedium,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Widget commonDropdownTextField<T>({
     required BuildContext context,
@@ -1869,5 +2009,52 @@ class _SearchableBottomSheetState<T>
         ],
       ),
     );
+  }
+}
+
+
+
+enum CustomInputType {
+  normal,
+  mobile,
+  pincode,
+  gst,
+  pan,
+  ifsc,
+  bankAccount,
+  aadhaar,
+  fssai
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
+}
+
+
+
+class Validator {
+  // 5 letters, 4 digits, 1 letter
+  static bool isValidPAN(String pan) {
+    return RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$').hasMatch(pan);
+  }
+
+  // 2 digits, 10 PAN chars, 1 digit/letter, 1 'Z', 1 digit/letter
+  static bool isValidGST(String gst) {
+    return RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$')
+        .hasMatch(gst);
+  }
+
+  // Exactly 14 digits
+  static bool isValidFSSAI(String fssai) {
+    return RegExp(r'^[0-9]{14}$').hasMatch(fssai);
   }
 }

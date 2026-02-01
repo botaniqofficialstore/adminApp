@@ -8,11 +8,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Utility/MediaHandler.dart';
 import '../../../Utility/CommonOtpVerificationScreen.dart';
+import '../RegisterSuccessScreen/RegisterSuccessScreen.dart';
 import 'AccountRegisterModel.dart';
 
 enum OtpVerifyType {
   mobile,
   email,
+  whatsApp,
   personalMobile,
   personalEmail
 }
@@ -21,12 +23,16 @@ class AccountRegisterScreenState {
   final bool isLoading;
   final int currentStep;
   final int maxCompletedStep;
+  final bool isPageAnimating;
 
   //Step 1
   final TextEditingController mobileNumberController;
+  final TextEditingController mobileNumberWhatsappController;
   final TextEditingController emailController;
   final bool verifiedMobile;
   final bool verifiedEmail;
+  final bool isWhatsApp;
+  final bool verifiedWhatsApp;
 
   //Step 2
   final TextEditingController fullNameController;
@@ -50,19 +56,40 @@ class AccountRegisterScreenState {
   final TextEditingController businessStartedDateController;
 
   //Step 4
+  final TextEditingController panNumberController;
+  final TextEditingController gstNumberController;
+  final TextEditingController fssAiController;
+
+  //Step 5
+  final TextEditingController bankIFSCCodeController;
+  final TextEditingController bankAccountNumberController;
+
+  //Step 6
   final LatLng? selectedLocation;
   final String selectPickupAddress;
+
+  //Step 7
+  final Map<String, DaySchedule> weeklySchedule;
+
+  //Step 8
+  final bool isAgreementAccepted;
+  final List<AgreementSection> sellerAgreementSections;
+
 
   AccountRegisterScreenState({
     this.isLoading = false,
     this.currentStep = 0,
     this.maxCompletedStep = 0,
+    this.isPageAnimating = false,
 
     //Step 1
     required this.mobileNumberController,
+    required this.mobileNumberWhatsappController,
     required this.emailController,
     this.verifiedMobile = false,
     this.verifiedEmail = false,
+    this.isWhatsApp = true,
+    this.verifiedWhatsApp = false,
 
     //Step 2
     required this.fullNameController,
@@ -86,8 +113,24 @@ class AccountRegisterScreenState {
     required this.businessStartedDateController,
 
     //Step 4
+    required this.panNumberController,
+    required this.gstNumberController,
+    required this.bankIFSCCodeController,
+
+    //Step 5
+    required this.bankAccountNumberController,
+    required this.fssAiController,
+
+    //Step 6
     required this.selectedLocation,
-    this.selectPickupAddress = ''
+    this.selectPickupAddress = '',
+
+    //Step 7
+    required this.weeklySchedule,
+
+    //Step 8
+    required this.isAgreementAccepted,
+    required this.sellerAgreementSections,
 
   });
 
@@ -96,10 +139,14 @@ class AccountRegisterScreenState {
     bool? isLoading,
     int? currentStep,
     int? maxCompletedStep,
+    bool? isPageAnimating,
     TextEditingController? mobileNumberController,
-    TextEditingController? emailController,
+    TextEditingController? mobileNumberWhatsappController,
     bool? verifiedMobile,
+    TextEditingController? emailController,
+    bool? isWhatsApp,
     bool? verifiedEmail,
+    bool? verifiedWhatsApp,
     TextEditingController? fullNameController,
     TextEditingController? dobController,
     String? profileImage,
@@ -118,17 +165,28 @@ class AccountRegisterScreenState {
     TextEditingController? businessDescriptionController,
     TextEditingController? businessStartedDateController,
     LatLng? selectedLocation,
-    String? selectPickupAddress
-
+    String? selectPickupAddress,
+    TextEditingController? panNumberController,
+    TextEditingController? gstNumberController,
+    TextEditingController? bankIFSCCodeController,
+    TextEditingController? bankAccountNumberController,
+    TextEditingController? fssAiController,
+    Map<String, DaySchedule>? weeklySchedule,
+    bool? isAgreementAccepted,
+    List<AgreementSection>? sellerAgreementSections
   }) {
     return AccountRegisterScreenState(
       isLoading: isLoading ?? this.isLoading,
       currentStep: currentStep ?? this.currentStep,
       maxCompletedStep: maxCompletedStep ?? this.maxCompletedStep,
+      isPageAnimating: isPageAnimating ?? this.isPageAnimating,
       mobileNumberController: mobileNumberController ?? this.mobileNumberController,
+      mobileNumberWhatsappController: mobileNumberWhatsappController ?? this.mobileNumberWhatsappController,
       emailController: emailController ?? this.emailController,
       verifiedMobile: verifiedMobile ?? this.verifiedMobile,
       verifiedEmail: verifiedEmail ?? this.verifiedEmail,
+      isWhatsApp: isWhatsApp ?? this.isWhatsApp,
+      verifiedWhatsApp: verifiedWhatsApp ?? this.verifiedWhatsApp,
       fullNameController: fullNameController ?? this.fullNameController,
       dobController: dobController ?? this.dobController,
       profileImage: profileImage ?? this.profileImage,
@@ -148,6 +206,14 @@ class AccountRegisterScreenState {
       businessStartedDateController: businessStartedDateController ?? this.businessStartedDateController,
       selectedLocation: selectedLocation ?? this.selectedLocation,
       selectPickupAddress: selectPickupAddress ?? this.selectPickupAddress,
+      panNumberController: panNumberController ?? this.panNumberController,
+      gstNumberController: gstNumberController ?? this.gstNumberController,
+      bankIFSCCodeController: bankIFSCCodeController ?? this.bankIFSCCodeController,
+      bankAccountNumberController: bankAccountNumberController ?? this.bankAccountNumberController,
+        fssAiController: fssAiController ?? this.fssAiController,
+      weeklySchedule: weeklySchedule ?? this.weeklySchedule,
+      isAgreementAccepted: isAgreementAccepted ?? this.isAgreementAccepted,
+      sellerAgreementSections: sellerAgreementSections ?? this.sellerAgreementSections,
     );
   }
 }
@@ -156,6 +222,7 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
   AccountRegisterScreenStateNotifier() : super(AccountRegisterScreenState(
     //------
     mobileNumberController: TextEditingController(),
+    mobileNumberWhatsappController: TextEditingController(),
     emailController: TextEditingController(),
     fullNameController: TextEditingController(),
     dobController: TextEditingController(),
@@ -163,8 +230,93 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     brandNameController: TextEditingController(),
     businessDescriptionController: TextEditingController(),
     businessStartedDateController: TextEditingController(),
+    panNumberController: TextEditingController(),
+    gstNumberController: TextEditingController(),
+    bankIFSCCodeController: TextEditingController(),
+    bankAccountNumberController: TextEditingController(),
+    fssAiController: TextEditingController(),
     selectedLocation: null,
+    weeklySchedule: {
+      'Monday': DaySchedule(isOpen: false),
+      'Tuesday': DaySchedule(isOpen: false),
+      'Wednesday': DaySchedule(isOpen: false),
+      'Thursday': DaySchedule(isOpen: false),
+      'Friday': DaySchedule(isOpen: false),
+      'Saturday': DaySchedule(isOpen: false),
+      'Sunday': DaySchedule(isOpen: false),
+    },
+      isAgreementAccepted: false,
+      sellerAgreementSections : [
+        AgreementSection(
+          title: "1. Platform Role",
+          points: [
+            "The platform acts only as a marketplace facilitator.",
+            "Sellers are solely responsible for product quality, legality, and authenticity.",
+          ],
+        ),
+        AgreementSection(
+          title: "2. Seller Responsibilities",
+          points: [
+            "Maintain valid FSSAI, GST, and PAN registrations.",
+            "Ensure organic claims are truthful and verifiable.",
+            "Follow food safety, hygiene, packaging, and labeling laws.",
+          ],
+        ),
+        AgreementSection(
+          title: "3. Product Approval",
+          points: [
+            "Products will be visible to customers only after admin verification.",
+            "Admin may suspend or remove products at any time.",
+          ],
+        ),
+        AgreementSection(
+          title: "4. Orders & Delivery",
+          points: [
+            "Sellers must pack products hygienically and upload package images.",
+            "Handover to delivery partner requires OTP verification.",
+          ],
+        ),
+        AgreementSection(
+          title: "5. Payments & Settlements",
+          points: [
+            "Payments will be settled weekly.",
+            "Platform may deduct commission, logistics charges, GST/TDS/TCS as applicable.",
+          ],
+        ),
+        AgreementSection(
+          title: "6. Reviews & Ratings",
+          points: [
+            "Customers may provide reviews and ratings.",
+            "Manipulation of reviews is strictly prohibited.",
+          ],
+        ),
+        AgreementSection(
+          title: "7. Returns & Disputes",
+          points: [
+            "Sellers must comply with return and refund policies.",
+            "Platform decisions in disputes shall be final.",
+          ],
+        ),
+        AgreementSection(
+          title: "8. Legal Compliance",
+          points: [
+            "Seller agrees to comply with Indian laws including:",
+            "FSSAI Act",
+            "GST Act",
+            "Consumer Protection (E-commerce) Rules",
+            "IT Act & DPDP Act 2023",
+          ],
+        ),
+        AgreementSection(
+          title: "9. Account Suspension",
+          points: [
+            "Platform may suspend or terminate accounts for violations or fraud.",
+          ],
+        ),
+      ]
   ));
+
+
 
 
 
@@ -184,6 +336,8 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
 
   void updateBusinessType(String type) => state = state.copyWith(businessType: type);
 
+  void updateIsWhatApp(bool isWhatsApp) => state = state.copyWith(isWhatsApp: isWhatsApp);
+
 
 
   ///Mark:-  Profile Image Upload Methods
@@ -201,9 +355,14 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     return CodeReusability.isValidMobileNumber(state.mobileNumberController.text.trim());
   }
 
+  bool showVerifyButtonForMobileNumberWhatsApp(){
+    return CodeReusability.isValidMobileNumber(state.mobileNumberWhatsappController.text.trim());
+  }
+
   bool showVerifyButtonForEmail(){
     return CodeReusability.isValidEmail(state.emailController.text.trim());
   }
+
 
   /// Mark:- Update Verified boolean
   void updateMobileNumberVerified(bool isVerified){
@@ -224,55 +383,130 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     state = state.copyWith(selectedLocation: null, selectPickupAddress: '');
   }
 
+  void toggleDay(String day) {
+    final current = state.weeklySchedule[day]!;
+    state = state.copyWith(
+      weeklySchedule: {
+        ...state.weeklySchedule,
+        day: current.copyWith(isOpen: !current.isOpen),
+      },
+    );
+  }
+
+  void updateTime(String day, bool isOpenTime, TimeOfDay time) {
+    final current = state.weeklySchedule[day]!;
+    state = state.copyWith(
+      weeklySchedule: {
+        ...state.weeklySchedule,
+        day: isOpenTime ? current.copyWith(openTime: time) : current.copyWith(closeTime: time),
+      },
+    );
+  }
+
+  void copyMondayToAll() {
+    final monday = state.weeklySchedule['Monday']!;
+    final newSchedule = state.weeklySchedule.map((key, value) {
+      return MapEntry(key, monday.copyWith());
+    });
+    state = state.copyWith(weeklySchedule: newSchedule);
+  }
+
+  void updateReadedAgreement(bool value) {
+    state = state.copyWith(isAgreementAccepted: value);
+  }
+
+
 
   ///Mark:- Empty Validation for Pages
+
+  void startPageAnimation() {
+    state = state.copyWith(isPageAnimating: true);
+  }
+
+  void endPageAnimation() {
+    state = state.copyWith(isPageAnimating: false);
+  }
+
   bool canMoveToNext(int step) {
     if (step == 0) {
-      /*final mobileNumber = state.mobileNumberController.text.trim();
+      final mobileNumber = state.mobileNumberController.text.trim();
       final email = state.emailController.text.trim();
+      final isWhatsApp = state.isWhatsApp ? true : (state.mobileNumberWhatsappController.text.trim().isNotEmpty && state.verifiedWhatsApp);
 
       return mobileNumber.isNotEmpty && CodeReusability.isValidMobileNumber(mobileNumber) &&
-          email.isNotEmpty && CodeReusability.isValidEmail(email) && state.verifiedMobile && state.verifiedEmail;*/
-      return true;
+          email.isNotEmpty && CodeReusability.isValidEmail(email) && state.verifiedMobile &&
+          state.verifiedEmail && isWhatsApp;
     }
 
     if (step == 1) {
-      /*final fulName = state.fullNameController.text.trim();
+      final fulName = state.fullNameController.text.trim();
       final dob = state.dobController.text.trim();
 
       return fulName.isNotEmpty &&
           dob.isNotEmpty &&
           state.selectedCountryCode.isNotEmpty &&
           state.selectedStateCode.isNotEmpty &&
-    state.selectedCityCode.isNotEmpty && state.profileImage.isNotEmpty;*/
-      return true;
+    state.selectedCityCode.isNotEmpty && state.profileImage.isNotEmpty;
     }
 
     if (step == 2) {
-      /*final brandName = state.brandNameController.text.trim();
+      final brandName = state.brandNameController.text.trim();
       final businessDescription = state.businessDescriptionController.text.trim();
       final businessStartedDate = state.businessStartedDateController.text.trim();
 
       return brandName.isNotEmpty &&
           businessDescription.isNotEmpty &&
           businessStartedDate.isNotEmpty &&
-          state.businessType!.isNotEmpty;*/
-      return true;
+          state.businessType!.isNotEmpty;
     }
 
     if (step == 3) {
-      //return state.selectedLocation != null;
+      final panNumber = state.panNumberController.text.trim();
+      final gstIn = state.gstNumberController.text.trim();
+      final fssAINumber = state.fssAiController.text.trim();
 
-      return true;
+      /*if (!Validator.isValidPAN(panNumber)) {
+        return false;// Show error: "Invalid PAN Card format"
+      } else if (gstIn.isNotEmpty && !Validator.isValidGST(gstIn)) {
+        return false;// Show error: "Invalid GST number"
+      } else if (fssAINumber.isNotEmpty && !Validator.isValidFSSAI(fssAINumber)) {
+        return false;// Show error: "FSSAI must be 14 digits"
+      } else {
+        return true;
+      }*/
+
+      return (panNumber.isNotEmpty);
     }
 
     if (step == 4) {
-      return false;
+      final accountNumber = state.bankAccountNumberController.text.trim();
+      final ifscCode = state.bankIFSCCodeController.text.trim();
+
+      return accountNumber.isNotEmpty &&
+          ifscCode.isNotEmpty;
     }
 
     if (step == 5){
 
-      return false;
+      return state.selectedLocation != null;
+    }
+
+    if (step == 6) {
+      bool anyOpen = state.weeklySchedule.values.any((day) => day.isOpen);
+      if (!anyOpen) return false;
+
+      for (var day in state.weeklySchedule.values) {
+        if (day.isOpen) {
+          final start = day.openTime.hour * 60 + day.openTime.minute;
+          final end = day.closeTime.hour * 60 + day.closeTime.minute;
+          if (end <= start) return false; // Closing must be after opening
+        }
+      }
+      return true;
+    }
+
+    if (step == 7){
+     return state.isAgreementAccepted;
     }
 
     return true;
@@ -350,6 +584,8 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
       state = state.copyWith(verifiedMobile: isVerified);
     } else if (type == OtpVerifyType.email){
       state = state.copyWith(verifiedEmail: isVerified);
+    } else if (type == OtpVerifyType.whatsApp){
+      state = state.copyWith(verifiedWhatsApp: isVerified);
     }
   }
 
@@ -487,6 +723,15 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     });
   }
 
+  void callRegistrationAPI(BuildContext context){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RegisterSuccessScreen(),
+      ),
+    );
+  }
+
 
 }
 
@@ -494,3 +739,38 @@ final accountRegisterScreenStateProvider =
 StateNotifierProvider.autoDispose<AccountRegisterScreenStateNotifier, AccountRegisterScreenState>((ref) {
   return AccountRegisterScreenStateNotifier();
 });
+
+
+
+
+class DaySchedule {
+  final bool isOpen;
+  final TimeOfDay openTime;
+  final TimeOfDay closeTime;
+
+  DaySchedule({
+    this.isOpen = false,
+    this.openTime = const TimeOfDay(hour: 9, minute: 0),
+    this.closeTime = const TimeOfDay(hour: 18, minute: 0),
+  });
+
+  DaySchedule copyWith({bool? isOpen, TimeOfDay? openTime, TimeOfDay? closeTime}) {
+    return DaySchedule(
+      isOpen: isOpen ?? this.isOpen,
+      openTime: openTime ?? this.openTime,
+      closeTime: closeTime ?? this.closeTime,
+    );
+  }
+}
+
+
+
+class AgreementSection {
+  final String title;
+  final List<String> points;
+
+  AgreementSection({
+    required this.title,
+    required this.points,
+  });
+}

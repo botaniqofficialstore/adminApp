@@ -201,7 +201,8 @@ class SellerMainScreenGlobalStateNotifier
     } else if (module == ScreenName.addReel){
       onScreen = ScreenName.reels;
     } else if (module == ScreenName.addProduct){
-      final bool shouldPop = await ConfirmClosePopup.show(context) ?? false;
+      final bool shouldPop = await ConfirmClosePopup.show(context, title: "You're in the middle of adding a new organic product. If you go back now, the details you've entered won’t be saved.",
+          description: "Would you like to continue adding the product or exit for now?") ?? false;
 
       if (shouldPop && context.mounted) {
         onScreen = ScreenName.products;
