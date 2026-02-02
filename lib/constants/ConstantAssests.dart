@@ -62,6 +62,10 @@ class ConstantAssests{
    String distance = '${commonIconsAssets}distance.png';
 
 
+   ///Animated Icons
+   String celebration = '${commonIconsAssets}celebration.json';
+
+
 
    ///Fonts
    static const montserratBold = "MontserratBold";

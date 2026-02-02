@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../Utility/ConfirmClosePopup.dart';
+import '../../../Utility/NetworkImageLoader.dart';
 import '../LoginScreen/LoginScreen.dart';
 import 'AccountRegisterModel.dart';
 import 'AccountRegisterScreenState.dart';
@@ -27,6 +28,27 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     'Individual / Proprietorship',
     'Partnership',
     'LLP / Private Limited',
+  ];
+
+  final List<String> productsType = [
+    //Edibles
+    'Fresh Produce',
+    'Grains & Millets',
+    'Oils, Ghee & Cooking Fats',
+    'Meat, Eggs & Dairy',
+    'Natural Sweeteners & Condiments',
+    'Spices & Masalas',
+    'Dry Fruits, Nuts & Seeds',
+    'Ayurvedic Edibles (Internal Use)',
+    'Beverages & Health Drinks',
+    'Traditional Foods & Snacks',
+    //Non edibles
+    'Personal Care & Beauty',
+    'Ayurvedic External Use',
+    'Home Care & Cleaning',
+    'Gardening & Farming',
+    'Eco-Friendly & Sustainable Products',
+    'Spiritual & Lifestyle'
   ];
 
 
@@ -610,6 +632,7 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CodeReusability().customTextField(
             context,
@@ -646,18 +669,150 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           minimumAge: 0
         ),
 
+        SizedBox(height: 20.dp,),
+
+
+        objCommonWidgets.customText(
+          context,
+          'Brand Logo',
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        objCommonWidgets.customText(
+          context,
+          'Upload your business/brand logo with good quality in format of jpg, jpeg or png',
+          10,
+          Colors.black,
+          objConstantFonts.montserratRegular,
+        ),
+        SizedBox(height: 10.dp),
+
+        Container(
+          height: 220.dp,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300, width: 1),
+          ),
+          child: state.businessLogo.isEmpty
+              ? CupertinoButton(
+              onPressed: () => notifier.uploadLogo(context), // Call uploadImage for index 0
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              child: _buildAddPlaceholder())
+              : Stack(
+            fit: StackFit.expand,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: NetworkImageLoader(
+                  imageUrl: state.businessLogo,
+                  placeHolder: objConstantAssest.placeholderImage,
+                  size: 80.dp,
+                  imageSize: double.infinity,
+                  isLocal: CodeReusability().isNotValidUrl(state.businessLogo),
+                ),
+              ),
+              _buildDeleteButton(() {
+                notifier.updateBusinessLogo('');
+              }),
+            ],
+          ),
+        ),
 
         SizedBox(height: 20.dp),
 
         CodeReusability().customTextView(
-          context,
-          "Tell us about your business",
-          "Enter your description",
-          description: 'This information will be visible to customers and helps them make confident purchase decisions. Please ensure all details are accurate and genuine.',
-          Icons.description_outlined,
-          state.businessDescriptionController,
+            context,
+            "Tell us about your business",
+            "Enter your description",
+            description: 'This information will be visible to customers and helps them make confident purchase decisions. Please ensure all details are accurate and genuine.',
+            Icons.description_outlined,
+            state.businessDescriptionController,
             onChanged: (_) => notifier.onChanged()
-        )
+        ),
+
+        SizedBox(height: 20.dp),
+
+
+
+        objCommonWidgets.customText(
+          context,
+          'Select Product Categories',
+          12,
+          Colors.black,
+          objConstantFonts.montserratMedium,
+        ),
+
+        SizedBox(height: 5.dp),
+
+        objCommonWidgets.customText(
+          context,
+          'Select the types of organic products you want to sell on our app. Choose one or more categories that match your offerings to help us set up your seller account correctly.',
+          10,
+          Colors.black,
+          objConstantFonts.montserratRegular,
+        ),
+        SizedBox(height: 10.dp),
+
+        // Modern Selection Grid using Wrap
+        Wrap(
+          spacing: 10.0,
+          runSpacing: 5,
+          children: productsType.map((product) {
+            final isSelected = state.selectedProducts.contains(product);
+            return FilterChip(
+              selected: isSelected,
+              onSelected: (_) => notifier.toggleProductSelection(product),
+
+              showCheckmark: false, // 🚫 remove default big tick
+
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isSelected)
+                    Icon(
+                      Icons.check_rounded,
+                      size: 12.dp,
+                      color: Colors.white,
+                    ),
+                  if (isSelected) SizedBox(width: 4.dp),
+
+                  objCommonWidgets.customText(
+                    context,
+                    product,
+                    10,
+                    isSelected ? Colors.white : Colors.black87,
+                    isSelected ? objConstantFonts.montserratMedium : objConstantFonts.montserratRegular,
+                  ),
+
+                ],
+              ),
+
+              visualDensity: const VisualDensity(horizontal: -3, vertical: -3),
+              padding: EdgeInsets.symmetric(horizontal: isSelected ? 0 : 5.dp, vertical: 6.dp),
+
+              backgroundColor: Colors.grey[100],
+              selectedColor: Colors.black,
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.dp),
+                side: BorderSide(
+                  color: isSelected ? Colors.transparent : Colors.grey[300]!,
+                ),
+              ),
+            );
+
+          }).toList(),
+        ),
+
+
+
 
       ],
     );
@@ -700,7 +855,23 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           Icons.food_bank,
           state.fssAiController,
           inputType: CustomInputType.fssai,
-        )
+        ),
+
+        /// Validation Message
+        if (state.isFssAiNeeded && state.fssAiController.text.trim().isEmpty)
+          Padding(
+            padding: EdgeInsets.only(top: 10.dp),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(20),
+                borderRadius: BorderRadius.circular(5.dp),
+                border: Border.all(color: Colors.red)
+              ),
+              padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 10.dp),
+              child: objCommonWidgets.customText(context, "You are selling edible products so you must add your FSSAI number to complete this step",
+                  10, Colors.red, objConstantFonts.montserratMedium, textAlign: TextAlign.center),
+            ),
+          )
       ],
     );
   }
@@ -1069,7 +1240,39 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
 
 
+  Widget _buildAddPlaceholder() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add_a_photo_outlined, color: Colors.deepOrange, size: 24.dp),
+          SizedBox(height: 8.dp),
+          objCommonWidgets.customText(context, "Tap to Upload", 10, Colors.grey.shade600, objConstantFonts.montserratMedium),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildDeleteButton(VoidCallback onTap) {
+    return Positioned(
+      top: 8,
+      right: 8,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+          child: const Icon(Icons.close, color: Colors.red, size: 16),
+        ),
+      ),
+    );
+  }
 
 
 

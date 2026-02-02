@@ -9,6 +9,7 @@ import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/Selle
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerConfirmOrderScreen/SellerConfirmOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerDashboardScreen/SellerDashboardScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerLegalScreen/SellerLegalScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerLocationScreen/SellerLocationScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerNewOrderScreen/SellerNewOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerPackedOrderScreen/SellerPackedOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerProductAddScreen/SellerProductAddScreen.dart';
@@ -112,6 +113,8 @@ class SellerMainScreenGlobalStateNotifier
       return const SellerProductAddScreen();
     } else if (state.currentModule == ScreenName.account) {
       return const SellerAccountScreen();
+    } else if (state.currentModule == ScreenName.location) {
+      return const SellerLocationScreen();
     } else {
       return const SellerDashboardScreen();
     }
@@ -214,7 +217,8 @@ class SellerMainScreenGlobalStateNotifier
         state.currentModule == ScreenName.rating ||
         state.currentModule == ScreenName.businessHours ||
         state.currentModule == ScreenName.products ||
-        state.currentModule == ScreenName.account) {
+        state.currentModule == ScreenName.account ||
+        state.currentModule == ScreenName.location ) {
       onScreen = ScreenName.profile;
     } else if (state.currentModule == ScreenName.productReview) {
       onScreen = ScreenName.rating;

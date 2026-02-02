@@ -54,11 +54,14 @@ class AccountRegisterScreenState {
   final String? businessType;
   final TextEditingController businessDescriptionController;
   final TextEditingController businessStartedDateController;
+  final List<String> selectedProducts;
+  final String businessLogo;
 
   //Step 4
   final TextEditingController panNumberController;
   final TextEditingController gstNumberController;
   final TextEditingController fssAiController;
+  final bool isFssAiNeeded;
 
   //Step 5
   final TextEditingController bankIFSCCodeController;
@@ -111,6 +114,8 @@ class AccountRegisterScreenState {
     this.businessType,
     required this.businessDescriptionController,
     required this.businessStartedDateController,
+    this.selectedProducts = const [],
+    this.businessLogo = '',
 
     //Step 4
     required this.panNumberController,
@@ -120,6 +125,7 @@ class AccountRegisterScreenState {
     //Step 5
     required this.bankAccountNumberController,
     required this.fssAiController,
+    this.isFssAiNeeded = false,
 
     //Step 6
     required this.selectedLocation,
@@ -164,6 +170,7 @@ class AccountRegisterScreenState {
     String? businessType,
     TextEditingController? businessDescriptionController,
     TextEditingController? businessStartedDateController,
+    String? businessLogo,
     LatLng? selectedLocation,
     String? selectPickupAddress,
     TextEditingController? panNumberController,
@@ -171,9 +178,11 @@ class AccountRegisterScreenState {
     TextEditingController? bankIFSCCodeController,
     TextEditingController? bankAccountNumberController,
     TextEditingController? fssAiController,
+    bool? isFssAiNeeded,
     Map<String, DaySchedule>? weeklySchedule,
     bool? isAgreementAccepted,
-    List<AgreementSection>? sellerAgreementSections
+    List<AgreementSection>? sellerAgreementSections,
+    List<String>? selectedProducts
   }) {
     return AccountRegisterScreenState(
       isLoading: isLoading ?? this.isLoading,
@@ -204,16 +213,19 @@ class AccountRegisterScreenState {
       businessType: businessType ?? this.businessType,
       businessDescriptionController: businessDescriptionController ?? this.businessDescriptionController,
       businessStartedDateController: businessStartedDateController ?? this.businessStartedDateController,
+      businessLogo: businessLogo ?? this.businessLogo,
       selectedLocation: selectedLocation ?? this.selectedLocation,
       selectPickupAddress: selectPickupAddress ?? this.selectPickupAddress,
       panNumberController: panNumberController ?? this.panNumberController,
       gstNumberController: gstNumberController ?? this.gstNumberController,
       bankIFSCCodeController: bankIFSCCodeController ?? this.bankIFSCCodeController,
+      isFssAiNeeded: isFssAiNeeded ?? this.isFssAiNeeded,
       bankAccountNumberController: bankAccountNumberController ?? this.bankAccountNumberController,
         fssAiController: fssAiController ?? this.fssAiController,
       weeklySchedule: weeklySchedule ?? this.weeklySchedule,
       isAgreementAccepted: isAgreementAccepted ?? this.isAgreementAccepted,
       sellerAgreementSections: sellerAgreementSections ?? this.sellerAgreementSections,
+      selectedProducts: selectedProducts ?? this.selectedProducts,
     );
   }
 }
@@ -318,6 +330,30 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
 
 
 
+  final List<String> edibleCategories = [
+    'Fresh Produce', 'Grains & Millets', 'Oils, Ghee & Cooking Fats',
+    'Meat, Eggs & Dairy', 'Natural Sweeteners & Condiments', 'Spices & Masalas',
+    'Dry Fruits, Nuts & Seeds', 'Ayurvedic Edibles (Internal Use)',
+    'Beverages & Health Drinks', 'Traditional Foods & Snacks'
+  ];
+
+  void toggleProductSelection(String product) {
+    List<String> currentSelected = List.from(state.selectedProducts);
+
+    if (currentSelected.contains(product)) {
+      currentSelected.remove(product);
+    } else {
+      currentSelected.add(product);
+    }
+
+    // Validation: Check if any selected item is in the edible list
+    bool needsFssai = currentSelected.any((item) => edibleCategories.contains(item));
+
+    state = state.copyWith(
+      selectedProducts: currentSelected,
+      isFssAiNeeded: needsFssai,
+    );
+  }
 
 
 
@@ -338,13 +374,22 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
 
   void updateIsWhatApp(bool isWhatsApp) => state = state.copyWith(isWhatsApp: isWhatsApp);
 
+  void updateBusinessLogo(String imagePath) => state = state.copyWith(businessLogo: imagePath);
 
 
-  ///Mark:-  Profile Image Upload Methods
+
+  ///Mark:-  Profile Image Upload
   Future<void> uploadImage(BuildContext context) async {
     final imagePath = await MediaHandler().handleCommonMediaPicker(context, ImageSource.gallery);
     if (imagePath != null) {
       state = state.copyWith(profileImage: imagePath);
+    }
+  }
+  ///Mark:-  Business Logo Upload
+  Future<void> uploadLogo(BuildContext context) async {
+    final imagePath = await MediaHandler().handleCommonMediaPicker(context, ImageSource.gallery);
+    if (imagePath != null) {
+      state = state.copyWith(businessLogo: imagePath);
     }
   }
 
@@ -457,13 +502,17 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
       return brandName.isNotEmpty &&
           businessDescription.isNotEmpty &&
           businessStartedDate.isNotEmpty &&
-          state.businessType!.isNotEmpty;
+          state.businessType!.isNotEmpty &&
+          state.selectedProducts.isNotEmpty &&
+    state.businessLogo.isNotEmpty;
     }
 
     if (step == 3) {
       final panNumber = state.panNumberController.text.trim();
       final gstIn = state.gstNumberController.text.trim();
       final fssAINumber = state.fssAiController.text.trim();
+
+      final fssaiNeeded =  state.isFssAiNeeded ? fssAINumber.isNotEmpty : true;
 
       /*if (!Validator.isValidPAN(panNumber)) {
         return false;// Show error: "Invalid PAN Card format"
@@ -475,7 +524,7 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
         return true;
       }*/
 
-      return (panNumber.isNotEmpty);
+      return (panNumber.isNotEmpty && fssaiNeeded);
     }
 
     if (step == 4) {

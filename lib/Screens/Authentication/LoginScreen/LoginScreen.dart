@@ -29,21 +29,62 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
     final notifier = ref.read(loginScreenProvider.notifier);
 
     return PopScope(
-      canPop: false, // 🔥 We fully control back navigation
+      canPop: false,
       onPopInvokedWithResult: (didPop, dynamic) {
         if (didPop) return;
-
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent, // optional
-          statusBarIconBrightness: Brightness.light, // ANDROID → black icons
-          statusBarBrightness: Brightness.dark, // iOS → black icons
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         child: GestureDetector(
           onTap: () => CodeReusability.hideKeyboard(context),
           child: Scaffold(
-            backgroundColor: Color(0xFFF9FAFB),
+            backgroundColor: const Color(0xFFF9FAFB),
+
+            /// ✅ SAFE FOOTER (gesture + button navigation safe)
+            bottomNavigationBar: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12.dp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    objCommonWidgets.customText(
+                      context,
+                      'New to Botaniq? ',
+                      10,
+                      Colors.black,
+                      objConstantFonts.montserratRegular,
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                            const AccountRegisterScreen(),
+                          ),
+                        );
+
+                      },
+                      child: objCommonWidgets.customText(
+                        context,
+                        'Register Now',
+                        12,
+                        Colors.deepOrange,
+                        objConstantFonts.montserratSemiBold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             body: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
@@ -53,216 +94,223 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                       minHeight: constraints.maxHeight,
                     ),
                     child: IntrinsicHeight(
-                      child: Column(
-                        children: [
+                      child: SafeArea(
+                        top: false,
+                        child: Column(
+                          children: [
 
-                          /// 🔹 TOP IMAGE SECTION
-                          Stack(
-                            children: [
-                              Image.asset(
-                                objConstantAssest.loginPic,
-                                width: double.infinity,
-                                height: 58.h,
-                                fit: BoxFit.fitHeight,
-                              ),
-                              Positioned.fill(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                                  child: Container(
-                                    color: Colors.black.withAlpha(80),
+                            /// 🔹 TOP IMAGE SECTION
+                            Stack(
+                              children: [
+                                Image.asset(
+                                  objConstantAssest.loginPic,
+                                  width: double.infinity,
+                                  height: 58.h,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                                Positioned.fill(
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 3,
+                                      sigmaY: 3,
+                                    ),
+                                    child: Container(
+                                      color: Colors.black.withAlpha(80),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                bottom: 45.dp,
-                                left: 15.dp,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    objCommonWidgets.customText(
-                                      context,
-                                      'Welcome Back',
-                                      30,
-                                      Colors.white,
-                                      objConstantFonts.montserratSemiBold,
-                                    ),
-                                    SizedBox(height: 2.h),
-                                    objCommonWidgets.customText(
-                                      context,
-                                      'Sell organic. We’ll handle the rest.',
-                                      14,
-                                      Colors.white,
-                                      objConstantFonts.montserratSemiBold,
-                                    ),
-                                    objCommonWidgets.customText(
-                                      context,
-                                      'Orders, collection, and delivery made simple.',
-                                      10,
-                                      Colors.white,
-                                      objConstantFonts.montserratMedium,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-
-                          /// 🔹 FORM SECTION
-                          Transform.translate(
-                            offset: const Offset(0, -30),
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF9FAFB),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(35.dp),
-                                  topRight: Radius.circular(35.dp),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Positioned(
+                                  bottom: 45.dp,
+                                  left: 15.dp,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                     children: [
                                       objCommonWidgets.customText(
                                         context,
-                                        'Login',
-                                        25,
-                                        Colors.black,
-                                        objConstantFonts.montserratSemiBold,
+                                        'Welcome Back',
+                                        30,
+                                        Colors.white,
+                                        objConstantFonts
+                                            .montserratSemiBold,
                                       ),
-
-                                      Row(
-                                        children: [
-                                          objCommonWidgets.customText(context, 'Login as Admin?', 12, Colors.black, objConstantFonts.montserratMedium),
-                                          SizedBox(
-                                            width: 36,
-                                            child: Transform.scale(
-                                              scale: 0.6,
-                                              child: CupertinoSwitch(
-                                                activeTrackColor: Colors.green,
-                                                value: isAdmin,
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    isAdmin = val;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      SizedBox(height: 2.h),
+                                      objCommonWidgets.customText(
+                                        context,
+                                        'Sell organic. We’ll handle the rest.',
+                                        14,
+                                        Colors.white,
+                                        objConstantFonts
+                                            .montserratSemiBold,
+                                      ),
+                                      objCommonWidgets.customText(
+                                        context,
+                                        'Orders, collection, and delivery made simple.',
+                                        10,
+                                        Colors.white,
+                                        objConstantFonts
+                                            .montserratMedium,
                                       ),
                                     ],
-                                  ),
-
-                                  SizedBox(height: 2.h),
-
-                                  _customTextField(
-                                    "Enter Mobile Number",
-                                    "Enter your reg. mobile number",
-                                    state.emailController,
-                                    keyboardType: TextInputType.number,
-                                    prefixText: "+91",
-                                    maxLength: 10,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                  ),
-
-
-                                  SizedBox(height: 3.h),
-
-
-
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () {
-
-                                      if (isAdmin){
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
-                                      } else {
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SellerMainScreen()));
-                                      }
-
-
-                                      //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OtpScreen(loginWith: '7985648975')));
-                                    },
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.symmetric(vertical: 15.dp),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(25.dp),
-                                      ),
-                                      child: Center(
-                                        child: objCommonWidgets.customText(
-                                          context,
-                                          'Get OTP',
-                                          16,
-                                          Colors.white,
-                                          objConstantFonts.montserratSemiBold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          /// 🔥 THIS PUSHES FOOTER TO BOTTOM
-                          const Spacer(),
-
-                          /// 🔹 FOOTER
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 30.dp),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                objCommonWidgets.customText(
-                                  context,
-                                  'New to Botaniq? ',
-                                  10,
-                                  Colors.black,
-                                  objConstantFonts.montserratRegular,
-                                ),
-                                CupertinoButton(
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  onPressed: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AccountRegisterScreen()));
-                                  },
-                                  child: objCommonWidgets.customText(
-                                    context,
-                                    'Register Now',
-                                    12,
-                                    Colors.deepOrange,
-                                    objConstantFonts.montserratSemiBold,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+
+                            /// 🔹 FORM SECTION
+                            Transform.translate(
+                              offset: const Offset(0, -30),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF9FAFB),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft:
+                                    Radius.circular(35.dp),
+                                    topRight:
+                                    Radius.circular(35.dp),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .spaceBetween,
+                                      children: [
+                                        objCommonWidgets.customText(
+                                          context,
+                                          'Login',
+                                          25,
+                                          Colors.black,
+                                          objConstantFonts
+                                              .montserratSemiBold,
+                                        ),
+                                        Row(
+                                          children: [
+                                            objCommonWidgets
+                                                .customText(
+                                              context,
+                                              'Login as Admin?',
+                                              10,
+                                              Colors.black,
+                                              objConstantFonts
+                                                  .montserratSemiBold,
+                                            ),
+                                            SizedBox(
+                                              width: 40,
+                                              child: Transform.scale(
+                                                scale: 0.6,
+                                                child:
+                                                CupertinoSwitch(
+                                                  activeTrackColor:
+                                                  Colors.green,
+                                                  value: isAdmin,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      isAdmin = val;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 2.h),
+
+                                    _customTextField(
+                                      "Enter Mobile Number",
+                                      "Enter your reg. mobile number",
+                                      state.emailController,
+                                      keyboardType:
+                                      TextInputType.number,
+                                      prefixText: "+91",
+                                      maxLength: 10,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter
+                                            .digitsOnly,
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 3.h),
+
+                                    CupertinoButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () {
+                                        if (isAdmin) {
+                                          Navigator
+                                              .pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              const MainScreen(),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator
+                                              .pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              const SellerMainScreen(),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding:
+                                        EdgeInsets.symmetric(
+                                          vertical: 15.dp,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                            25.dp,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: objCommonWidgets
+                                              .customText(
+                                            context,
+                                            'Get OTP',
+                                            16,
+                                            Colors.white,
+                                            objConstantFonts
+                                                .montserratSemiBold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 );
               },
             ),
-
           ),
         ),
       ),
     );
   }
+
 
   /// 🔹 CUSTOM TEXT FIELD
   Widget _customTextField(

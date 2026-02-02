@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:lottie/lottie.dart';
 import '../../../Constants/ConstantVariables.dart';
 import '../LoginScreen/LoginScreen.dart';
 
@@ -30,27 +31,27 @@ class _RegisterSuccessScreenState extends State<RegisterSuccessScreen> {
 
   // A controlled sequence is much smoother than nested timers
   void _startSequence() async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 200));
     if (!mounted) return;
     setState(() => _showBg = true);
 
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 150));
     if (!mounted) return;
     setState(() => _showTitle = true);
 
-    await Future.delayed(const Duration(milliseconds: 120));
+    await Future.delayed(const Duration(milliseconds: 180));
     if (!mounted) return;
     setState(() => _showText1 = true);
 
-    await Future.delayed(const Duration(milliseconds: 130));
+    await Future.delayed(const Duration(milliseconds: 200));
     if (!mounted) return;
     setState(() => _showText2 = true);
 
-    await Future.delayed(const Duration(milliseconds: 140));
+    await Future.delayed(const Duration(milliseconds: 240));
     if (!mounted) return;
     setState(() => _showText3 = true);
 
-    await Future.delayed(const Duration(milliseconds: 150));
+    await Future.delayed(const Duration(milliseconds: 280));
     if (!mounted) return;
     setState(() => _showButton = true);
   }
@@ -83,13 +84,26 @@ class _RegisterSuccessScreenState extends State<RegisterSuccessScreen> {
                 child: Container(color: Colors.black.withOpacity(0.5)),
               ),
 
+              Positioned(
+                top: 0.dp,
+                child: Lottie.asset(
+                  objConstantAssest.celebration,
+                  repeat: false,
+                  height: MediaQuery.of(context).size.height/2 + 100.dp,
+                 fit: BoxFit.fill,
+                  width: MediaQuery.of(context).size.width
+                ),
+              ),
+
               /// 🔹 Content
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.dp),
                   child: Column(
                     children: [
-                      const Spacer(),
+
+                      SizedBox(height: 120.dp),
+
 
                       _SmoothFadeSlide(
                         show: _showTitle,
@@ -103,7 +117,9 @@ class _RegisterSuccessScreenState extends State<RegisterSuccessScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 30.dp),
+                      SizedBox(height: 50.dp),
+
+
 
                       _SmoothFadeSlide(
                         show: _showText1,
@@ -151,25 +167,25 @@ class _RegisterSuccessScreenState extends State<RegisterSuccessScreen> {
                         show: _showButton,
                         isButton: true,
                         child: CupertinoButton(
-                          padding: EdgeInsets.zero,
+                          padding: EdgeInsets.symmetric(horizontal: 20.dp),
                           onPressed: () => Navigator.pushAndRemoveUntil(
                               context, MaterialPageRoute(builder: (_) => const LoginScreen()), (r) => false),
                           child: Container(
                             width: double.infinity,
-                            padding: EdgeInsets.symmetric(vertical: 15.dp),
+                            padding: EdgeInsets.symmetric(vertical: 13.dp),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(30.dp),
                             ),
                             child: Center(
                               child: objCommonWidgets.customText(
-                                  context, 'Back to Login', 15, Colors.black, objConstantFonts.montserratSemiBold),
+                                  context, 'Back to Login', 13, Colors.black, objConstantFonts.montserratSemiBold),
                             ),
                           ),
                         ),
                       ),
 
-                      SizedBox(height: 30.dp),
+                      SizedBox(height: 50.dp),
                     ],
                   ),
                 ),
