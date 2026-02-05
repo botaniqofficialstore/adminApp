@@ -351,19 +351,20 @@ class SellerProductsScreenStateUI extends ConsumerState<SellerProductsScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.dp, horizontal: 15.dp),
+      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
       child: Row(
         children: [
-          CupertinoButton(
-              padding: EdgeInsets.zero,
+          CupertinoButton(padding: EdgeInsets.zero,
               minimumSize: Size.zero,
-              child: Icon(Icons.arrow_back_rounded, color: Colors.black, size: 25.dp),
-              onPressed: () {
+              child: Icon(Icons.arrow_back_rounded,
+                  color: Colors.black,
+                  size: 23.dp),
+              onPressed: (){
                 var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
                 userScreenNotifier.callNavigation(ScreenName.profile);
               }),
           SizedBox(width: 5.dp),
-          objCommonWidgets.customText(context, 'My Products', 16, objConstantColor.black, objConstantFonts.montserratMedium),
+          objCommonWidgets.customText(context, 'My Products', 14, objConstantColor.black, objConstantFonts.montserratMedium),
           const Spacer(),
           CupertinoButton(
             padding: EdgeInsets.zero,

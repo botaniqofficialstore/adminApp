@@ -10,6 +10,7 @@ import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/CommonSuccessPopup.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import 'SellerNewOrderScreenState.dart';
 
 class SellerNewOrderScreen extends ConsumerStatefulWidget {
@@ -145,6 +146,8 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
           SizedBox(height: 20.dp),
           deliveryTimeline(context),
           SizedBox(height: 20.dp),
+          productListView(),
+          SizedBox(height: 20.dp),
           _buildActionButtons(context),
         ],
       ),
@@ -187,33 +190,86 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
     );
   }
 
+  Widget productListView(){
+    final state = ref.watch(sellerNewOrderScreenProvider);
+    final notifier = ref.read(sellerNewOrderScreenProvider.notifier);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(0.dp, 0.dp, 0.dp, 0.dp),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 5.dp,
+        crossAxisSpacing: 10.dp,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: state.productList.length,
+      itemBuilder: (context, index) {
+        final product = state.productList[index];
+        return buildProductCard(product, true);
+      },
+    );
+  }
+
+  Widget buildProductCard(Map<String, dynamic> product, bool isVerified) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.dp),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withAlpha(35),
+              blurRadius: 5, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+              child: NetworkImageLoader(
+                imageUrl: product['image'],
+                placeHolder: objConstantAssest.placeholderImage,
+                size: 80.dp,
+                imageSize: double.infinity,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10.dp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
+                SizedBox(height: 4.dp),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 13, const Color(0xFF5E910E), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
+                  ],
+                ),
+
+
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildActionButtons(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: CupertinoButton(
-            onPressed: () => showPurchaseBottomSheet(context),
-            padding: EdgeInsets.zero,
-            child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
-                decoration: BoxDecoration(color: objConstantColor.yellow, borderRadius: BorderRadius.circular(20.dp)),
-                child: Center(child: objCommonWidgets.customText(context, 'View Details', 13, objConstantColor.black, objConstantFonts.montserratSemiBold))),
-          ),
-        ),
-        SizedBox(width: 10.dp),
-        Expanded(
-          child: CupertinoButton(
-            onPressed: () => showConfirmPopup(context),
-            padding: EdgeInsets.zero,
-            child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
-                decoration: BoxDecoration(color: const Color(0xFF06AC0B), borderRadius: BorderRadius.circular(20.dp)),
-                child: Center(child: objCommonWidgets.customText(context, 'Confirm Order', 13, objConstantColor.white, objConstantFonts.montserratSemiBold))),
-          ),
-        ),
-      ],
+    return CupertinoButton(
+      onPressed: () => showConfirmPopup(context),
+      padding: EdgeInsets.zero,
+      minimumSize: Size.zero,
+      child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 14.dp, vertical: 12.dp),
+          decoration: BoxDecoration(color: const Color(0xFF06AC0B), borderRadius: BorderRadius.circular(20.dp)),
+          child: Center(child: objCommonWidgets.customText(context, 'Confirm Order', 13, objConstantColor.white, objConstantFonts.montserratSemiBold))),
     );
   }
 
@@ -247,26 +303,6 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
     );
   }
 
-  void showPurchaseBottomSheet(BuildContext context) {
-    PreferencesManager.getInstance().then((prefs) {
-      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (_) => DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          builder: (_, controller) => Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF424242),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(22.dp)),
-            ),
-            child: Center(child: Text("Product List Here", style: TextStyle(color: Colors.white))),
-          ),
-        ),
-      ).then((_) => prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false));
-    });
-  }
 
   void showConfirmPopup(BuildContext context) {
     PreferencesManager.getInstance().then((pref) {

@@ -210,7 +210,7 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: 15.dp, left: 10.dp, right: 10.dp),
+        padding: EdgeInsets.only(top: 15.dp, left: 10.dp, right: 10.dp, bottom: 6.dp),
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -232,11 +232,11 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                             children: [
                               Image.asset(
                                 isSelected ? activeIcons[index] : inactiveIcons[index],
-                                width: 20.dp,
+                                width: 18.dp,
                                 color: objConstantColor.black.withAlpha(isSelected ? 250 : 150),
                                 colorBlendMode: BlendMode.srcIn,
                               ),
-                              SizedBox(height: 3.5.dp),
+                              SizedBox(height: 3.dp),
                               objCommonWidgets.customText(
                                 context,
                                 moduleTitle[index],
@@ -262,8 +262,8 @@ class UserFooterViewState extends ConsumerState<UserFooterView> {
                               child: objCommonWidgets.customText(
                                 context,
                                 '1235',
-                                10, Colors.white,
-                                objConstantFonts.montserratBold,
+                                9, Colors.white,
+                                objConstantFonts.montserratSemiBold,
                               ),
                             ),
                           ),

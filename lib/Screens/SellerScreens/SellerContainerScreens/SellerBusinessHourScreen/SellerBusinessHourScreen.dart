@@ -142,19 +142,19 @@ class SellerBusinessHourScreenStateUI extends ConsumerState<SellerBusinessHourSc
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+      padding: EdgeInsets.only(left: 10.dp, top: 10.dp, bottom: 5.dp),
       child: Row(
         children: [
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            child: Icon(Icons.arrow_back_rounded, color: Colors.black, size: 23.dp),
-            onPressed: () {
-              var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
-              userScreenNotifier.callNavigation(ScreenName.profile);
-            },
-          ),
-          SizedBox(width: 10.dp),
+          CupertinoButton(padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              child: Icon(Icons.arrow_back_rounded,
+                  color: Colors.black,
+                  size: 20.dp),
+              onPressed: (){
+                var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+                userScreenNotifier.callNavigation(ScreenName.profile);
+              }),
+          SizedBox(width: 5.dp),
           objCommonWidgets.customText(context, 'Business Hours', 14, objConstantColor.black, objConstantFonts.montserratMedium),
         ],
       ),

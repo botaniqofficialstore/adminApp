@@ -30,6 +30,12 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
     'LLP / Private Limited',
   ];
 
+  final List<String> genderType = [
+    'Male',
+    'Female',
+    'Other',
+  ];
+
   final List<String> productsType = [
     //Edibles
     'Fresh Produce',
@@ -488,6 +494,21 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
 
         SizedBox(height: 20.dp),
 
+        CodeReusability().customSingleDropdownField(
+          context: context,
+          placeholder: "Select Your Gender",
+          items: genderType,
+          selectedValue: state.gender,
+          prefixIcon: Icons.wc,
+          onChanged: (value) {
+            setState(() {
+              notifier.updateGender(value!);
+            });
+          },
+        ),
+
+        SizedBox(height: 20.dp),
+
         /// COUNTRY
         CodeReusability().commonDropdownTextField<CountryModel>(
           context: context,
@@ -574,7 +595,29 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
             onChanged: (_) => notifier.onChanged()
         ),
 
+        SizedBox(height: 20.dp),
 
+        CodeReusability().customTextField(
+            context,
+            "Street",
+            "enter your Street",
+            Icons.signpost,
+            state.streetController,
+            inputType: CustomInputType.normal,
+            onChanged: (_) => notifier.onChanged()
+        ),
+
+        SizedBox(height: 20.dp),
+
+        CodeReusability().customTextField(
+            context,
+            "Build/Flat no.",
+            "enter your building or flat no.",
+            Icons.home_work,
+            state.buildNumberController,
+            inputType: CustomInputType.normal,
+            onChanged: (_) => notifier.onChanged()
+        ),
 
         SizedBox(height: 20.dp),
 

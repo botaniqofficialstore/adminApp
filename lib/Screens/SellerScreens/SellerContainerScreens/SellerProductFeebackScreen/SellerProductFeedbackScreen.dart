@@ -328,20 +328,20 @@ class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeed
 
   // Modern Header
   Widget _buildHeader(BuildContext context) {
-    return  Container(
-      padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+    return Container(
+      padding: EdgeInsets.only(left: 10.dp, top: 10.dp, bottom: 15.dp),
       child: Row(
         children: [
           CupertinoButton(padding: EdgeInsets.zero,
               minimumSize: Size.zero,
               child: Icon(Icons.arrow_back_rounded,
                   color: Colors.black,
-                  size: 23.dp),
+                  size: 20.dp),
               onPressed: (){
                 var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
-                userScreenNotifier.callNavigation(ScreenName.rating);
+                userScreenNotifier.callNavigation(ScreenName.profile);
               }),
-          SizedBox(width: 10.dp),
+          SizedBox(width: 5.dp),
           objCommonWidgets.customText(context, 'Customer Ratings & Review', 14, objConstantColor.black, objConstantFonts.montserratMedium),
         ],
       ),

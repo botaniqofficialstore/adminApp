@@ -375,9 +375,9 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
               borderRadius: BorderRadius.circular(14.dp),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withAlpha(20),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withAlpha(10),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
                 )
               ],
             ),

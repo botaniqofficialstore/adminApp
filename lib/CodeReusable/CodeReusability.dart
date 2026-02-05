@@ -1342,7 +1342,8 @@ class CodeReusability {
         double initialHeight = 120,
         Widget? suffixWidget,
         void Function(String)? onChanged,
-        String description = ''
+        String description = '',
+        bool isEdit = false
       }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1408,7 +1409,7 @@ class CodeReusability {
                           cursorColor: Colors.black,
                           onChanged: onChanged,
                           style: TextStyle(
-                            fontSize: 14.dp,
+                            fontSize: isEdit ? 12.dp : 14.dp,
                             fontFamily: objConstantFonts.montserratMedium,
                             color: Colors.black,
                           ),

@@ -1,6 +1,5 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
 import 'package:botaniq_admin/CommonViews/MapScreen.dart';
-import 'package:botaniq_admin/Screens/Authentication/AccountRegisterScreen/AccountRegisterRepository.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,22 +7,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Utility/MediaHandler.dart';
 import '../../../Utility/CommonOtpVerificationScreen.dart';
-import '../RegisterSuccessScreen/RegisterSuccessScreen.dart';
-import 'AccountRegisterModel.dart';
+import '../../Screens/Authentication/AccountRegisterScreen/AccountRegisterModel.dart';
+import '../../Screens/Authentication/AccountRegisterScreen/AccountRegisterRepository.dart';
+import '../../Screens/Authentication/AccountRegisterScreen/AccountRegisterScreenState.dart';
 
-enum OtpVerifyType {
-  mobile,
-  email,
-  whatsApp,
-  personalMobile,
-  personalEmail
-}
 
-class AccountRegisterScreenState {
-  final bool isLoading;
-  final int currentStep;
-  final int maxCompletedStep;
-  final bool isPageAnimating;
+class AccountUpdateScreenState {
+
+  final String formTitle;
 
   //Step 1
   final TextEditingController mobileNumberController;
@@ -31,7 +22,6 @@ class AccountRegisterScreenState {
   final TextEditingController emailController;
   final bool verifiedMobile;
   final bool verifiedEmail;
-  final bool isWhatsApp;
   final bool verifiedWhatsApp;
 
   //Step 2
@@ -70,31 +60,14 @@ class AccountRegisterScreenState {
   final TextEditingController bankIFSCCodeController;
   final TextEditingController bankAccountNumberController;
 
-  //Step 6
-  final LatLng? selectedLocation;
-  final String selectPickupAddress;
-
-  //Step 7
-  final Map<String, DaySchedule> weeklySchedule;
-
-  //Step 8
-  final bool isAgreementAccepted;
-  final List<AgreementSection> sellerAgreementSections;
-
-
-  AccountRegisterScreenState({
-    this.isLoading = false,
-    this.currentStep = 0,
-    this.maxCompletedStep = 0,
-    this.isPageAnimating = false,
-
+  AccountUpdateScreenState({
+    this.formTitle = '',
     //Step 1
     required this.mobileNumberController,
     required this.mobileNumberWhatsappController,
     required this.emailController,
     this.verifiedMobile = false,
     this.verifiedEmail = false,
-    this.isWhatsApp = true,
     this.verifiedWhatsApp = false,
 
     //Step 2
@@ -133,30 +106,16 @@ class AccountRegisterScreenState {
     required this.fssAiController,
     this.isFssAiNeeded = false,
 
-    //Step 6
-    required this.selectedLocation,
-    this.selectPickupAddress = '',
-
-    //Step 7
-    required this.weeklySchedule,
-
-    //Step 8
-    required this.isAgreementAccepted,
-    required this.sellerAgreementSections,
-
   });
 
 
-  AccountRegisterScreenState copyWith({
+  AccountUpdateScreenState copyWith({
+    String? formTitle,
     bool? isLoading,
-    int? currentStep,
-    int? maxCompletedStep,
-    bool? isPageAnimating,
     TextEditingController? mobileNumberController,
     TextEditingController? mobileNumberWhatsappController,
     bool? verifiedMobile,
     TextEditingController? emailController,
-    bool? isWhatsApp,
     bool? verifiedEmail,
     bool? verifiedWhatsApp,
     TextEditingController? fullNameController,
@@ -188,22 +147,15 @@ class AccountRegisterScreenState {
     TextEditingController? bankAccountNumberController,
     TextEditingController? fssAiController,
     bool? isFssAiNeeded,
-    Map<String, DaySchedule>? weeklySchedule,
-    bool? isAgreementAccepted,
-    List<AgreementSection>? sellerAgreementSections,
     List<String>? selectedProducts
   }) {
-    return AccountRegisterScreenState(
-      isLoading: isLoading ?? this.isLoading,
-      currentStep: currentStep ?? this.currentStep,
-      maxCompletedStep: maxCompletedStep ?? this.maxCompletedStep,
-      isPageAnimating: isPageAnimating ?? this.isPageAnimating,
+    return AccountUpdateScreenState(
+      formTitle: formTitle ?? this.formTitle,
       mobileNumberController: mobileNumberController ?? this.mobileNumberController,
       mobileNumberWhatsappController: mobileNumberWhatsappController ?? this.mobileNumberWhatsappController,
       emailController: emailController ?? this.emailController,
       verifiedMobile: verifiedMobile ?? this.verifiedMobile,
       verifiedEmail: verifiedEmail ?? this.verifiedEmail,
-      isWhatsApp: isWhatsApp ?? this.isWhatsApp,
       verifiedWhatsApp: verifiedWhatsApp ?? this.verifiedWhatsApp,
       fullNameController: fullNameController ?? this.fullNameController,
       streetController: streetController ?? this.streetController,
@@ -226,120 +178,36 @@ class AccountRegisterScreenState {
       businessDescriptionController: businessDescriptionController ?? this.businessDescriptionController,
       businessStartedDateController: businessStartedDateController ?? this.businessStartedDateController,
       businessLogo: businessLogo ?? this.businessLogo,
-      selectedLocation: selectedLocation ?? this.selectedLocation,
-      selectPickupAddress: selectPickupAddress ?? this.selectPickupAddress,
       panNumberController: panNumberController ?? this.panNumberController,
       gstNumberController: gstNumberController ?? this.gstNumberController,
       bankIFSCCodeController: bankIFSCCodeController ?? this.bankIFSCCodeController,
       isFssAiNeeded: isFssAiNeeded ?? this.isFssAiNeeded,
       bankAccountNumberController: bankAccountNumberController ?? this.bankAccountNumberController,
-        fssAiController: fssAiController ?? this.fssAiController,
-      weeklySchedule: weeklySchedule ?? this.weeklySchedule,
-      isAgreementAccepted: isAgreementAccepted ?? this.isAgreementAccepted,
-      sellerAgreementSections: sellerAgreementSections ?? this.sellerAgreementSections,
+      fssAiController: fssAiController ?? this.fssAiController,
       selectedProducts: selectedProducts ?? this.selectedProducts,
     );
   }
 }
 
-class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterScreenState> {
-  AccountRegisterScreenStateNotifier() : super(AccountRegisterScreenState(
+class AccountUpdateScreenStateNotifier extends StateNotifier<AccountUpdateScreenState> {
+  AccountUpdateScreenStateNotifier() : super(AccountUpdateScreenState(
     //------
-    mobileNumberController: TextEditingController(),
-    mobileNumberWhatsappController: TextEditingController(),
-    emailController: TextEditingController(),
-    fullNameController: TextEditingController(),
+      mobileNumberController: TextEditingController(),
+      mobileNumberWhatsappController: TextEditingController(),
+      emailController: TextEditingController(),
+      fullNameController: TextEditingController(),
       streetController: TextEditingController(),
       buildNumberController: TextEditingController(),
-    dobController: TextEditingController(),
-    pinCodeController: TextEditingController(),
-    brandNameController: TextEditingController(),
-    businessDescriptionController: TextEditingController(),
-    businessStartedDateController: TextEditingController(),
-    panNumberController: TextEditingController(),
-    gstNumberController: TextEditingController(),
-    bankIFSCCodeController: TextEditingController(),
-    bankAccountNumberController: TextEditingController(),
-    fssAiController: TextEditingController(),
-    selectedLocation: null,
-    weeklySchedule: {
-      'Monday': DaySchedule(isOpen: false),
-      'Tuesday': DaySchedule(isOpen: false),
-      'Wednesday': DaySchedule(isOpen: false),
-      'Thursday': DaySchedule(isOpen: false),
-      'Friday': DaySchedule(isOpen: false),
-      'Saturday': DaySchedule(isOpen: false),
-      'Sunday': DaySchedule(isOpen: false),
-    },
-      isAgreementAccepted: false,
-      sellerAgreementSections : [
-        AgreementSection(
-          title: "1. Platform Role",
-          points: [
-            "The platform acts only as a marketplace facilitator.",
-            "Sellers are solely responsible for product quality, legality, and authenticity.",
-          ],
-        ),
-        AgreementSection(
-          title: "2. Seller Responsibilities",
-          points: [
-            "Maintain valid FSSAI, GST, and PAN registrations.",
-            "Ensure organic claims are truthful and verifiable.",
-            "Follow food safety, hygiene, packaging, and labeling laws.",
-          ],
-        ),
-        AgreementSection(
-          title: "3. Product Approval",
-          points: [
-            "Products will be visible to customers only after admin verification.",
-            "Admin may suspend or remove products at any time.",
-          ],
-        ),
-        AgreementSection(
-          title: "4. Orders & Delivery",
-          points: [
-            "Sellers must pack products hygienically and upload package images.",
-            "Handover to delivery partner requires OTP verification.",
-          ],
-        ),
-        AgreementSection(
-          title: "5. Payments & Settlements",
-          points: [
-            "Payments will be settled weekly.",
-            "Platform may deduct commission, logistics charges, GST/TDS/TCS as applicable.",
-          ],
-        ),
-        AgreementSection(
-          title: "6. Reviews & Ratings",
-          points: [
-            "Customers may provide reviews and ratings.",
-            "Manipulation of reviews is strictly prohibited.",
-          ],
-        ),
-        AgreementSection(
-          title: "7. Returns & Disputes",
-          points: [
-            "Sellers must comply with return and refund policies.",
-            "Platform decisions in disputes shall be final.",
-          ],
-        ),
-        AgreementSection(
-          title: "8. Legal Compliance",
-          points: [
-            "Seller agrees to comply with Indian laws including:",
-            "FSSAI Act",
-            "GST Act",
-            "Consumer Protection (E-commerce) Rules",
-            "IT Act & DPDP Act 2023",
-          ],
-        ),
-        AgreementSection(
-          title: "9. Account Suspension",
-          points: [
-            "Platform may suspend or terminate accounts for violations or fraud.",
-          ],
-        ),
-      ]
+      dobController: TextEditingController(),
+      pinCodeController: TextEditingController(),
+      brandNameController: TextEditingController(),
+      businessDescriptionController: TextEditingController(),
+      businessStartedDateController: TextEditingController(),
+      panNumberController: TextEditingController(),
+      gstNumberController: TextEditingController(),
+      bankIFSCCodeController: TextEditingController(),
+      bankAccountNumberController: TextEditingController(),
+      fssAiController: TextEditingController(),
   ));
 
 
@@ -368,15 +236,104 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
       isFssAiNeeded: needsFssai,
     );
   }
+  
+
+
+  void updateInitialData(BuildContext context, FormType type, dynamic data){
+    if (type == FormType.brandLogo){
+      state = state.copyWith(businessLogo: data ?? '', formTitle: 'Upload your brand logo');
+    } else if (type == FormType.brandName){
+      state = state.copyWith(brandNameController: TextEditingController(text: data ?? ''), formTitle: 'Upload your brand logo');
+    } else if (type == FormType.brandStartDate){
+      state = state.copyWith(businessStartedDateController: TextEditingController(text: data ?? ''), formTitle: 'Update your business started date');
+    } else if (type == FormType.aboutStore){
+      state = state.copyWith(businessDescriptionController: TextEditingController(text: data ?? ''), formTitle: 'Update something about your business');
+    } else if (type == FormType.businessType){
+      state = state.copyWith(businessType: data ?? '', formTitle: 'Update your business type');
+    } else if (type == FormType.productCategory){
+      state = state.copyWith(selectedProducts: data, formTitle: 'Update your product categories');
+    } else if (type == FormType.emailID){
+      state = state.copyWith(emailController: TextEditingController(text: data ?? ''), verifiedEmail: true, formTitle: 'Update your Email');
+    } else if (type == FormType.mobileNumber){
+      state = state.copyWith(mobileNumberController: TextEditingController(text: data ?? ''), verifiedMobile: true, formTitle: 'Update your mobile number');
+    } else if (type == FormType.whatsAppNumber){
+      state = state.copyWith(mobileNumberWhatsappController: TextEditingController(text: data ?? ''), verifiedWhatsApp: true, formTitle: 'Update your whatsApp number');
+    } else if (type == FormType.panNumber){
+      state = state.copyWith(panNumberController: TextEditingController(text: data ?? ''), formTitle: 'Update your PAN number');
+    } else if (type == FormType.gstNumber){
+      state = state.copyWith(gstNumberController: TextEditingController(text: data ?? ''), formTitle: 'Update your GST');
+    } else if (type == FormType.fssaiNumber){
+      state = state.copyWith(fssAiController: TextEditingController(text: data ?? ''), formTitle: 'Update your FSSAI code');
+    } else if (type == FormType.bankDetails){
+      final bankDetails = data as BankDetails?;
+
+      state = state.copyWith(
+        bankAccountNumberController: TextEditingController(text: bankDetails?.acNumber ?? ''),
+        bankIFSCCodeController: TextEditingController(text: bankDetails?.ifscCode ?? ''),
+          formTitle: 'Update your bank details'
+      );
+
+    } else if (type == FormType.personalProfile){
+      callCountryListGepAPI(context);
+      callStatesListGepAPI(context, 'IN');
+      callCityListGepAPI(context, 'IN', 'KL');
+      final profile = data as PersonalProfile?;
+
+      state = state.copyWith(
+        profileImage: profile?.image,
+        fullNameController: TextEditingController(text: profile?.name ?? ''),
+        dobController: TextEditingController(text: profile?.age ?? ''),
+        gender: profile?.gender,
+        buildNumberController: TextEditingController(text: profile?.flatBuildNo ?? ''),
+        streetController: TextEditingController(text: profile?.street ?? ''),
+        city: profile?.city,
+        state: profile?.state,
+        country: profile?.country,
+        pinCodeController: TextEditingController(text: profile?.pinCode ?? ''),
+          formTitle: 'Update your personal details'
+      );
+
+    }
+  }
 
 
 
-  void setStep(int step) {
-    state = state.copyWith(
-      currentStep: step,
-      maxCompletedStep:
-      step > state.maxCompletedStep ? step : state.maxCompletedStep,
-    );
+  FormFieldConfig? getFormFieldConfig(FormType type) {
+
+    switch (type) {
+      case FormType.panNumber:
+        return FormFieldConfig(
+          title: "PAN Number",
+          placeHolder: "eg. ABCDE1234F",
+          description: '',
+          icon: Icons.badge_outlined,
+          inputType: CustomInputType.pan,
+          controller: state.panNumberController,
+        );
+
+      case FormType.gstNumber:
+        return FormFieldConfig(
+          title: "GST (Optional)",
+          placeHolder: "eg. 22ABCDE1234F1Z5",
+          description: 'GST registration is required for certain businesses under Indian tax laws. If you have a GST number, please add it here to ensure compliance and enable invoicing support.',
+          icon: Icons.receipt_long,
+          inputType: CustomInputType.gst,
+          controller: state.gstNumberController,
+        );
+
+      case FormType.fssaiNumber:
+        return FormFieldConfig(
+          title: "FSSAI License (Optional)",
+          placeHolder: "Enter fssai number",
+          description: 'FSSAI registration is issued by the Food Safety and Standards Authority of India. Providing this helps verify food safety compliance and increases customer confidence.',
+          icon: Icons.food_bank,
+          inputType: CustomInputType.fssai,
+          controller: state.fssAiController,
+        );
+
+      default:
+        return null; // Other FormTypes don’t need a field
+    }
   }
 
 
@@ -385,8 +342,6 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
   }
 
   void updateBusinessType(String type) => state = state.copyWith(businessType: type);
-
-  void updateIsWhatApp(bool isWhatsApp) => state = state.copyWith(isWhatsApp: isWhatsApp);
 
   void updateBusinessLogo(String imagePath) => state = state.copyWith(businessLogo: imagePath);
 
@@ -411,17 +366,27 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
 
 
 
-  /// Mark:- Verify Button methods
-  bool showVerifyButtonForMobileNumber(){
-    return CodeReusability.isValidMobileNumber(state.mobileNumberController.text.trim());
-  }
-
-  bool showVerifyButtonForMobileNumberWhatsApp(){
-    return CodeReusability.isValidMobileNumber(state.mobileNumberWhatsappController.text.trim());
-  }
-
-  bool showVerifyButtonForEmail(){
-    return CodeReusability.isValidEmail(state.emailController.text.trim());
+  /// Mark:- Verify Button method
+  bool showVerifyButton(FormType type, dynamic data){
+    if (type == FormType.emailID){
+      if (data == state.emailController.text.trim()){
+        updateEmailVerified(true);
+        return false;
+      }
+      return CodeReusability.isValidEmail(state.emailController.text.trim());
+    } else if (type == FormType.mobileNumber){
+      if (data == state.mobileNumberController.text.trim()){
+        updateMobileNumberVerified(true);
+        return false;
+      }
+      return CodeReusability.isValidMobileNumber(state.mobileNumberController.text.trim());
+    } else {
+      if (data == state.mobileNumberWhatsappController.text.trim()){
+        updateWhatsAppVerified(true);
+        return false;
+      }
+      return CodeReusability.isValidMobileNumber(state.mobileNumberWhatsappController.text.trim());
+    }
   }
 
 
@@ -434,6 +399,10 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     state = state.copyWith(verifiedEmail: isVerified);
   }
 
+  void updateWhatsAppVerified(bool isVerified){
+    state = state.copyWith(verifiedWhatsApp: isVerified);
+  }
+
   /// Call this when location is selected from map/autocomplete
   void setSelectedLocation(LatLng location, String address) {
     state = state.copyWith(selectedLocation: location, selectPickupAddress: address);
@@ -443,61 +412,18 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
   void clearSelectedLocation() {
     state = state.copyWith(selectedLocation: null, selectPickupAddress: '');
   }
-
-  void toggleDay(String day) {
-    final current = state.weeklySchedule[day]!;
-    state = state.copyWith(
-      weeklySchedule: {
-        ...state.weeklySchedule,
-        day: current.copyWith(isOpen: !current.isOpen),
-      },
-    );
-  }
-
-  void updateTime(String day, bool isOpenTime, TimeOfDay time) {
-    final current = state.weeklySchedule[day]!;
-    state = state.copyWith(
-      weeklySchedule: {
-        ...state.weeklySchedule,
-        day: isOpenTime ? current.copyWith(openTime: time) : current.copyWith(closeTime: time),
-      },
-    );
-  }
-
-  void copyMondayToAll() {
-    final monday = state.weeklySchedule['Monday']!;
-    final newSchedule = state.weeklySchedule.map((key, value) {
-      return MapEntry(key, monday.copyWith());
-    });
-    state = state.copyWith(weeklySchedule: newSchedule);
-  }
-
-  void updateReadedAgreement(bool value) {
-    state = state.copyWith(isAgreementAccepted: value);
-  }
-
-
-
+  
   ///Mark:- Empty Validation for Pages
-
-  void startPageAnimation() {
-    state = state.copyWith(isPageAnimating: true);
-  }
-
-  void endPageAnimation() {
-    state = state.copyWith(isPageAnimating: false);
-  }
-
   bool canMoveToNext(int step) {
     //return true;
     if (step == 0) {
       final mobileNumber = state.mobileNumberController.text.trim();
       final email = state.emailController.text.trim();
-      final isWhatsApp = state.isWhatsApp ? true : (state.mobileNumberWhatsappController.text.trim().isNotEmpty && state.verifiedWhatsApp);
+      //final isWhatsApp = state.isWhatsApp ? true : (state.mobileNumberWhatsappController.text.trim().isNotEmpty && state.verifiedWhatsApp);
 
       return mobileNumber.isNotEmpty && CodeReusability.isValidMobileNumber(mobileNumber) &&
           email.isNotEmpty && CodeReusability.isValidEmail(email) && state.verifiedMobile &&
-          state.verifiedEmail && isWhatsApp;
+          state.verifiedEmail;// && isWhatsApp;
     }
 
     if (step == 1) {
@@ -513,7 +439,7 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
           state.gender!.isNotEmpty &&
           state.selectedCountryCode.isNotEmpty &&
           state.selectedStateCode.isNotEmpty &&
-    state.selectedCityCode.isNotEmpty &&
+          state.selectedCityCode.isNotEmpty &&
           state.profileImage.isNotEmpty;
     }
 
@@ -527,7 +453,7 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
           businessStartedDate.isNotEmpty &&
           state.businessType!.isNotEmpty &&
           state.selectedProducts.isNotEmpty &&
-    state.businessLogo.isNotEmpty;
+          state.businessLogo.isNotEmpty;
     }
 
     if (step == 3) {
@@ -556,29 +482,6 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
 
       return accountNumber.isNotEmpty &&
           ifscCode.isNotEmpty;
-    }
-
-    if (step == 5){
-
-      return state.selectedLocation != null;
-    }
-
-    if (step == 6) {
-      bool anyOpen = state.weeklySchedule.values.any((day) => day.isOpen);
-      if (!anyOpen) return false;
-
-      for (var day in state.weeklySchedule.values) {
-        if (day.isOpen) {
-          final start = day.openTime.hour * 60 + day.openTime.minute;
-          final end = day.closeTime.hour * 60 + day.closeTime.minute;
-          if (end <= start) return false; // Closing must be after opening
-        }
-      }
-      return true;
-    }
-
-    if (step == 7){
-     return state.isAgreementAccepted;
     }
 
     return true;
@@ -795,54 +698,83 @@ class AccountRegisterScreenStateNotifier extends StateNotifier<AccountRegisterSc
     });
   }
 
-  void callRegistrationAPI(BuildContext context){
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RegisterSuccessScreen(),
-      ),
-    );
-  }
 
 
 }
 
-final accountRegisterScreenStateProvider =
-StateNotifierProvider.autoDispose<AccountRegisterScreenStateNotifier, AccountRegisterScreenState>((ref) {
-  return AccountRegisterScreenStateNotifier();
+final accountUpdateScreenStateProvider =
+StateNotifierProvider.autoDispose<AccountUpdateScreenStateNotifier, AccountUpdateScreenState>((ref) {
+  return AccountUpdateScreenStateNotifier();
 });
 
-
-
-
-class DaySchedule {
-  final bool isOpen;
-  final TimeOfDay openTime;
-  final TimeOfDay closeTime;
-
-  DaySchedule({
-    this.isOpen = false,
-    this.openTime = const TimeOfDay(hour: 9, minute: 0),
-    this.closeTime = const TimeOfDay(hour: 18, minute: 0),
-  });
-
-  DaySchedule copyWith({bool? isOpen, TimeOfDay? openTime, TimeOfDay? closeTime}) {
-    return DaySchedule(
-      isOpen: isOpen ?? this.isOpen,
-      openTime: openTime ?? this.openTime,
-      closeTime: closeTime ?? this.closeTime,
-    );
-  }
+enum FormType {
+  brandLogo,
+  brandName,
+  brandStartDate,
+  aboutStore,
+  businessType,
+  productCategory,
+  emailID,
+  mobileNumber,
+  whatsAppNumber,
+  gstNumber,
+  fssaiNumber,
+  panNumber,
+  personalProfile,
+  bankDetails,
 }
 
+class PersonalProfile {
+  final String image;
+  final String name;
+  final String age;
+  final String gender;
+  final String flatBuildNo;
+  final String street;
+  final String city;
+  final String state;
+  final String country;
+  final String pinCode;
 
 
-class AgreementSection {
-  final String title;
-  final List<String> points;
-
-  AgreementSection({
-    required this.title,
-    required this.points,
+  PersonalProfile({
+    required this.image,
+    required this.name,
+    required this.age,
+    required this.gender,
+    required this.flatBuildNo,
+    required this.street,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.pinCode,
   });
+}
+
+class FormFieldConfig {
+  final String title;
+  final String placeHolder;
+  final String description;
+  final IconData icon;
+  final CustomInputType inputType;
+  final TextEditingController controller;
+
+  const FormFieldConfig({
+    required this.title,
+    required this.placeHolder,
+    required this.description,
+    required this.icon,
+    required this.inputType,
+    required this.controller,
+  });
+}
+
+class BankDetails {
+  final String acNumber;
+  final String ifscCode;
+
+  const BankDetails({
+    required this.acNumber,
+    required this.ifscCode,
+});
 }

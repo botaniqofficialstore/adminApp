@@ -1,6 +1,14 @@
-import 'dart:ui';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerAccountScreen/SellerAccountScreenState.dart';
+import 'package:botaniq_admin/Utility/AccountUpdatePopup/AccountUpdateScreen.dart';
+import 'package:botaniq_admin/Utility/Logger.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import '../../../../Constants/ConstantVariables.dart';
+import '../../../../Constants/Constants.dart';
+import '../../../../Utility/AccountUpdatePopup/AccountUpdateScreenState.dart';
+import '../../SellerMainScreen/SellerMainScreenState.dart';
 
 class SellerAccountScreen extends ConsumerStatefulWidget {
   const SellerAccountScreen({super.key});
@@ -10,200 +18,851 @@ class SellerAccountScreen extends ConsumerStatefulWidget {
 }
 
 class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with TickerProviderStateMixin {
-  late AnimationController _fadeController;
+  final List<String> productsType = [
+    'Personal Care & Beauty',
+    'Ayurvedic External Use',
+  ];
+  final ScrollController _scrollController = ScrollController();
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+
 
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
+
+    Future.microtask(() {
+      final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          notifier.toggleExpandBtn(true);
+        }
+      });
+
+    });
+
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..forward();
+      duration: const Duration(milliseconds: 1800),
+    );
+
+    // Start entrance animation immediately
+    _controller.forward();
+
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
+    _scrollController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB), // Very soft professional grey
-      body: Stack(
-        children: [
-          _buildBackgroundAesthetic(),
-          SafeArea(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                _buildSliverHeader(),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.transparent, // Changed from transparent for visibility
+      body: SafeArea(
+        child: Stack(
+          children: [
+            /// MAIN CONTENT
+            NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification) {
+                  // User started scrolling -> Shrink
+
+
+                  if (state.isExpandedButton) {
+                    notifier.toggleExpandBtn(false);
+                  }
+                } else if (notification is ScrollEndNotification) {
+                  // User stopped scrolling -> Expand
+                  if (!state.isExpandedButton) {
+                    notifier.toggleExpandBtn(true);
+                  }
+                }
+                return true;
+              },
+              child: CupertinoScrollbar(
+                controller: _scrollController,
+                thickness: 2.0,
+                radius: const Radius.circular(10),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      brandDetails(),
+                      if (state.showEdit)
+                        CupertinoButton(child:
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 13.dp, vertical: 15.dp),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(30.dp),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: objCommonWidgets.customText(
+                              context,
+                              'Save',
+                              15,
+                              Colors.white,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                          ),
+                        ), onPressed: (){
+                          notifier.toggleExpandBtn(true);
+                          notifier.toggleEdit(false);
+                        })
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            /// EXPANDING FLOATING BUTTON
+            if (!state.showEdit)
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    notifier.toggleEdit(true);
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  padding: EdgeInsets.symmetric(horizontal: state.isExpandedButton ? 13.dp : 10.dp, vertical: 10.dp),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(30.dp),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(15),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(height: 10),
-                        _animate(0, _buildIdentityPassport()),
-
-                        const SizedBox(height: 48),
-                        _buildSectionLabel("Corporate Registry"),
-                        _animate(1, _buildModernDataSheet([
-                          _buildDataRow("Legal Entity", "Global Exports Pvt Ltd"),
-                          _buildDataRow("Merchant Tier", "Executive Platinum"),
-                          _buildDataRow("Business Type", "Private Limited"),
-                        ])),
-
-                        const SizedBox(height: 32),
-                        _buildSectionLabel("Tax & Compliance"),
-                        _animate(2, _buildComplianceGrid()),
-
-                        const SizedBox(height: 32),
-                        _buildSectionLabel("Financial Settlements"),
-                        _animate(3, _buildBankModule()),
-
-                        const SizedBox(height: 32),
-                        _buildSectionLabel("Logistics Node"),
-                        _animate(4, _buildAddressModule()),
-
-                        const SizedBox(height: 140),
+                        Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 15.dp,
+                        ),
+                        if (state.isExpandedButton) ...[
+                          SizedBox(width: 5.dp),
+                          objCommonWidgets.customText(
+                            context,
+                            'Edit',
+                            13,
+                            Colors.white,
+                            objConstantFonts.montserratSemiBold,
+                          ),
+                        ],
                       ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-          _buildBottomAction(),
-        ],
-      ),
-    );
-  }
-
-  // --- MODERN PROFESSIONAL COMPONENTS ---
-
-  Widget _buildBackgroundAesthetic() {
-    return Positioned(
-      top: -100,
-      right: -50,
-      child: Container(
-        width: 300,
-        height: 300,
-        decoration: BoxDecoration(
-          color: Colors.indigo.withOpacity(0.03),
-          shape: BoxShape.circle,
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSliverHeader() {
-    return SliverAppBar(
-      backgroundColor: const Color(0xFFF9FAFB).withOpacity(0.8),
-      elevation: 0,
-      pinned: true,
-      centerTitle: false,
-      title: const Text("SETTINGS / ACCOUNT",
-          style: TextStyle(color: Color(0xFF6B7280), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
-      actions: [
-        IconButton(icon: const Icon(Icons.share_outlined, size: 18, color: Colors.black), onPressed: () {}),
-        const SizedBox(width: 12),
-      ],
-    );
-  }
 
-  Widget _buildIdentityPassport() {
+  Widget brandDetails() {
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Arjun Sharma",
-            style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: -1.2, color: Color(0xFF111827))),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            const Icon(Icons.verified_rounded, color: Colors.indigoAccent, size: 16),
-            const SizedBox(width: 6),
-            Text("ENTERPRISE ACCOUNT ACTIVE",
-                style: TextStyle(color: Colors.indigoAccent.withOpacity(0.8), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-          ],
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 15.dp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.10,
+                end: 0.30,
+                child: headerView(),
+              ),
+
+              SizedBox(height: 18.dp),
+
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.20,
+                end: 0.40,
+                child: aboutView(),
+              ),
+
+              SizedBox(height: 18.dp),
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.30,
+                end: 0.40,
+                child: contentView(
+                  'Business Type',
+                  'Individual / Proprietorship',
+                      () {},
+                ),
+              ),
+              SizedBox(height: 18.dp),
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.40,
+                end: 0.45,
+                child: categoryView(),
+              ),
+
+              SizedBox(height: 25.dp),
+
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.50,
+                end: 0.55,
+                child: contactDetails(),
+              ),
+
+              SizedBox(height: 25.dp),
+
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.60,
+                end: 0.65,
+                child: legalDetails(),
+              ),
+
+              SizedBox(height: 25.dp),
+
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.70,
+                end: 0.75,
+                child: bankingDetails(),
+              ),
+
+              SizedBox(height: 25.dp),
+
+              StaggeredRTL(
+                controller: _controller,
+                start: 0.80,
+                end: 0.85,
+                child: profileView(),
+              ),
+
+
+              SizedBox(height: 5.dp),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildSectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(text.toUpperCase(),
-          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF9CA3AF), letterSpacing: 1.5)),
+  Widget legalDetails(){
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Legal Details',
+          18,
+          Colors.black,
+          objConstantFonts.montserratSemiBold,
+        ),
+        SizedBox(height: 5.dp),
+        contentView('GST Number', '8975115483154', (){
+          notifier.openFormPopup(context, FormType.gstNumber, '8975115483154');
+        }),
+        SizedBox(height: 18.dp),
+        contentView('FSSAI Number', 'HF45MHS5545LK1N', (){
+          notifier.openFormPopup(context, FormType.fssaiNumber, 'HF45MHS5545LK1N');
+        }),
+        SizedBox(height: 18.dp),
+        contentView('PAN Number', '784S8SJS26SHS', (){
+          notifier.openFormPopup(context, FormType.panNumber, '784S8SJS26SHS');
+        }),
+      ],
     );
   }
 
-  Widget _buildModernDataSheet(List<Widget> rows) {
+  Widget contactDetails(){
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Contact Details',
+          18,
+          Colors.black,
+          objConstantFonts.montserratSemiBold,
+        ),
+        SizedBox(height: 5.dp),
+        contentView('Email', 'nourishOrganic@gmail.com', (){
+          notifier.openFormPopup(context, FormType.emailID, 'nourishOrganic@gmail.com');
+        }),
+        SizedBox(height: 18.dp),
+        contentView('Mobile Number', '+91 7634859755', (){
+          notifier.openFormPopup(context, FormType.mobileNumber, '7634859755');
+        }),
+        SizedBox(height: 18.dp),
+        contentView('WhatsApp Number', '+91 9845751258', (){
+          notifier.openFormPopup(context, FormType.whatsAppNumber, '9845751258');
+        }),
+      ],
+    );
+  }
+
+  Widget headerView(){
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 34.dp,
+                  backgroundColor: Colors.black,
+                  child: ClipOval(
+                    child: Image.network(
+                      'https://drive.google.com/uc?id=1Rmn4MxWtMaV7sEXqxGszVWud8XuyeRnv',
+                      width: 65.dp,
+                      height: 65.dp,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // 1. Local Placeholder Image
+                            Image.asset(
+                              objConstantAssest.defaultProfileImage,
+                              width: 65.dp,
+                              height: 65.dp,
+                              fit: BoxFit.cover,
+                            ),
+                            // 2. Small White Circular Progress Bar
+                            SizedBox(
+                              width: 12.dp, // Scaled down for the small avatar
+                              height: 12.dp,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.5,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                    : null,
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                backgroundColor: Colors.white24,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          objConstantAssest.defaultProfileImage,
+                          width: 65.dp,
+                          height: 65.dp,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                if (state.showEdit)
+                Positioned(
+                  bottom: 0.dp,
+                  right: 0.dp,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    onPressed: () async {
+                      notifier.openFormPopup(context, FormType.brandLogo, 'https://drive.google.com/uc?id=1Rmn4MxWtMaV7sEXqxGszVWud8XuyeRnv');
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5.dp),
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.edit,
+                        size: 12.dp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+            SizedBox(height: 6.dp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                objCommonWidgets.customText(
+                  context,
+                  'Nourish Organics',
+                  15,
+                  objConstantColor.black,
+                  objConstantFonts.montserratSemiBold,
+                ),
+                if (state.showEdit)
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  onPressed: () async {
+                    notifier.openFormPopup(context, FormType.brandName, 'Nourish Organics');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(5.dp),
+                    child: Icon(
+                      Icons.edit,
+                      size: 12.dp,
+                      color: Colors.black,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 1.dp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.verified_rounded,
+                  color: Colors.blueAccent,
+                  size: 14.dp,
+                ),
+                SizedBox(width: 2.dp),
+                objCommonWidgets.customText(
+                  context,
+                  'Verified Merchant',
+                  11,
+                  Colors.black,
+                  objConstantFonts.montserratMedium,
+                ),
+              ],
+            ),
+            SizedBox(height: 1.dp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                objCommonWidgets.customText(
+                  context,
+                  'Since 2018',
+                  9,
+                  Colors.black,
+                  objConstantFonts.montserratMedium,
+                ),
+                if (state.showEdit)
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  onPressed: () {
+                    notifier.openFormPopup(context, FormType.brandStartDate, '13/05/2018');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(5.dp),
+                    child: Icon(
+                      Icons.edit,
+                      size: 12.dp,
+                      color: Colors.black,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+
+        Positioned(
+          left: 0,
+          top: 0.dp,
+          child: CupertinoButton(padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              child: Icon(Icons.arrow_back_rounded,
+                  color: Colors.black,
+                  size: 20.dp),
+              onPressed: (){
+                var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+                userScreenNotifier.callNavigation(ScreenName.profile);
+              }),
+        ),
+
+      ],
+    );
+  }
+
+  Widget bankingDetails(){
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Banking Details',
+          18,
+          Colors.black,
+          objConstantFonts.montserratSemiBold,
+        ),
+        SizedBox(height: 5.dp),
+
+        Stack(
+          children: [
+
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15.dp),
+                boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 2))],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  objCommonWidgets.customText(
+                    context,
+                    'Account Number',
+                    13,
+                    Colors.black,
+                    objConstantFonts.montserratMedium,
+                  ),
+                  SizedBox(height: 1.5.dp),
+                  objCommonWidgets.customText(
+                      context,
+                      '98754812545621',
+                      11,
+                      Colors.black,
+                      objConstantFonts.montserratRegular,
+                      textAlign: TextAlign.justify
+                  ),
+
+                  SizedBox(height: 18.dp),
+
+                  objCommonWidgets.customText(
+                    context,
+                    'IFSC Code',
+                    13,
+                    Colors.black,
+                    objConstantFonts.montserratMedium,
+                  ),
+                  SizedBox(height: 1.5.dp),
+                  objCommonWidgets.customText(
+                      context,
+                      '78451214844',
+                      11,
+                      Colors.black,
+                      objConstantFonts.montserratRegular,
+                      textAlign: TextAlign.justify
+                  ),
+                ],
+              ),
+            ),
+
+            if (state.showEdit)
+            Positioned(
+                top: 15.dp,
+                right: 10.dp,
+                child: editButtonView('Update', () => notifier.openFormPopup(
+                    context,
+                    FormType.bankDetails,
+                    BankDetails(acNumber: '98754812545621', ifscCode: '78451214844'
+                    )
+                ))
+            )
+          ],
+        )
+
+      ],
+    );
+  }
+
+  Widget profileView() {
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        objCommonWidgets.customText(
+          context,
+          'Personal Details',
+          18,
+          Colors.black,
+          objConstantFonts.montserratSemiBold,
+        ),
+        SizedBox(height: 5.dp),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.dp),
+            boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 2))],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 20.dp,
+                    backgroundColor: Colors.black,
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://i.pravatar.cc/150?u=43',
+                        width: 40.dp,
+                        height: 40.dp,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 1. Local Placeholder Image
+                              Image.asset(
+                                objConstantAssest.defaultProfileImage,
+                                width: 40.dp,
+                                height: 40.dp,
+                                fit: BoxFit.cover,
+                              ),
+                              // 2. Small White Circular Progress Bar
+                              SizedBox(
+                                width: 12.dp, // Scaled down for the small avatar
+                                height: 12.dp,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                  backgroundColor: Colors.white24,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            objConstantAssest.defaultProfileImage,
+                            width: 40.dp,
+                            height: 40.dp,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5.dp),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      objCommonWidgets.customText(
+                        context,
+                        'Aswin Kumar',
+                        12,
+                        Colors.black,
+                        objConstantFonts.montserratMedium,
+                      ),
+                      objCommonWidgets.customText(
+                        context,
+                        'Male, 28 years old',
+                        11,
+                        Colors.black,
+                        objConstantFonts.montserratRegular,
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  if (state.showEdit)
+                  editButtonView('Edit Profile', (){
+                    notifier.openFormPopup(context, FormType.personalProfile, PersonalProfile(
+                      image: 'https://i.pravatar.cc/150?u=43',
+                      name: 'Aswin Kumar',
+                      age: '17/08/2000',
+                      gender: 'Male',
+                      flatBuildNo: 'Flat No. 3B',
+                      street: 'Green Valley Apartments',
+                      city: 'Chittur',
+                      state: 'Kerala',
+                      country: 'India',
+                      pinCode: '678101'
+                    ));
+                  }),
+                ],
+              ),
+              SizedBox(height: 15.dp),
+              objCommonWidgets.customText(
+                context,
+                'Address',
+                13,
+                Colors.black,
+                objConstantFonts.montserratMedium,
+              ),
+              SizedBox(height: 1.5.dp),
+              objCommonWidgets.customText(
+                  context,
+                  'Flat No. 3B, Green Valley Apartments, M.G. Road, East Fort, Chittur, Kerala, India, 678101',
+                  11,
+                  Colors.black,
+                  objConstantFonts.montserratRegular,
+                  textAlign: TextAlign.justify
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget aboutView(){
+    final state = ref.watch(sellerAccountScreenStateProvider);
+    final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(15.dp),
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 2))],
       ),
-      child: Column(children: rows),
-    );
-  }
+      child: Column(
 
-  Widget _buildDataRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14, fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(color: Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w700)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              objCommonWidgets.customText(
+                context,
+                'About',
+                13,
+                Colors.black,
+                objConstantFonts.montserratMedium,
+              ),
+              if (state.showEdit)
+              editButtonView('Update', (){
+                notifier.openFormPopup(context, FormType.aboutStore,
+                    'Nourish Organics is a wellness-focused brand dedicated to bringing the goodness of nature and Ayurveda into everyday self-care. We specialize in thoughtfully crafted Ayurvedic oils and bath soaps made using natural ingredients, traditional formulations, and time-tested herbal knowledge.');
+              }),
+            ],
+          ),
+
+          SizedBox(height: 5.dp),
+
+          objCommonWidgets.customText(
+              context,
+              'Nourish Organics is a wellness-focused brand dedicated to bringing the goodness of nature and Ayurveda into everyday self-care. We specialize in thoughtfully crafted Ayurvedic oils and bath soaps made using natural ingredients, traditional formulations, and time-tested herbal knowledge.',
+              11,
+              Colors.black,
+              objConstantFonts.montserratRegular,
+              textAlign: TextAlign.justify
+          ),
+
+
         ],
       ),
     );
   }
 
-  Widget _buildComplianceGrid() {
-    return Row(
-      children: [
-        _buildCompactCard("GSTIN", "27AAAAA0000Z"),
-        const SizedBox(width: 16),
-        _buildCompactCard("PAN", "ABCDE1234F"),
-      ],
-    );
-  }
 
-  Widget _buildCompactCard(String label, String value) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 4),
-            Text(value, style: const TextStyle(color: Color(0xFF111827), fontSize: 14, fontWeight: FontWeight.w800)),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildBankModule() {
+Widget contentView(String title, String value, VoidCallback edit){
+  final state = ref.watch(sellerAccountScreenStateProvider);
+  final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
       decoration: BoxDecoration(
-        color: const Color(0xFF111827), // Deep Onyx
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.dp),
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 2))],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              objCommonWidgets.customText(
+                context,
+                title,
+                13,
+                Colors.black,
+                objConstantFonts.montserratMedium,
+              ),
+              SizedBox(height: 1.5.dp),
+              objCommonWidgets.customText(
+                context,
+                value,
+                11,
+                Colors.black,
+                objConstantFonts.montserratRegular,
+                textAlign: TextAlign.justify
+              ),
+            ],
+          ),
+          if (state.showEdit)
+          editButtonView('Update', edit),
+        ],
+      ),
+    );
+}
+
+Widget categoryView(){
+  final state = ref.watch(sellerAccountScreenStateProvider);
+  final notifier = ref.read(sellerAccountScreenStateProvider.notifier);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 10.dp),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.dp),
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,77 +870,113 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.account_balance_rounded, color: Colors.white, size: 24),
-              Text("PRIMARY NODE", style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+              objCommonWidgets.customText(
+                context,
+                'Products Categories',
+                12,
+                Colors.black,
+                objConstantFonts.montserratMedium,
+              ),
+              if (state.showEdit)
+              editButtonView('Add Category', (){
+                notifier.openFormPopup(context, FormType.productCategory, productsType);
+              }),
             ],
           ),
-          const SizedBox(height: 24),
-          const Text("HDFC BANK LIMITED", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
-          const SizedBox(height: 4),
-          const Text("**** **** **** 5678", style: TextStyle(color: Colors.white54, fontSize: 18, letterSpacing: 2, fontWeight: FontWeight.w300)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddressModule() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.location_on_outlined, color: Color(0xFF6B7280), size: 18),
-          const SizedBox(width: 12),
-          Expanded(child: Text("Bandra West, Mumbai, MH, 400050", style: TextStyle(fontSize: 13, color: Color(0xFF374151), fontWeight: FontWeight.w600))),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomAction() {
-    return Positioned(
-      bottom: 0, left: 0, right: 0,
-      child: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB).withOpacity(0.8),
-              border: const Border(top: BorderSide(color: Color(0xFFE5E7EB))),
-            ),
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                color: const Color(0xFF111827),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Center(
-                child: Text("Update Information", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-              ),
-            ),
+          SizedBox(height: 10.dp),
+          Wrap(
+            spacing: 5.0,
+            runSpacing: 5,
+            children: productsType.map((product) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 6.dp),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(35),
+                  borderRadius: BorderRadius.circular(20.dp),
+                ),
+                child: objCommonWidgets.customText(
+                  context,
+                  product,
+                  8,
+                  Colors.green,
+                  objConstantFonts.montserratMedium,
+                ),
+              );
+            }).toList(),
           ),
+        ],
+      ),
+    );
+}
+
+Widget editButtonView(String title, VoidCallback edit){
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: Size.zero,
+      onPressed: edit,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 6.dp, horizontal: 10.dp),
+        decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(8.dp)
+        ),
+        child: objCommonWidgets.customText(
+          context,
+          title,
+          10,
+          Colors.white,
+          objConstantFonts.montserratMedium,
         ),
       ),
     );
-  }
+}
 
-  Widget _animate(int index, Widget child) {
-    final anim = CurvedAnimation(
-      parent: _fadeController,
-      curve: Interval((0.1 * index).clamp(0, 1), 1.0, curve: Curves.easeOutQuart),
-    );
-    return AnimatedBuilder(
-      animation: anim,
-      builder: (context, child) => Opacity(
-        opacity: anim.value,
-        child: Transform.translate(offset: Offset(0, 25 * (1 - anim.value)), child: child),
+}
+
+
+class StaggeredRTL extends StatelessWidget {
+  final Widget child;
+  final AnimationController controller;
+  final double start;
+  final double end;
+
+  const StaggeredRTL({
+    super.key,
+    required this.child,
+    required this.controller,
+    required this.start,
+    required this.end,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final slideAnimation = Tween<Offset>(
+      begin: const Offset(1, 0), // 👉 from right
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Interval(start, end, curve: Curves.easeOutCubic),
       ),
-      child: child,
+    );
+
+    final fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Interval(start, end, curve: Curves.easeOut),
+      ),
+    );
+
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: SlideTransition(
+        position: slideAnimation,
+        child: child,
+      ),
     );
   }
 }
+
