@@ -11,6 +11,7 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Utility/CalendarFilterPopup.dart';
 import '../../../../../Utility/PreferencesManager.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import 'SellerCancelledOrderScreenState.dart';
 
 class SellerCancelledOrderScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
     super.initState();
 
     Future.microtask((){
-      var screenNotifier = ref.watch(SellerCancelledOrderScreenStateProvider.notifier);
+      var screenNotifier = ref.watch(sellerCancelledOrderScreenStateProvider.notifier);
       screenNotifier.getFilteredDate(DateFilterType.last7Days);
     });
 
@@ -81,7 +82,7 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
 
   @override
   Widget build(BuildContext context) {
-    var userScreenState = ref.watch(SellerCancelledOrderScreenStateProvider);
+    var userScreenState = ref.watch(sellerCancelledOrderScreenStateProvider);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -426,8 +427,6 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
   // ===================== BOTTOM SHEET =====================
 
   void showPurchaseBottomSheet(BuildContext context) {
-    PreferencesManager.getInstance().then((prefs) {
-      prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -550,48 +549,11 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
                                       child: orderTimeline(context)),
 
                                   SizedBox(height: 20.dp),
+                                  productListView()
                                 ],
                               ),
                             )),
 
-
-
-
-                            /// GRID LIST
-                            SliverPadding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.dp),
-                              sliver: SliverGrid(
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 16,
-                                  crossAxisSpacing: 16,
-                                  childAspectRatio: 0.78,
-                                ),
-                                delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
-                                    return _productGridItem(context, index);
-                                  },
-                                  childCount: 2,
-                                ),
-                              ),
-                            ),
-
-                            SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.dp),
-                                  child: Column(
-                                      children: [
-                                        SizedBox(height: 20.dp),
-
-
-
-                                        SizedBox(height: 10.dp,)
-                                      ]
-                                  ),
-                                )
-                            )
                           ],
                         ),
                       ),
@@ -602,10 +564,80 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
             },
           );
         },
-      ).then((_) {
-        prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
-      });
-    });
+      );
+  }
+
+  Widget productListView(){
+    final state = ref.watch(sellerCancelledOrderScreenStateProvider);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 5.dp,
+        crossAxisSpacing: 10.dp,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: state.productList.length,
+      itemBuilder: (context, index) {
+        final product = state.productList[index];
+        return buildProductCard(product);
+      },
+    );
+  }
+
+
+  Widget buildProductCard(Map<String, dynamic> product) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.dp),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withAlpha(35),
+              blurRadius: 5, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+              child: NetworkImageLoader(
+                imageUrl: product['image'],
+                placeHolder: objConstantAssest.placeholderImage,
+                size: 80.dp,
+                imageSize: double.infinity,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10.dp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
+                SizedBox(height: 4.dp),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 12, const Color(
+                        0xFF588E03), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
+                  ],
+                ),
+                objCommonWidgets.customText(context, 'Item count: ${product['count']}', 10, Colors.black, objConstantFonts.montserratMedium)
+
+
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget orderTimeline(BuildContext context) {
@@ -683,80 +715,10 @@ class SellerCancelledOrderScreenState extends ConsumerState<SellerCancelledOrder
   }
 
 
-  /// ================= PRODUCT ITEM =================
-  Widget _productGridItem(BuildContext context, int index) {
-    return Container(
-      padding: EdgeInsets.all(10.dp),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.dp),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: const Offset(2, 4),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-
-          /// IMAGE
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.dp),
-            child: Image.network(
-              'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
-              width: double.infinity,
-              height: 115.dp,
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          SizedBox(height: 8.dp),
-
-          /// PRODUCT NAME
-          objCommonWidgets.customText(
-            context,
-            CodeReusability()
-                .cleanProductName('Red Amaranthus'),
-            12,
-            Colors.black,
-            objConstantFonts.montserratSemiBold,
-
-          ),
-
-          SizedBox(height: 4.dp),
-
-          /// PRICE
-          objCommonWidgets.customText(
-            context,
-            '₹189 / 100g',
-            11,
-            objConstantColor.orange,
-            objConstantFonts.montserratMedium,
-          ),
-
-
-          /// QTY
-          objCommonWidgets.customText(
-            context,
-            'Qty: 2',
-            10,
-            Colors.black54,
-            objConstantFonts.montserratMedium,
-          ),
-        ],
-      ),
-    );
-  }
 
 
   void showFilterPopup() {
-    var screenNotifier = ref.watch(SellerCancelledOrderScreenStateProvider.notifier);
+    var screenNotifier = ref.watch(sellerCancelledOrderScreenStateProvider.notifier);
 
     if (filterOverlay != null) {
       hideFilterPopup();

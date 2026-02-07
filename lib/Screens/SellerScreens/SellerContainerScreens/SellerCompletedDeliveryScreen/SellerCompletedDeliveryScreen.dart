@@ -8,7 +8,9 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonViews/CommonWidget.dart';
 import '../../../../Utility/CalendarFilterPopup.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import '../../../../Utility/PreferencesManager.dart';
+import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerCompletedDeliveryScreenState.dart';
 import 'package:botaniq_admin/constants/Constants.dart';
 
@@ -33,7 +35,7 @@ import 'package:botaniq_admin/constants/Constants.dart';
     @override
   void initState() {
       Future.microtask((){
-        var screenNotifier = ref.watch(SellerCompletedDeliveryScreenStateProvider.notifier);
+        var screenNotifier = ref.watch(sellerCompletedDeliveryScreenStateProvider.notifier);
         screenNotifier.getFilteredDate(DateFilterType.last7Days);
       });
 
@@ -51,355 +53,185 @@ import 'package:botaniq_admin/constants/Constants.dart';
   }
 
     @override
+
     Widget build(BuildContext context) {
-      final state = ref.watch(SellerCompletedDeliveryScreenStateProvider);
+      final state = ref.watch(sellerCompletedDeliveryScreenStateProvider);
 
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          top: false,
-          child: CustomScrollView(
-            slivers: [
-          
-              /// ================= COLLAPSIBLE HEADER =================
-              SliverAppBar(
-                expandedHeight: 240.dp,
-                pinned: false,
-                floating: false,
-                backgroundColor: Colors.transparent,
-                automaticallyImplyLeading: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: _buildHeader(context),
-                ),
-              ),
-          
-              /// ================= PINNED SEARCH BAR =================
-              SliverAppBar(
-                pinned: true,
-                primary: false,
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: false,
-                toolbarHeight: 80,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Padding(padding: EdgeInsets.symmetric(horizontal: 15.dp),
-                  child: Row(
+      return GestureDetector(
+        onTap: () => CodeReusability.hideKeyboard(context),
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.dp,),
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: CommonTextField(
-                          controller: state.searchController,
-                          placeholder: "Search by order ID...",
-                          textSize: 14,
-                          fontFamily: objConstantFonts.montserratMedium,
-                          textColor: objConstantColor.black,
-                          isShowIcon: true,
-                          isDarkView: false,
-                          onChanged: (_) {},
-                        ),
-                      ),
-          
-                      SizedBox(width: 10.dp),
-          
-                      CupertinoButton(
-                        key: filterKey,
-                        padding: EdgeInsets.zero,
-                        onPressed: showFilterPopup,
-                        child: Container(
-                          padding: EdgeInsets.all(8.dp),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.dp),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(20),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              )
-                            ],
-                          ),
-                          child: Icon(
-                              Icons.filter_list, size: 22.dp, color: Color(0xFF7606DC)
-                          ),
-                        ),
-                      )
-          
-          
-                    ],
-                  ),),
-                ),
-              ),
 
+                      //Header section here....
+                      buildHeader(context),
 
-              SliverAppBar(
-                pinned: true,
-                primary: false,
-                backgroundColor: Colors.white,
-                automaticallyImplyLeading: false,
-                toolbarHeight: 50,
-                titleSpacing: 15.dp,
-
-                title: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5.dp), // Large radius for a modern feel
-                    boxShadow: [
-                      // Soft ambient shadow
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                      // Sharp outer definition
-                      BoxShadow(
-                        color: objConstantColor.orange.withOpacity(0.08),
-                        blurRadius: 1,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: IntrinsicHeight(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Premium accent: A gradient vertical pill
-                        Container(
-                          width: 4,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color(0xFF7606DC),
-                                Color(0xFF7606DC).withOpacity(0.5),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        SizedBox(width: 5.dp),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.dp),
+                        child: Row(
                           children: [
-                            objCommonWidgets.customText(
-                              context,
-                              'Filtered List',
-                              10,
-                              Colors.black.withAlpha(120), // Deep obsidian black for premium contrast
-                              objConstantFonts.montserratMedium,
+                            Expanded(
+                              child: CommonTextField(
+                                controller: state.searchController,
+                                placeholder: "Search by order ID...",
+                                textSize: 14,
+                                fontFamily: objConstantFonts.montserratMedium,
+                                textColor: objConstantColor.black,
+                                isShowIcon: true,
+                                isDarkView: false,
+                                onChanged: (_) {},
+                              ),
                             ),
-                            const SizedBox(height: 2),
-                            objCommonWidgets.customText(
-                              context,
-                              '${state.filterType ?? 'All'} Delivery List',
-                              10,
-                              const Color(0xFF1A1A1A), // Deep obsidian black for premium contrast
-                              objConstantFonts.montserratSemiBold,
-                            ),
+                            SizedBox(width: 10.dp),
+                            CupertinoButton(
+                              key: filterKey,
+                              padding: EdgeInsets.zero,
+                              onPressed: showFilterPopup,
+                              child: Container(
+                                padding: EdgeInsets.all(8.dp),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.dp),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withAlpha(20),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    )
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.filter_list,
+                                  size: 22.dp,
+                                  color: const Color(0xFF7606DC),
+                                ),
+                              ),
+                            )
                           ],
                         ),
+                      ),
 
-                      ],
-                    ),
+                       Padding(
+                         padding: EdgeInsets.symmetric(vertical: 10.dp),
+                         child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10.dp, vertical: 8.dp),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5.dp),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.03),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                    BoxShadow(
+                                      color: objConstantColor.orange.withOpacity(0.08),
+                                      blurRadius: 1,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                                child: IntrinsicHeight(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 4,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              const Color(0xFF7606DC),
+                                              const Color(0xFF7606DC).withOpacity(0.5),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5.dp),
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          objCommonWidgets.customText(
+                                            context,
+                                            'Filtered List',
+                                            10,
+                                            Colors.black.withAlpha(120),
+                                            objConstantFonts.montserratMedium,
+                                          ),
+                                          const SizedBox(height: 2),
+                                          objCommonWidgets.customText(
+                                            context,
+                                            '${state.filterType ?? 'All'} Delivery List',
+                                            10,
+                                            const Color(0xFF1A1A1A),
+                                            objConstantFonts.montserratSemiBold,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                       ),
+
+
+                      ListView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 15.dp),
+                        itemCount: 5,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 20.dp),
+                            child: _orderCard(context, ref),
+                          );
+                        },
+                      )
+
+
+                    ],
                   ),
                 ),
               ),
-
-
-
-
-              /// ================= DELIVERY LIST =================
-              SliverPadding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 15.dp, vertical: 15.dp),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 20.dp),
-                        child: _orderCard(context, ref),
-                      );
-                    },
-                    childCount: 5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    Widget _buildHeader(BuildContext context) {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.dp),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomRight,
-            colors: [
-
-              Color(0xFF52029C),
-              Color(0xFF6204B8),
-              Color(0xFF7606DC),
-              Color(0xFF8B42F8),
-
-            ],
-          ),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(25.dp),
-            bottomRight: Radius.circular(25.dp),
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 5.dp),
-
-              objCommonWidgets.customText(
-                context,
-                'Delivery Overview',
-                18,
-                Colors.white,
-                objConstantFonts.montserratSemiBold,
-              ),
-
-              SizedBox(height: 10.dp),
-              _buildStatItem("Completed Delivery's", "23750", Icons.check_circle),
-
-              SizedBox(height: 10.dp),
-              Row(
-                children: [
-                  Expanded(child: _buildStatItem("Pending", "12", Icons.pending_actions)),
-                  SizedBox(width: 10.dp),
-                  Expanded(child: _buildStatItem("Out for Delivery", "08", Icons.local_shipping)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-
-    // Helper method for the stats
-    Widget _buildStatItem(String label, String count, IconData icon) {
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 15.dp),
-        decoration: BoxDecoration(
-          color: Colors.white.withAlpha(45),
-          borderRadius: BorderRadius.circular(10.dp)
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                objCommonWidgets.customText(
-                  context,
-                  count,
-                  23,
-                  Colors.white,
-                  objConstantFonts.montserratSemiBold,
-                ),
-
-                SizedBox(height: 5.dp),
-
-                objCommonWidgets.customText(
-                  context,
-                  label,
-                  13,
-                  Colors.white,
-                  objConstantFonts.montserratSemiBold,
-                ),
-              ],
-            ),
-
-            Spacer(),
-
-            Icon(icon, color: Colors.white, size: 25.dp),
-          ],
-        ),
-      );
-    }
-
-
-
-
-    /// ================= PRODUCT ITEM =================
-    Widget _productGridItem(BuildContext context, int index) {
-      return Container(
-        padding: EdgeInsets.all(10.dp),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14.dp),
-          border: Border.all(
-            color: Colors.grey.withOpacity(0.2),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 5,
-              offset: const Offset(2, 4),
             )
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            /// IMAGE
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.dp),
-              child: Image.network(
-                'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
-                width: double.infinity,
-                height: 115.dp,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            SizedBox(height: 8.dp),
-
-            /// PRODUCT NAME
-            objCommonWidgets.customText(
-              context,
-              CodeReusability()
-                  .cleanProductName('Red Amaranthus'),
-              12,
-              Colors.black,
-              objConstantFonts.montserratSemiBold,
-
-            ),
-
-            SizedBox(height: 4.dp),
-
-            /// PRICE
-            objCommonWidgets.customText(
-              context,
-              '₹189 / 100g',
-              11,
-              Color(0xFF7606DC),
-              objConstantFonts.montserratMedium,
-            ),
-
-
-            /// QTY
-            objCommonWidgets.customText(
-              context,
-              'Qty: 2',
-              10,
-              Colors.black54,
-              objConstantFonts.montserratMedium,
-            ),
-          ],
         ),
       );
     }
+
+
+    Widget buildHeader(BuildContext context) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CupertinoButton(
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              child: SizedBox(width: 20.dp, child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.black)),
+              onPressed: () {
+                var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+                userScreenNotifier.callHomeNavigation();
+              }),
+          SizedBox(width: 2.5.dp),
+          objCommonWidgets.customText(context, "Completed Order's", 16, objConstantColor.black, objConstantFonts.montserratSemiBold),
+        ],
+      );
+    }
+
+
 
 
     /// ================= ORDER CARD =================
@@ -679,8 +511,6 @@ import 'package:botaniq_admin/constants/Constants.dart';
 
 
     void showPurchaseBottomSheet(BuildContext context) {
-      PreferencesManager.getInstance().then((prefs) {
-        prefs.setBooleanValue(PreferenceKeys.isBottomSheet, true);
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
@@ -822,86 +652,12 @@ import 'package:botaniq_admin/constants/Constants.dart';
                                       objConstantFonts.montserratSemiBold,
                                     ),
 
-                                    SizedBox(height: 10.dp,)
+                                    SizedBox(height: 10.dp),
+
+                                    productListView()
                                   ],
-                                ),)),
-
-
-                              /// GRID LIST
-                              SliverPadding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.dp),
-                                sliver: SliverGrid(
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 16,
-                                    crossAxisSpacing: 16,
-                                    childAspectRatio: 0.78,
-                                  ),
-                                  delegate: SliverChildBuilderDelegate(
-                                        (context, index) {
-                                      return _productGridItem(context, index);
-                                    },
-                                    childCount: 2,
-                                  ),
                                 ),
-                              ),
-
-                              SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.dp),
-                                    child: Column(
-                                        children: [
-                                          SizedBox(height: 20.dp),
-
-                                          CupertinoButton(
-                                            onPressed: () {
-                                              CommonWidget()
-                                                  .showFullScreenImageViewer(
-                                                context,
-                                                imageUrl:
-                                                'https://drive.google.com/uc?export=view&id=1E6BJdw_VtaekKeY50Qd9vCy7_ul7f0uT',
-                                                title: 'Package Image',
-                                              );
-                                            },
-                                            padding: EdgeInsets.zero,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 12.5.dp),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFF7606DC),
-                                                borderRadius: BorderRadius
-                                                    .circular(
-                                                    22.dp),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.image, size: 18.5.dp,
-                                                    color: objConstantColor
-                                                        .white,),
-                                                  SizedBox(width: 2.5.dp),
-                                                  objCommonWidgets.customText(
-                                                    context,
-                                                    'View Package Photo',
-                                                    12,
-                                                    objConstantColor.white,
-                                                    objConstantFonts
-                                                        .montserratSemiBold,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-
-                                          SizedBox(height: 10.dp,)
-                                        ]
-                                    ),
-                                  )
-                              )
+                              )),
                             ],
                           ),
                         ),
@@ -912,18 +668,87 @@ import 'package:botaniq_admin/constants/Constants.dart';
               },
             );
           },
-        ).then((_) {
-          prefs.setBooleanValue(PreferenceKeys.isBottomSheet, false);
-        });
-      });
+        );
+    }
+
+    Widget productListView(){
+      final state = ref.watch(sellerCompletedDeliveryScreenStateProvider);
+
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 5.dp,
+          crossAxisSpacing: 10.dp,
+          childAspectRatio: 0.68,
+        ),
+        itemCount: state.productList.length,
+        itemBuilder: (context, index) {
+          final product = state.productList[index];
+          return buildProductCard(product);
+        },
+      );
+    }
+
+
+    Widget buildProductCard(Map<String, dynamic> product) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.dp),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withAlpha(35),
+                blurRadius: 5, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+                child: NetworkImageLoader(
+                  imageUrl: product['image'],
+                  placeHolder: objConstantAssest.placeholderImage,
+                  size: 80.dp,
+                  imageSize: double.infinity,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.dp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
+                  SizedBox(height: 4.dp),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      objCommonWidgets.customText(context, "₹${product['price']}/_", 12, const Color(
+                          0xFF588E03), objConstantFonts.montserratSemiBold),
+                      objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
+                    ],
+                  ),
+                  objCommonWidgets.customText(context, 'Item count: ${product['count']}', 10, Colors.black, objConstantFonts.montserratMedium)
+
+
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
 
 
 
-
     void showFilterPopup() {
-      var screenNotifier = ref.watch(SellerCompletedDeliveryScreenStateProvider.notifier);
+      var screenNotifier = ref.watch(sellerCompletedDeliveryScreenStateProvider.notifier);
 
       if (filterOverlay != null) {
         hideFilterPopup();

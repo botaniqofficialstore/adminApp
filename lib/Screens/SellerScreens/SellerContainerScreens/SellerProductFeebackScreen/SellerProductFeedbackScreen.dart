@@ -1,9 +1,11 @@
 import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/Constants.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductFeedbackScreenState.dart';
 
@@ -15,170 +17,212 @@ class SellerProductFeedbackScreen extends ConsumerStatefulWidget {
 }
 
 class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeedbackScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(sellerProductFeedBackScreenStateProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: RawScrollbar(
-                thumbColor: objConstantColor.black.withAlpha(45),
-                radius: const Radius.circular(20),
-                thickness: 4,
-                thumbVisibility: false,
-                interactive: true,
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18.dp),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildProductSummaryCard(state),
-                        SizedBox(height: 25.dp),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // optional
+        statusBarIconBrightness: Brightness.light, // ANDROID → black icons
+        statusBarBrightness: Brightness.dark, // iOS → black icons
+      ),
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.transparent,
+          body: CustomScrollView(
+            slivers: [
+
+              SliverToBoxAdapter(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    productImageView(),
+
+                    /// BLACK GRADIENT OVERLAY (FULL COVER)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Colors.black.withAlpha(220),
+                              Colors.black.withAlpha(100),// top dark
+                              Colors.transparent, // bottom dark
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 5.dp,
+                      left: 15.dp,
+                      child: SafeArea(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(25),
+                            borderRadius: BorderRadius.circular(30.dp),
+                          ),
+                          child: CupertinoButton(
+                            padding: EdgeInsets.all(8.dp),
+                            minimumSize: Size.zero,
+                            borderRadius: BorderRadius.circular(30),
+                            child: Image.asset(
+                              objConstantAssest.backIcon,
+                              color: Colors.white,
+                              width: 18.dp,
+                            ),
+                            onPressed: () {
+                              var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
+                              userScreenNotifier.callNavigation(ScreenName.rating);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      bottom: 40.dp,
+                      left: 15.dp,
+                      right: 15.dp, // 👈 important for smooth slide
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 1.0, end: 0.0), // 1 → 0
+                        duration: const Duration(milliseconds: 700),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, child) {
+                          return Transform.translate(
+                            offset: Offset(60 * value, 0), // 👉 slide from right
+                            child: Opacity(
+                              opacity: 1 - value, // optional fade-in
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            objCommonWidgets.customText(context, 'Customer Reviews', 14, objConstantColor.black, objConstantFonts.montserratSemiBold),
-                            objCommonWidgets.customText(context, '${state.reviews.length} total', 11, Colors.grey, objConstantFonts.montserratMedium),
+                            objCommonWidgets.customText(
+                              context,
+                              'Red Amaranthus',
+                              23,
+                              Colors.white,
+                              objConstantFonts.montserratSemiBold,
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.star_rounded, color: Colors.amber, size: 18.dp),
+                                SizedBox(width: 4.dp),
+                                objCommonWidgets.customText(
+                                  context,
+                                  '4.2',
+                                  15,
+                                  Colors.white,
+                                  objConstantFonts.montserratSemiBold,
+                                ),
+                                SizedBox(width: 8.dp),
+                                objCommonWidgets.customText(
+                                  context,
+                                  '(329 reviews)',
+                                  13,
+                                  Colors.white.withAlpha(180),
+                                  objConstantFonts.montserratMedium,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 2.dp),
+                            objCommonWidgets.customText(
+                              context,
+                              "High Satisfaction",
+                              12,
+                              Colors.white,
+                              objConstantFonts.montserratMedium,
+                            ),
                           ],
                         ),
-                        SizedBox(height: 15.dp),
-                        _buildReviewList(state.reviews),
-                        SizedBox(height: 30.dp),
-                      ],
+                      ),
                     ),
-                  ),
+
+
+                    Positioned(
+                      bottom: -18.dp,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 40.dp,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F4F4),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.dp),
+                            topRight: Radius.circular(25.dp),
+                          ),
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 50.dp,
+                            height: 5.dp,
+                            decoration: BoxDecoration(
+                                color: Colors.black.withAlpha(50),
+                                borderRadius: BorderRadius.circular(20.dp)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+
+              SliverToBoxAdapter(
+                  child: Container(
+                      color: const Color(0xFFF4F4F4),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.dp),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 15.dp),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                objCommonWidgets.customText(context, 'Customer Reviews', 14, objConstantColor.black, objConstantFonts.montserratSemiBold),
+                                objCommonWidgets.customText(context, '${state.reviews.length} total', 11, Colors.black, objConstantFonts.montserratMedium),
+                              ],
+                            ),
+                            SizedBox(height: 10.dp),
+                            _buildReviewList(state.reviews),
+                            SizedBox(height: 15.dp),
+                          ],
+                        ),
+                      )
+                  )
+              )
+
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Requirement 1: Product Details & Overall Rating Header
-  Widget _buildProductSummaryCard(SellerProductFeedBackScreenState state) {
-    return Container(
-      padding: EdgeInsets.all(15.dp),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.dp),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(15),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            )
-          ]
-      ),
-      child: Row(
-        children: [
-          // Animated Product Image
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.8, end: 1.0),
-            duration: const Duration(milliseconds: 600),
-            builder: (context, value, child) => Transform.scale(scale: value, child: child),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15.dp),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.dp),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 5)
-                    ]
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.dp),
-                  child: Image.network(
-                    state.productImage,
-                    width: 75.dp,
-                    height: 75.dp,
-                    fit: BoxFit.cover,
-                    // Handle the loading state
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) return child; // Image is fully loaded
+  Widget productImageView(){
+    final state = ref.watch(sellerProductFeedBackScreenStateProvider);
 
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // 1. The Local Placeholder Image
-                          Image.asset(
-                            objConstantAssest.placeholderImage,
-                            width: 75.dp,
-                            height: 75.dp,
-                            fit: BoxFit.cover,
-                          ),
-                          // 2. The White Progress Bar
-                          SizedBox(
-                            width: 20.dp, // Small and clean
-                            height: 20.dp,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.0, // Thinner lines look more modern
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                  : null,
-                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                              backgroundColor: Colors.white24, // Subtle track color
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    // Optional: Handle errors (e.g., 404 or no internet)
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        objConstantAssest.placeholderImage,
-                        width: 75.dp,
-                        height: 75.dp,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 15.dp),
-          // Product Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                objCommonWidgets.customText(context, state.productName, 16, objConstantColor.black, objConstantFonts.montserratSemiBold),
-                SizedBox(height: 0.dp),
-
-                Row(
-                  children: [
-                    Icon(Icons.star_rounded, color: Colors.amber, size: 15.dp),
-                    SizedBox(width: 4.dp),
-                    objCommonWidgets.customText(context,
-                        '4.2', 13,
-                        Colors.black,
-                        objConstantFonts.montserratSemiBold),
-                    SizedBox(width: 8.dp),
-                    objCommonWidgets.customText(context,
-                        '(329 reviews)', 12,
-                        Colors.black.withAlpha(100),
-                        objConstantFonts.montserratMedium),
-                  ],
-                ),
-                SizedBox(height: 2.dp),
-                objCommonWidgets.customText(context, "High Satisfaction", 10, Colors.grey.shade600, objConstantFonts.montserratMedium),
-              ],
-            ),
-          ),
-        ],
+    return SizedBox(
+      height: 320.dp,
+      child: NetworkImageLoader(
+        imageUrl: state.productImage,
+        placeHolder: objConstantAssest.placeholderImage,
+        size: 180.dp,
+        imageSize: double.infinity,
       ),
     );
   }
+
 
   // Requirement 2: List of Customer Reviews with Animations
   Widget _buildReviewList(List<ProductReview> reviews) {
@@ -317,32 +361,10 @@ class SellerProductFeedbackScreenStateUI extends ConsumerState<SellerProductFeed
           objCommonWidgets.customText(
               context,
               review.comment,
-              12,
+              10,
               Colors.black.withOpacity(0.75),
               objConstantFonts.montserratMedium
           ),
-        ],
-      ),
-    );
-  }
-
-  // Modern Header
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 10.dp, top: 10.dp, bottom: 15.dp),
-      child: Row(
-        children: [
-          CupertinoButton(padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              child: Icon(Icons.arrow_back_rounded,
-                  color: Colors.black,
-                  size: 20.dp),
-              onPressed: (){
-                var userScreenNotifier = ref.watch(SellerMainScreenGlobalStateProvider.notifier);
-                userScreenNotifier.callNavigation(ScreenName.profile);
-              }),
-          SizedBox(width: 5.dp),
-          objCommonWidgets.customText(context, 'Customer Ratings & Review', 14, objConstantColor.black, objConstantFonts.montserratMedium),
         ],
       ),
     );

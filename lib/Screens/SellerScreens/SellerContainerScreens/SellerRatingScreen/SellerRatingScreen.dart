@@ -104,7 +104,7 @@ class SellerRatingScreenStateUI extends ConsumerState<SellerRatingScreen> {
             flex: 2,
             child: Column(
               children: [
-                objCommonWidgets.customText(context, rating.toString(), 40, objConstantColor.black, objConstantFonts.montserratBold),
+                objCommonWidgets.customText(context, rating.toString(), 40, objConstantColor.black, objConstantFonts.montserratSemiBold),
                 _buildStars(rating, Colors.amber),
                 SizedBox(height: 8.dp),
                 objCommonWidgets.customText(context, "1.2k Reviews", 11, Colors.grey, objConstantFonts.montserratMedium),
@@ -326,8 +326,8 @@ class SellerRatingScreenStateUI extends ConsumerState<SellerRatingScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             objCommonWidgets.customText(
-                                context, product.name, 15, objConstantColor.black,
-                                objConstantFonts.montserratSemiBold),
+                                context, product.name, 12, objConstantColor.black,
+                                objConstantFonts.montserratMedium),
                             SizedBox(height: 4.dp),
                             Row(
                               children: [
@@ -348,7 +348,7 @@ class SellerRatingScreenStateUI extends ConsumerState<SellerRatingScreen> {
                             // "View Details" hint
                             objCommonWidgets.customText(context,
                                 getSentimentLabel(product.rating), 11,
-                                objConstantColor.black.withAlpha(100),
+                                objConstantColor.black,
                                 objConstantFonts.montserratMedium),
                           ],
                         ),

@@ -230,7 +230,9 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
                 child: contentView(
                   'Business Type',
                   'Individual / Proprietorship',
-                      () {},
+                      () {
+                        notifier.openFormPopup(context, FormType.businessType, 'Individual / Proprietorship');
+                      },
                 ),
               ),
               SizedBox(height: 18.dp),
@@ -295,7 +297,7 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
         objCommonWidgets.customText(
           context,
           'Legal Details',
-          18,
+          16,
           Colors.black,
           objConstantFonts.montserratSemiBold,
         ),
@@ -324,7 +326,7 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
         objCommonWidgets.customText(
           context,
           'Contact Details',
-          18,
+          16,
           Colors.black,
           objConstantFonts.montserratSemiBold,
         ),
@@ -539,7 +541,7 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
         objCommonWidgets.customText(
           context,
           'Banking Details',
-          18,
+          16,
           Colors.black,
           objConstantFonts.montserratSemiBold,
         ),
@@ -626,7 +628,7 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
         objCommonWidgets.customText(
           context,
           'Personal Details',
-          18,
+          16,
           Colors.black,
           objConstantFonts.montserratSemiBold,
         ),

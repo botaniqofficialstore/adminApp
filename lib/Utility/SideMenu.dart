@@ -165,12 +165,12 @@ class SideMenu extends StatelessWidget {
         onPressed: () => onMenuClick?.call(module),
         child: Row(
           children: [
-            Image.asset(icon, width: 22.dp, color: getColorForUSerRole(),),
+            Image.asset(icon, width: 20.dp, color: getColorForUSerRole(),),
             SizedBox(width: 10.dp),
             objCommonWidgets.customText(context,
-                title, 13.5,
+                title, 12.5,
                 getColorForUSerRole(),
-                objConstantFonts.montserratSemiBold),
+                (currentUser == UserRole.admin) ? objConstantFonts.montserratSemiBold : objConstantFonts.montserratMedium),
           ],
         ),
       ),

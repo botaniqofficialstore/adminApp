@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerMainScreen/SellerMainScreenState.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../Constants/Constants.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import 'SellerConfirmOrderScreenState.dart';
 
 class SellerConfirmOrderScreen extends ConsumerStatefulWidget {
@@ -238,7 +238,7 @@ class SellerConfirmOrderScreenState extends ConsumerState<SellerConfirmOrderScre
           boxShadow: [BoxShadow(color: Colors.black.withAlpha(20), blurRadius: 4, offset: const Offset(0, 2))],
         ),
         child: Center(
-          child: objCommonWidgets.customText(context, 'Order Packed', 13, objConstantColor.white, objConstantFonts.montserratSemiBold),
+          child: objCommonWidgets.customText(context, 'Update Order Packed', 13, objConstantColor.white, objConstantFonts.montserratSemiBold),
         ),
       ),
     );
@@ -259,7 +259,7 @@ class SellerConfirmOrderScreenState extends ConsumerState<SellerConfirmOrderScre
             boxShadow: [BoxShadow(color: Colors.black.withAlpha(15), blurRadius: 2, offset: const Offset(0, 2))],
           ),
           padding: EdgeInsets.all(7.dp),
-          child: objCommonWidgets.customText(context, 'Purchase List', 10, objConstantColor.black, objConstantFonts.montserratSemiBold),
+          child: objCommonWidgets.customText(context, 'Products List', 10, objConstantColor.black, objConstantFonts.montserratSemiBold),
         ),
       ),
     );
@@ -306,12 +306,174 @@ class SellerConfirmOrderScreenState extends ConsumerState<SellerConfirmOrderScre
   }
 
   void showPurchaseBottomSheet(BuildContext context) {
-    // Bottom sheet logic remains largely the same with your BackdropFilter and DraggableScrollableSheet
-    // Add logic here from previous implementation
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      barrierColor: Colors.black.withOpacity(0.35),
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.5,
+          minChildSize: 0.4,
+          maxChildSize: 0.65,
+          builder: (context, scrollController) {
+            return ClipRRect(
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(24.dp)),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22.dp),
+                  border: Border.all(color: Colors.white.withOpacity(0.12)),
+                ),
+                child: Column(
+                  children: [
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15.dp),
+                      child: Container(
+                        width: 40.dp,
+                        height: 4.dp,
+                        decoration: BoxDecoration(
+                          color: objConstantColor.black.withAlpha(80),
+                          borderRadius: BorderRadius.circular(10.dp),
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: CustomScrollView(
+                        controller: scrollController, // 🔥 ONE controller
+                        slivers: [
+
+                          /// HEADER CONTENT
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.dp),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      objCommonWidgets.customText(
+                                        context, "Purchase Details", 16,
+                                        Colors.black,
+                                        objConstantFonts
+                                            .montserratSemiBold,),
+                                      CupertinoButton(
+                                        minimumSize: Size(0, 0),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        padding: EdgeInsets.zero,
+                                        child: Container(
+                                          padding: EdgeInsets.all(6.dp),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.black.withAlpha(30),),
+                                          child: Icon(Icons.close_rounded,
+                                              size: 18.dp,
+                                              color: Colors.black),),),
+                                    ],),),
+
+                                SizedBox(height: 20.dp),
+
+                                productListView()
+
+                              ],
+                            ),
+                          ),
+
+                          /// GRID LIST
+
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
-  Widget cell(BuildContext context, int index, String productName, String price, String gram, int count, String image) {
-    // Product cell logic remains largely the same
-    return const SizedBox();
+  Widget productListView(){
+    final state = ref.watch(sellerConfirmOrderScreenStateProvider);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(15.dp, 0.dp, 15.dp, 0.dp),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 5.dp,
+        crossAxisSpacing: 10.dp,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: state.productList.length,
+      itemBuilder: (context, index) {
+        final product = state.productList[index];
+        return buildProductCard(product);
+      },
+    );
+  }
+
+
+  Widget buildProductCard(Map<String, dynamic> product) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.dp),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withAlpha(35),
+              blurRadius: 5, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+              child: NetworkImageLoader(
+                imageUrl: product['image'],
+                placeHolder: objConstantAssest.placeholderImage,
+                size: 80.dp,
+                imageSize: double.infinity,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(10.dp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
+                SizedBox(height: 4.dp),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 12, const Color(
+                        0xFF588E03), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
+                  ],
+                ),
+                objCommonWidgets.customText(context, 'Item count: ${product['count']}', 10, Colors.black, objConstantFonts.montserratMedium)
+
+
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

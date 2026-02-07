@@ -1,5 +1,4 @@
 import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/ChangePasswordScreen/ChangePasswordScreen.dart';
-import 'package:botaniq_admin/Screens/AdminScreens/InnerScreens/ContainerScreen/RevenueScreen/RevenueScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/LoginScreen/LoginScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/ConfirmPackedOrderScreen/ConfirmPackedOrderScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerAccountScreen/SellerAccountScreen.dart';
@@ -20,6 +19,7 @@ import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/Selle
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerRatingScreen/SellerRatingScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnOrderHistoryScreen/SellerReturnOrderHistoryScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerReturnedOrderScreen/SellerReturnedOrderScreen.dart';
+import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerRevenueScreen/SellerRevenueScreen.dart';
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerSettingsScreen/SellerSettingsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,7 +92,7 @@ class SellerMainScreenGlobalStateNotifier
     } else if (state.currentModule == ScreenName.returnedOrderHistory) {
       return const SellerReturnOrderHistoryScreen();
     } else if (state.currentModule == ScreenName.revenue) {
-      return const RevenueScreen();
+      return const SellerRevenueScreen();
     } else if (state.currentModule == ScreenName.profile) {
       return const SellerProfileScreen();
     } else if (state.currentModule == ScreenName.settings) {

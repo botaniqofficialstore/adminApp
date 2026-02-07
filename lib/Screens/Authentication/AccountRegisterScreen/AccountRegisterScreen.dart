@@ -1041,7 +1041,15 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
   Widget _buildStepSeven() {
     final state = ref.watch(accountRegisterScreenStateProvider);
     final notifier = ref.read(accountRegisterScreenStateProvider.notifier);
-    final days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    final days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1055,18 +1063,21 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                 minimumSize: Size.zero,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20.dp)
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(20.dp)
                   ),
-              padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
-              child: Row(
-                children: [
-                  Icon(Icons.copy_all, size: 15.dp, color: Colors.white),
-                  SizedBox(width: 2.5.dp),
-                  objCommonWidgets.customText(context, 'Apply Monday to all', 10, Colors.white, objConstantFonts.montserratMedium)
-                ],
-              ),
-            ), onPressed: () => notifier.copyMondayToAll())
+                  padding: EdgeInsets.symmetric(
+                      vertical: 5.dp, horizontal: 10.dp),
+                  child: Row(
+                    children: [
+                      Icon(Icons.copy_all, size: 15.dp, color: Colors.white),
+                      SizedBox(width: 2.5.dp),
+                      objCommonWidgets.customText(
+                          context, 'Apply Monday to all', 10, Colors.white,
+                          objConstantFonts.montserratMedium)
+                    ],
+                  ),
+                ), onPressed: () => notifier.copyMondayToAll())
           ],
         ),
 
@@ -1076,11 +1087,13 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: days.length,
-          separatorBuilder: (_, __) => Divider(height: 0, color: Colors.black, thickness: 0.3,),
+          separatorBuilder: (_, __) =>
+              Divider(height: 0, color: Colors.black, thickness: 0.3,),
           itemBuilder: (context, index) {
             final day = days[index];
             final schedule = state.weeklySchedule[day]!;
-            final inValidCloseTime = (schedule.closeTime.hour * 60 + schedule.closeTime.minute) <=
+            final inValidCloseTime = (schedule.closeTime.hour * 60 +
+                schedule.closeTime.minute) <=
                 (schedule.openTime.hour * 60 + schedule.openTime.minute);
 
             return Container(
@@ -1088,13 +1101,24 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
               child: Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: objCommonWidgets.customText(context,
-                            day, 13,
-                            schedule.isOpen ? Colors.black : Colors.black.withAlpha(100),
-                            objConstantFonts.montserratMedium),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          objCommonWidgets.customText(context,
+                              day, 13,
+                              schedule.isOpen ? Colors.black : Colors.black
+                                  .withAlpha(100),
+                              objConstantFonts.montserratMedium),
+                          if (!schedule.isOpen)
+                            objCommonWidgets.customText(
+                                context, "Closed / Holiday", 10,
+                                Colors.red,
+                                objConstantFonts.montserratSemiBold),
+                        ],
                       ),
+
                       Transform.scale(
                         scale: 0.8,
                         child: CupertinoSwitch(
@@ -1115,11 +1139,16 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                             label: "Opens at",
                             time: schedule.openTime,
                             onTap: () async {
-                              final picked = await showTimePicker(context: context, initialTime: schedule.openTime);
-                              if (picked != null) notifier.updateTime(day, true, picked);
+                              final picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: schedule.openTime);
+                              if (picked != null) {
+                                notifier.updateTime(
+                                  day, true, picked);
+                              }
                             },
                           ),
-                           Padding(
+                          Padding(
                             padding: EdgeInsets.symmetric(horizontal: 12.dp),
                             child: objCommonWidgets.customText(context,
                                 'to', 13,
@@ -1132,8 +1161,11 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                             time: schedule.closeTime,
                             error: inValidCloseTime,
                             onTap: () async {
-                              final picked = await showTimePicker(context: context, initialTime: schedule.closeTime);
-                              if (picked != null) notifier.updateTime(day, false, picked);
+                              final picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: schedule.closeTime);
+                              if (picked != null) notifier.updateTime(
+                                  day, false, picked);
                             },
                           ),
                         ],
@@ -1151,12 +1183,17 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
                                   color: Colors.red.withAlpha(35),
                                   borderRadius: BorderRadius.circular(20.dp)
                               ),
-                              padding: EdgeInsets.symmetric(vertical: 5.dp, horizontal: 10.dp),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 5.dp, horizontal: 10.dp),
                               child: Row(
                                 children: [
-                                  Icon(Icons.warning_rounded, size: 12.dp, color: Colors.red),
+                                  Icon(Icons.warning_rounded, size: 12.dp,
+                                      color: Colors.red),
                                   SizedBox(width: 2.5.dp),
-                                  objCommonWidgets.customText(context, 'Please enter valid closing time!', 8, Colors.red, objConstantFonts.montserratMedium),
+                                  objCommonWidgets.customText(context,
+                                      'Please enter valid closing time!', 8,
+                                      Colors.red,
+                                      objConstantFonts.montserratMedium),
                                 ],
                               ),
                             ),

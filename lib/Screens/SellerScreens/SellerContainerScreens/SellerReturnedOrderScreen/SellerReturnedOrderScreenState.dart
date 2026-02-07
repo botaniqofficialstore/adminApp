@@ -13,6 +13,7 @@ class SellerReturnedOrderScreenState {
   final DateTime? filterStartDate;
   final DateTime? filterEndDate;
   final String? filterType;
+  final List<Map<String, dynamic>> productList;
 
   SellerReturnedOrderScreenState({
     required this.packedList,
@@ -21,6 +22,7 @@ class SellerReturnedOrderScreenState {
     this.filterStartDate,
     this.filterEndDate,
     this.filterType,
+    required this.productList,
   });
 
 
@@ -32,6 +34,7 @@ class SellerReturnedOrderScreenState {
     DateTime? filterStartDate,
     DateTime? filterEndDate,
     String? filterType,
+    List<Map<String, dynamic>>? productList,
   }) {
     return SellerReturnedOrderScreenState(
       packedList: packedList ?? this.packedList,
@@ -40,6 +43,7 @@ class SellerReturnedOrderScreenState {
       filterStartDate: filterStartDate ?? this.filterStartDate,
       filterEndDate: filterEndDate ?? this.filterEndDate,
       filterType: filterType ?? this.filterType,
+      productList: productList ?? this.productList,
     );
   }
 }
@@ -48,9 +52,35 @@ class SellerReturnedOrderScreenStateNotifier
     extends StateNotifier<SellerReturnedOrderScreenState> {
   SellerReturnedOrderScreenStateNotifier()
       : super(SellerReturnedOrderScreenState(
-      packedList: List.generate(2, (_) => false), packagePhoto: '', searchController: TextEditingController(), filterStartDate: null,
+      packedList: List.generate(2, (_) => false),
+      packagePhoto: '',
+      searchController: TextEditingController(),
+      filterStartDate: null,
       filterEndDate: null,
-      filterType: ''));
+      filterType: '',
+    productList: _getSampleData(),
+  ));
+
+  static List<Map<String, dynamic>> _getSampleData() {
+    return [
+      {
+        'id': 1,
+        'name': 'Radish Pink Microgreen',
+        'price': '189',
+        'quantity': '250 gm',
+        'count' : 2,
+        'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png'
+      },
+      {
+        'id': 2,
+        'name': 'Beetroot Microgreens',
+        'price': '219',
+        'quantity': '100 gm',
+        'count' : 1,
+        'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/betroot_Micro.png'
+      },
+    ];
+  }
 
   ///This method is used to get start and end date for filter
   void getFilteredDate(DateFilterType filterType) {
@@ -109,7 +139,7 @@ class SellerReturnedOrderScreenStateNotifier
 
 }
 
-final SellerReturnedOrderScreenStateProvider =
+final sellerReturnedOrderScreenStateProvider =
 StateNotifierProvider.autoDispose<
     SellerReturnedOrderScreenStateNotifier,
     SellerReturnedOrderScreenState>((ref) {

@@ -207,12 +207,12 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
       itemCount: state.productList.length,
       itemBuilder: (context, index) {
         final product = state.productList[index];
-        return buildProductCard(product, true);
+        return buildProductCard(product);
       },
     );
   }
 
-  Widget buildProductCard(Map<String, dynamic> product, bool isVerified) {
+  Widget buildProductCard(Map<String, dynamic> product) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -241,18 +241,18 @@ class SellerNewOrderScreenState extends ConsumerState<SellerNewOrderScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                objCommonWidgets.customText(context, product['name'], 11.5, Colors.black, objConstantFonts.montserratMedium),
+                objCommonWidgets.customText(context, product['name'], 10.5, Colors.black, objConstantFonts.montserratMedium),
                 SizedBox(height: 4.dp),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    objCommonWidgets.customText(context, "₹${product['price']}/_", 13, const Color(0xFF5E910E), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 12, const Color(
+                        0xFF588E03), objConstantFonts.montserratSemiBold),
                     objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
                   ],
                 ),
-
-
+                objCommonWidgets.customText(context, 'Item count: ${product['count']}', 10, Colors.black, objConstantFonts.montserratMedium)
               ],
             ),
           ),

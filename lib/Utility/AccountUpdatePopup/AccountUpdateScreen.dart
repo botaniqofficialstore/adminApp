@@ -91,6 +91,7 @@ class AccountUpdatePopupState extends ConsumerState<AccountUpdateScreen> {
                 /// HEADER
                 SizedBox(height: 10.dp),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CupertinoButton(
                       padding: EdgeInsets.zero,
@@ -103,12 +104,14 @@ class AccountUpdatePopupState extends ConsumerState<AccountUpdateScreen> {
                       ),
                     ),
                     SizedBox(width: 5.dp),
-                    objCommonWidgets.customText(
-                      context,
-                      state.formTitle,
-                      14,
-                      objConstantColor.black,
-                      objConstantFonts.montserratMedium,
+                    Flexible(
+                      child: objCommonWidgets.customText(
+                        context,
+                        state.formTitle,
+                        14,
+                        objConstantColor.black,
+                        objConstantFonts.montserratMedium,
+                      ),
                     ),
                   ],
                 ),

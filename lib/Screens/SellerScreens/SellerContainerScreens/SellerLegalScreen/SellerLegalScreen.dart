@@ -57,7 +57,7 @@ class SellerLegalScreenStateUI extends ConsumerState<SellerLegalScreen> with Sin
     // final notifier = ref.read(sellerLegalScreenStateProvider.notifier);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Soft organic mint-white
+      backgroundColor: Colors.transparent, // Soft organic mint-white
       body: SafeArea(
         child: Column(
           children: [
@@ -95,8 +95,6 @@ class SellerLegalScreenStateUI extends ConsumerState<SellerLegalScreen> with Sin
                       ),
                     ),
 
-                    SizedBox(height: 20.dp),
-
                     // 🔹 Legal Accordion List with Staggered Animation
                     ListView.separated(
                       shrinkWrap: true,
@@ -133,14 +131,21 @@ class SellerLegalScreenStateUI extends ConsumerState<SellerLegalScreen> with Sin
                               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
                                 tilePadding: EdgeInsets.symmetric(horizontal: 15.dp),
+                                visualDensity: const VisualDensity(
+                                  vertical: -3, // 👈 reduce height
+                                  horizontal: 0,
+                                ),
                                 title: objCommonWidgets.customText(
-                                    context, item.title, 13, Colors.black, objConstantFonts.montserratMedium),
-                                leading: Icon(Icons.gavel_rounded, color: const Color(0xFF0C7301), size: 18.dp),
+                                    context, item.title, 11, Colors.black, objConstantFonts.montserratMedium),
+                                leading: Icon(Icons.gavel_rounded, color: const Color(0xFF0C7301), size: 16.dp),
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(left: 15.dp, right: 15.dp, bottom: 15.dp),
                                     child: objCommonWidgets.customText(
-                                        context, item.content, 11.5, Colors.black, objConstantFonts.montserratRegular),
+                                        context, item.content, 10,
+                                        Colors.black,
+                                        objConstantFonts.montserratRegular,
+                                    textAlign: TextAlign.start),
                                   )
                                 ],
                               ),
@@ -183,7 +188,10 @@ class SellerLegalScreenStateUI extends ConsumerState<SellerLegalScreen> with Sin
       padding: EdgeInsets.all(20.dp),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF292929), Color(0xFF6F706F)],
+          colors: [
+            Color(0xFF03A103),
+            Color(0xFF0C0C0C),
+          ],
           begin: Alignment.centerLeft,
           end: Alignment.bottomRight,
         ),
@@ -195,7 +203,7 @@ class SellerLegalScreenStateUI extends ConsumerState<SellerLegalScreen> with Sin
           SizedBox(height: 10.dp),
           objCommonWidgets.customText(context, 'Botaniq Seller Policy', 16, objConstantColor.white, objConstantFonts.montserratSemiBold),
           SizedBox(height: 5.dp),
-          objCommonWidgets.customText(context, 'Ensuring a fair and transparent organic marketplace for all our partners.', 12, objConstantColor.white, objConstantFonts.montserratMedium),
+          objCommonWidgets.customText(context, 'Ensuring a fair and transparent organic marketplace for all our partners.', 10, objConstantColor.white, objConstantFonts.montserratRegular),
         ],
       ),
     );

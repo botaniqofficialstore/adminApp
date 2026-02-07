@@ -276,7 +276,9 @@ class AccountUpdateScreenStateNotifier extends StateNotifier<AccountUpdateScreen
     } else if (type == FormType.personalProfile){
       callCountryListGepAPI(context);
       callStatesListGepAPI(context, 'IN');
+      updateCountry('India', 'IN');
       callCityListGepAPI(context, 'IN', 'KL');
+      updateState('Kerala', 'KL');
       final profile = data as PersonalProfile?;
 
       state = state.copyWith(

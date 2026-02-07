@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../CodeReusable/CodeReusability.dart';
+import '../../../Constants/Constants.dart';
 import 'LoginScreenState.dart';
 import 'package:botaniq_admin/Constants/ConstantVariables.dart';
 
@@ -86,6 +87,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
             ),
 
             body: LayoutBuilder(
+
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -247,25 +249,8 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                                     CupertinoButton(
                                       padding: EdgeInsets.zero,
                                       onPressed: () {
-                                        if (isAdmin) {
-                                          Navigator
-                                              .pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                              const MainScreen(),
-                                            ),
-                                          );
-                                        } else {
-                                          Navigator
-                                              .pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                              const SellerMainScreen(),
-                                            ),
-                                          );
-                                        }
+                                        currentUser = isAdmin ? UserRole.admin : UserRole.seller ;
+                                        notifier.checkLoginFieldValidation(context);
                                       },
                                       child: Container(
                                         width: double.infinity,

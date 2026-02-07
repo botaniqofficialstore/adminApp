@@ -1,5 +1,3 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SellerNewOrderScreenState {
@@ -20,7 +18,9 @@ class SellerNewOrderScreenState {
 
 class SellerNewOrderScreenNotifier
     extends StateNotifier<SellerNewOrderScreenState> {
-  SellerNewOrderScreenNotifier() : super(SellerNewOrderScreenState(productList: _getSampleData(),));
+  SellerNewOrderScreenNotifier() : super(SellerNewOrderScreenState(
+    productList: _getSampleData(),
+  ));
 
   @override
   void dispose() {
@@ -34,6 +34,7 @@ class SellerNewOrderScreenNotifier
         'name': 'Radish Pink Microgreen',
         'price': '189',
         'quantity': '250 gm',
+        'count' : 2,
         'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png'
       },
       {
@@ -41,6 +42,7 @@ class SellerNewOrderScreenNotifier
         'name': 'Beetroot Microgreens',
         'price': '219',
         'quantity': '100 gm',
+        'count' : 1,
         'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/betroot_Micro.png'
       },
     ];

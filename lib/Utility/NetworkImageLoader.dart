@@ -100,7 +100,7 @@ class _NetworkImageWithLoaderState extends State<NetworkImageLoader> {
             if (!widget.isLocal && !_isLoaded)
               const CupertinoActivityIndicator(
                 radius: 12,
-                color: Colors.brown,
+                color: Colors.black,
               ),
           ],
         ),

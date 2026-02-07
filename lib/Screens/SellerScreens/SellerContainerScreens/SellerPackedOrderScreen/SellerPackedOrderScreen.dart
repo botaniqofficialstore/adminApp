@@ -9,6 +9,7 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonViews/CommonWidget.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerPackedOrderScreenState.dart';
 
@@ -133,7 +134,7 @@ class _SellerPackedOrderScreenState extends ConsumerState<SellerPackedOrderScree
   }
 
   Widget _orderCard(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(SellerPackedOrderScreenStateProvider);
+    final state = ref.watch(sellerPackedOrderScreenStateProvider);
 
     return Container(
       padding: EdgeInsets.all(16.dp),
@@ -153,21 +154,7 @@ class _SellerPackedOrderScreenState extends ConsumerState<SellerPackedOrderScree
           SizedBox(height: 10.dp),
 
           /// 🔹 Grid Items with Internal Staggered Pop-in
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: state.packedList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 14.dp,
-              mainAxisSpacing: 14.dp,
-              childAspectRatio: 0.72,
-            ),
-            itemBuilder: (context, index) {
-              // Internal grid delay: only starts once the parent card is visible
-              return _productGridItem(context, index);
-            },
-          ),
+          productListView(),
           SizedBox(height: 20.dp),
           _buildViewPhotoButton(context),
         ],
@@ -187,32 +174,71 @@ class _SellerPackedOrderScreenState extends ConsumerState<SellerPackedOrderScree
     );
   }
 
-  Widget _productGridItem(BuildContext context, int index) {
+  Widget productListView(){
+    final state = ref.watch(sellerPackedOrderScreenStateProvider);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(0.dp, 0.dp, 0.dp, 0.dp),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 5.dp,
+        crossAxisSpacing: 10.dp,
+        childAspectRatio: 0.68,
+      ),
+      itemCount: state.productList.length,
+      itemBuilder: (context, index) {
+        final product = state.productList[index];
+        return buildProductCard(product);
+      },
+    );
+  }
+
+  Widget buildProductCard(Map<String, dynamic> product) {
     return Container(
-      padding: EdgeInsets.all(10.dp),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.dp),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(2, 4))],
+        borderRadius: BorderRadius.circular(10.dp),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withAlpha(35),
+              blurRadius: 5, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.dp),
-            child: Image.network(
-              'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
-              width: double.infinity,
-              height: 115.dp,
-              fit: BoxFit.cover,
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.dp, right: 5.dp, top: 5.dp),
+              child: NetworkImageLoader(
+                imageUrl: product['image'],
+                placeHolder: objConstantAssest.placeholderImage,
+                size: 80.dp,
+                imageSize: double.infinity,
+              ),
             ),
           ),
-          SizedBox(height: 8.dp),
-          objCommonWidgets.customText(context, CodeReusability().cleanProductName('Red Amaranthus'), 12, Colors.black, objConstantFonts.montserratSemiBold),
-          SizedBox(height: 4.dp),
-          objCommonWidgets.customText(context, '₹189 / 100g', 11, objConstantColor.orange, objConstantFonts.montserratMedium),
-          objCommonWidgets.customText(context, 'Qty: 2', 10, Colors.black54, objConstantFonts.montserratMedium),
+          Padding(
+            padding: EdgeInsets.all(10.dp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                objCommonWidgets.customText(context, product['name'], 10.5, Colors.black, objConstantFonts.montserratMedium),
+                SizedBox(height: 4.dp),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    objCommonWidgets.customText(context, "₹${product['price']}/_", 12, const Color(
+                        0xFF588E03), objConstantFonts.montserratSemiBold),
+                    objCommonWidgets.customText(context, product['quantity'], 11, Colors.black54, objConstantFonts.montserratMedium)
+                  ],
+                ),
+                objCommonWidgets.customText(context, 'Item count: ${product['count']}', 10, Colors.black, objConstantFonts.montserratMedium)
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -233,7 +259,7 @@ class _SellerPackedOrderScreenState extends ConsumerState<SellerPackedOrderScree
         decoration: BoxDecoration(
           color: objConstantColor.orange,
           borderRadius: BorderRadius.circular(22.dp),
-          boxShadow: [BoxShadow(color: objConstantColor.orange.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
+          boxShadow: [BoxShadow(color: objConstantColor.black.withAlpha(15), blurRadius: 10, offset: const Offset(0, 4))],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

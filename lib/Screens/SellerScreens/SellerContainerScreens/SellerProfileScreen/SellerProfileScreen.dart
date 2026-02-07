@@ -125,7 +125,7 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
         SellerMainScreenGlobalStateProvider.notifier);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F4F4),
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         top: false,
         child: RawScrollbar(
@@ -237,79 +237,95 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
 
   // --- UI COMPONENTS ---
 
+
   Widget _buildModernPremiumHeader() {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 5,
-            offset: const Offset(2, 4),
-          )
-        ],
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(25.dp),
           bottomRight: Radius.circular(25.dp),
         ),
       ),
       child: SafeArea(
-        bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20.dp, 20.dp, 20.dp, 0.dp),
+          padding: EdgeInsets.fromLTRB(20.dp, 10.dp, 20.dp, 0.dp),
           child: Column(
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(2.5.dp),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: objConstantColor.orange.withOpacity(0.3),
-                          width: 2),
-                    ),
+                  CircleAvatar(
+                    radius: 34.dp,
+                    backgroundColor: Colors.black,
                     child: ClipOval(
                       child: Image.network(
                         'https://drive.google.com/uc?id=1Rmn4MxWtMaV7sEXqxGszVWud8XuyeRnv',
-                        width: 60.dp,
-                        height: 60.dp,
+                        width: 65.dp,
+                        height: 65.dp,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            Image.asset(
-                              objConstantAssest.defaultProfileImage,
-                              width: 60.dp,
-                              height: 60.dp,
-                            ),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 1. Local Placeholder Image
+                              Image.asset(
+                                objConstantAssest.defaultProfileImage,
+                                width: 65.dp,
+                                height: 65.dp,
+                                fit: BoxFit.cover,
+                              ),
+                              // 2. Small White Circular Progress Bar
+                              SizedBox(
+                                width: 12.dp, // Scaled down for the small avatar
+                                height: 12.dp,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                  backgroundColor: Colors.white24,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            objConstantAssest.defaultProfileImage,
+                            width: 65.dp,
+                            height: 65.dp,
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                   ),
                   SizedBox(width: 10.dp),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        objCommonWidgets.customText(
-                            context, 'Nourish Organics', 15, Colors.black,
-                            objConstantFonts.montserratSemiBold),
-                        SizedBox(height: 4.dp),
-                        Row(
-                          children: [
-                            Icon(Icons.verified_rounded,
-                                color: Colors.blueAccent, size: 14.dp),
-                            SizedBox(width: 2.dp),
-                            objCommonWidgets.customText(context,
-                                'Verified Merchant', 10, Colors.black,
-                                objConstantFonts.montserratRegular),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      objCommonWidgets.customText(
+                          context, 'Nourish Organics', 15, Colors.black,
+                          objConstantFonts.montserratSemiBold),
+                      SizedBox(height: 4.dp),
+                      Row(
+                        children: [
+                          Icon(Icons.verified_rounded,
+                              color: Colors.blueAccent, size: 14.dp),
+                          SizedBox(width: 2.dp),
+                          objCommonWidgets.customText(context,
+                              'Verified Merchant', 10, Colors.black,
+                              objConstantFonts.montserratRegular),
+                        ],
+                      ),
+                    ],
                   ),
+
                 ],
               ),
-              SizedBox(height: 15.dp),
+              SizedBox(height: 5.dp),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 18.dp),
                 child: Row(
@@ -317,10 +333,10 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
                   children: [
                     _buildStatItem(
                         "4.8", "Rating", Icons.star_rounded, Colors.orange),
-                    Container(width: 1, height: 25.dp, color: Colors.grey[300]),
+                    Container(width: 1, height: 25.dp, color: Colors.black.withAlpha(100)),
                     _buildStatItem("124", "Products", Icons.inventory_2_rounded,
                         Colors.blue),
-                    Container(width: 1, height: 25.dp, color: Colors.grey[300]),
+                    Container(width: 1, height: 25.dp, color: Colors.black.withAlpha(100)),
                     _buildStatItem(
                         "2.4k", "Customers", Icons.people_alt_rounded,
                         Colors.green),
