@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../Utility/AccountUpdatePopup/AccountUpdateScreen.dart';
-import '../../../../Utility/AccountUpdatePopup/AccountUpdateScreenState.dart';
+import '../../../../CommonPopupViews/AccountUpdatePopup/AccountUpdateScreen.dart';
+import '../../../../CommonPopupViews/AccountUpdatePopup/AccountUpdateScreenState.dart';
 
 class SellerAccountScreenState {
   final bool showEdit;
@@ -32,7 +32,17 @@ class SellerAccountScreenStateNotifier extends StateNotifier<SellerAccountScreen
   Future<void> openFormPopup(BuildContext context, FormType type, dynamic data) async {
     toggleEdit(false);
     toggleExpandBtn(true);
-    final result = await showGeneralDialog<dynamic>(
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (_) => AccountUpdateScreen(
+          formType: type,
+          initialData: data,
+        ),
+      ),
+    );
+
+    /*final result = await showGeneralDialog<dynamic>(
       context: context,
       barrierDismissible: false,
       transitionDuration: const Duration(milliseconds: 400),
@@ -62,7 +72,7 @@ class SellerAccountScreenStateNotifier extends StateNotifier<SellerAccountScreen
         default:
           final String value = result;
       }
-    }
+    }*/
   }
 
 }

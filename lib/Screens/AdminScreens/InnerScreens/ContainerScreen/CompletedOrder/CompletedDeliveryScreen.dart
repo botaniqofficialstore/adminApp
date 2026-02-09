@@ -8,9 +8,9 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
-import '../../../../../Utility/CalendarFilterPopup.dart';
+import '../../../../../CommonPopupViews/CalendarFilterPopup/CalendarFilterPopup.dart';
 import '../../../../../Utility/PreferencesManager.dart';
-import '../../../../../Utility/ScheduleDeliveryPopup.dart';
+import '../../../../../CommonPopupViews/ScheduleDeliveryPopup/ScheduleDeliveryPopup.dart';
 import '../../MainScreen/MainScreenState.dart';
 import 'CompletedDeliveryScreenState.dart';
 

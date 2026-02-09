@@ -8,7 +8,7 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/PreferencesManager.dart';
-import '../../../../../Utility/ScheduleDeliveryPopup.dart';
+import '../../../../../CommonPopupViews/ScheduleDeliveryPopup/ScheduleDeliveryPopup.dart';
 import '../../MainScreen/MainScreenState.dart';
 import 'PackedOrderScreenState.dart';
 

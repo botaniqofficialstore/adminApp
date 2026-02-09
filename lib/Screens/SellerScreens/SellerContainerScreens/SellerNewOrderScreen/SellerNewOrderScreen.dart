@@ -9,7 +9,7 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../../../../Utility/PreferencesManager.dart';
-import '../../../../Utility/CommonSuccessPopup.dart';
+import '../../../../CommonPopupViews/CommonSuccessPopup/CommonSuccessPopup.dart';
 import '../../../../Utility/NetworkImageLoader.dart';
 import 'SellerNewOrderScreenState.dart';
 

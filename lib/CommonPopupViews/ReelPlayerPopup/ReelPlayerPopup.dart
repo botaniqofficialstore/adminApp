@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:video_player/video_player.dart';
 
-import '../Constants/ConstantVariables.dart';
-import 'PreferencesManager.dart';
+import '../../Constants/ConstantVariables.dart';
+import '../../Utility/PreferencesManager.dart';
 
 class ReelPlayerPopup extends StatefulWidget {
   final String videoUrl;

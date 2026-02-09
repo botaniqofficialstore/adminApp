@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:image_picker/image_picker.dart';
-import '../CodeReusable/CodeReusability.dart';
-import 'MediaHandler.dart';
-import 'NetworkImageLoader.dart';
+import '../../CodeReusable/CodeReusability.dart';
+import '../../Utility/MediaHandler.dart';
+import '../../Utility/NetworkImageLoader.dart';
 
 class ProductImageUploadPopup extends StatefulWidget {
   final String mainPhoto;

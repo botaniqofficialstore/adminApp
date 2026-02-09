@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../../Constants/Constants.dart';
 import '../../../../../../Utility/PreferencesManager.dart';
-import '../../../../../../Utility/ReelPlayerPopup.dart';
+import '../../../../../../CommonPopupViews/ReelPlayerPopup/ReelPlayerPopup.dart';
 import '../../../../../../Utility/ReelThumbnail.dart';
 import '../../../MainScreen/MainScreen.dart';
 import '../../../MainScreen/MainScreenState.dart';

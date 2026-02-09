@@ -1,3 +1,5 @@
+import 'package:botaniq_admin/CommonPopupViews/OrderDetailsPopupView/OrderDetailsPopupView.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum RevenueFilter { lastWeek, lastMonth, lastYear }
@@ -93,6 +95,17 @@ class SellerRevenueScreenStateNotifier extends StateNotifier<SellerRevenueScreen
   String _getMonth(int m) {
     return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m - 1];
   }
+
+  void callDetailPopupView(BuildContext context){
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (_) => const OrderDetailsPopupView(),
+      ),
+    );
+
+  }
+
 }
 
 final sellerRevenueScreenStateProvider = StateNotifierProvider.autoDispose<

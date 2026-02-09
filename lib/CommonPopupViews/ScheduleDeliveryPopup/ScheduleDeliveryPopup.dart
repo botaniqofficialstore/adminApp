@@ -2,9 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import '../Constants/ConstantVariables.dart';
-import 'DeliveryConfirmPopup.dart';
-import 'PreferencesManager.dart';
+import '../../Constants/ConstantVariables.dart';
+import '../DeliveryConfirmPopup/DeliveryConfirmPopup.dart';
+import '../../Utility/PreferencesManager.dart';
 
 class ScheduleDeliveryPopup extends StatefulWidget {
   final List<DeliveryBoy> deliveryBoys;

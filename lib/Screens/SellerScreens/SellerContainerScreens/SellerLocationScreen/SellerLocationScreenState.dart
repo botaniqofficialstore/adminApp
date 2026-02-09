@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../../CommonViews/MapScreen.dart';
+import '../../../../CommonPopupViews/MapScreen/MapScreen.dart';
 
 
 

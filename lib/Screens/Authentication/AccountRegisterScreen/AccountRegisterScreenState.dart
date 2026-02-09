@@ -1,5 +1,5 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
-import 'package:botaniq_admin/CommonViews/MapScreen.dart';
+import 'package:botaniq_admin/CommonPopupViews/MapScreen/MapScreen.dart';
 import 'package:botaniq_admin/Screens/Authentication/AccountRegisterScreen/AccountRegisterRepository.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../Utility/MediaHandler.dart';
-import '../../../Utility/CommonOtpVerificationScreen.dart';
+import '../../../CommonPopupViews/CommonOtpVerificationScreen/CommonOtpVerificationScreen.dart';
 import '../RegisterSuccessScreen/RegisterSuccessScreen.dart';
 import 'AccountRegisterModel.dart';
 

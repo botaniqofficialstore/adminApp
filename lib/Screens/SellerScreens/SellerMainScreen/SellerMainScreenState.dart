@@ -27,7 +27,7 @@ import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/PushNotificationService/NotificationService.dart';
-import '../../../Utility/ConfirmClosePopup.dart';
+import '../../../CommonPopupViews/ConfirmClosePopup/ConfirmClosePopup.dart';
 import '../../CommonScreens/NotificationScreen/NotificationScreen.dart';
 
 
@@ -159,7 +159,10 @@ class SellerMainScreenGlobalStateNotifier
   }
 
   bool isHideFooter(){
-    return state.currentModule == ScreenName.addProduct;
+    return (
+        state.currentModule == ScreenName.addProduct ||
+        state.currentModule == ScreenName.revenue
+    );
   }
 
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 
-import '../Constants/ConstantVariables.dart';
+import '../../Constants/ConstantVariables.dart';
 
 class CommonSuccessPopup extends StatelessWidget {
   final String title;

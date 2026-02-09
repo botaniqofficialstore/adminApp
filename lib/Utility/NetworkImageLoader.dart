@@ -11,6 +11,8 @@ class NetworkImageLoader extends StatefulWidget {
 
   /// NEW: Local image flag
   final bool isLocal;
+  final int topCurve;
+  final int bottomCurve;
 
   const NetworkImageLoader({
     super.key,
@@ -18,7 +20,9 @@ class NetworkImageLoader extends StatefulWidget {
     required this.placeHolder,
     required this.size,
     required this.imageSize,
-    this.isLocal = false, // default value
+    this.isLocal = false,
+    this.topCurve = 10,
+    this.bottomCurve = 0,
   });
 
   @override
@@ -40,10 +44,16 @@ class _NetworkImageWithLoaderState extends State<NetworkImageLoader> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.dp)),
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(widget.topCurve.dp),
+          bottom: Radius.circular(widget.bottomCurve.dp),
+        ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10.dp)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(widget.topCurve.dp),
+          bottom: Radius.circular(widget.bottomCurve.dp)
+        ),
         child: Stack(
           alignment: Alignment.center,
           children: [

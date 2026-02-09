@@ -8,7 +8,7 @@ import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../Constants/Constants.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonViews/CommonWidget.dart';
-import '../../../../Utility/CommonSuccessPopup.dart';
+import '../../../../CommonPopupViews/CommonSuccessPopup/CommonSuccessPopup.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'ConfirmPackedOrderScreenState.dart';

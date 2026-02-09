@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
-import '../../../Utility/SideMenu.dart';
+import '../../../CommonViews/SideMenu.dart';
 import 'SellerMainScreenState.dart';
 
 final GlobalKey<ScaffoldState> mainSellerScaffoldKey =
@@ -55,7 +55,7 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SafeArea(
-            bottom: false,
+            bottom: userScreenNotifier.isHideFooter(),
             top: false,
             child: Scaffold(
               key: mainSellerScaffoldKey,

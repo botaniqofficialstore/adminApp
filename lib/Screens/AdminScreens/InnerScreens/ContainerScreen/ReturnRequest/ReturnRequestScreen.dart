@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../../Utility/PreferencesManager.dart';
-import '../../../../../Utility/ScheduleDeliveryPopup.dart';
+import '../../../../../CommonPopupViews/ScheduleDeliveryPopup/ScheduleDeliveryPopup.dart';
 import '../../MainScreen/MainScreenState.dart';
 import 'ReturnRequestScreenState.dart';
 

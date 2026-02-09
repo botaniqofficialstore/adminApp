@@ -1,5 +1,5 @@
 import 'package:botaniq_admin/Screens/SellerScreens/SellerContainerScreens/SellerAccountScreen/SellerAccountScreenState.dart';
-import 'package:botaniq_admin/Utility/AccountUpdatePopup/AccountUpdateScreen.dart';
+import 'package:botaniq_admin/CommonPopupViews/AccountUpdatePopup/AccountUpdateScreen.dart';
 import 'package:botaniq_admin/Utility/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
-import '../../../../Utility/AccountUpdatePopup/AccountUpdateScreenState.dart';
+import '../../../../CommonPopupViews/AccountUpdatePopup/AccountUpdateScreenState.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 
 class SellerAccountScreen extends ConsumerStatefulWidget {
@@ -24,8 +24,6 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
   ];
   final ScrollController _scrollController = ScrollController();
   late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-
 
 
   @override
@@ -39,7 +37,6 @@ class SellerAccountScreenState extends ConsumerState<SellerAccountScreen> with T
           notifier.toggleExpandBtn(true);
         }
       });
-
     });
 
     _controller = AnimationController(

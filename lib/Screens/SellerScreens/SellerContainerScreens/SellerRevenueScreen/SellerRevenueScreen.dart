@@ -49,7 +49,10 @@ class SellerRevenueScreen extends ConsumerWidget {
                       SizedBox(height: 20.dp),
 
                       // 3. Transactions List
-                      _buildOrderList(context, state),
+                      _buildOrderList(context, state, notifier),
+
+
+
                     ],
                   ),
                 ),
@@ -93,7 +96,10 @@ class SellerRevenueScreen extends ConsumerWidget {
         padding: EdgeInsets.symmetric(vertical: 15.dp, horizontal: 15.dp),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF1A1A1B), Color(0xFF2D2D2E)],
+            colors: [
+              Color(0xFF2D2D2E),
+              Color(0xFF222222)
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -145,23 +151,8 @@ class SellerRevenueScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ],
-                  ),
 
-                  SizedBox(height: 10.dp),
-
-                  /// Revenue + Orders
-                  Row(
-                    children: [
-                      objCommonWidgets.customText(
-                        context,
-                        '₹${state.totalRevenue.toStringAsFixed(2)}',
-                        23,
-                        Colors.green,
-                        objConstantFonts.montserratSemiBold,
-                      ),
-
-                      const Spacer(), // 🔥 THIS FIXES IT
+                      const Spacer(),
 
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -169,7 +160,7 @@ class SellerRevenueScreen extends ConsumerWidget {
                           objCommonWidgets.customText(
                             context,
                             '${state.totalOrders}',
-                            18,
+                            15,
                             Colors.yellowAccent,
                             objConstantFonts.montserratSemiBold,
                           ),
@@ -183,6 +174,20 @@ class SellerRevenueScreen extends ConsumerWidget {
                         ],
                       ),
                     ],
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.dp),
+                    child: Divider(color: Colors.white.withAlpha(150), height: 2.dp, thickness: 0.3.dp,),
+                  ),
+
+                  /// Revenue + Orders
+                  objCommonWidgets.customText(
+                    context,
+                    '₹${state.totalRevenue.toStringAsFixed(2)}/_',
+                    23,
+                    Colors.green,
+                    objConstantFonts.montserratSemiBold,
                   ),
                 ],
               ),
@@ -219,13 +224,13 @@ class SellerRevenueScreen extends ConsumerWidget {
           ),
         ),
 
-        SizedBox(height: 5.dp),
+        SizedBox(height: 8.dp),
 
         Container(
           height: 400.dp,
           padding: EdgeInsets.symmetric(vertical: 25.dp, horizontal: 15.dp),
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Color(0xFF2D2D2E),
           ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -387,7 +392,8 @@ class SellerRevenueScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderList(BuildContext context, SellerRevenueScreenState state) {
+  Widget _buildOrderList(BuildContext context, SellerRevenueScreenState state, SellerRevenueScreenStateNotifier notifier) {
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.dp),
       child: Column(
@@ -410,7 +416,8 @@ class SellerRevenueScreen extends ConsumerWidget {
                 padding: EdgeInsets.all(10.dp),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF323233), Color(0xFF2D2D2E)],
+                    colors: [Color(0xFF323233),
+                      Color(0xFF2D2D2E)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -420,7 +427,7 @@ class SellerRevenueScreen extends ConsumerWidget {
                   children: [
                     Container(
                       padding: EdgeInsets.all(10.dp),
-                      decoration: BoxDecoration(color: Colors.white.withAlpha(20), borderRadius: BorderRadius.circular(10.dp)),
+                      decoration: BoxDecoration(color: Colors.white.withAlpha(50), borderRadius: BorderRadius.circular(8.dp)),
                       child: Icon(Icons.receipt_long, color: Colors.white, size: 20.dp),
                     ),
                     SizedBox(width: 10.dp),
@@ -438,8 +445,6 @@ class SellerRevenueScreen extends ConsumerWidget {
                               DateFormat('₹${order.amount}/_').format(order.date),
                               15,
                               Colors.green, objConstantFonts.montserratSemiBold),
-
-
                         ],
                       ),
                     ),
@@ -452,8 +457,11 @@ class SellerRevenueScreen extends ConsumerWidget {
                         CupertinoButton(
                             padding: EdgeInsets.zero,
                             minimumSize: Size.zero,
+                            onPressed: (){
+                              notifier.callDetailPopupView(context);
+                            },
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 4.dp, horizontal: 7.dp),
+                              padding: EdgeInsets.symmetric(vertical: 6.dp, horizontal: 7.dp),
                              decoration: BoxDecoration(
                                 color: Colors.yellowAccent,
                                 borderRadius: BorderRadius.circular(5.dp),
@@ -462,12 +470,11 @@ class SellerRevenueScreen extends ConsumerWidget {
                               child: objCommonWidgets.customText(
                                   context,
                                   'View Details',
-                                  8,
+                                  9,
                                   Colors.black, objConstantFonts.montserratSemiBold),
                             ),
-                            onPressed: (){}
                         ),
-                        SizedBox(height: 2.dp),
+                        SizedBox(height: 2.5.dp),
                         objCommonWidgets.customText(
                             context,
                             DateFormat('dd MMM yyyy, hh:mm a').format(order.date),

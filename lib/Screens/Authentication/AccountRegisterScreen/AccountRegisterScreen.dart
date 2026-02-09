@@ -7,7 +7,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
-import '../../../Utility/ConfirmClosePopup.dart';
+import '../../../CommonPopupViews/ConfirmClosePopup/ConfirmClosePopup.dart';
 import '../../../Utility/NetworkImageLoader.dart';
 import '../LoginScreen/LoginScreen.dart';
 import 'AccountRegisterModel.dart';

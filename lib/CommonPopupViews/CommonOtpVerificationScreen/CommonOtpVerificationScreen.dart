@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import '../CodeReusable/CodeReusability.dart';
-import '../Constants/ConstantVariables.dart';
+import '../../CodeReusable/CodeReusability.dart';
+import '../../Constants/ConstantVariables.dart';
 
 class CommonOtpVerificationScreen extends StatefulWidget {
   final bool isEmail;

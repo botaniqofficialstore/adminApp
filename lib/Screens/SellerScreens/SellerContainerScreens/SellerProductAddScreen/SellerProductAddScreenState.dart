@@ -1,5 +1,5 @@
 import 'package:botaniq_admin/Utility/Logger.dart';
-import 'package:botaniq_admin/Utility/ProductVerificationPopup.dart';
+import 'package:botaniq_admin/CommonPopupViews/ProductVerificationPopup/ProductVerificationPopup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

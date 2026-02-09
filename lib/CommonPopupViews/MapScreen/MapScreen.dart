@@ -10,10 +10,10 @@ import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../CodeReusable/CommonWidgets.dart';
-import '../../../../constants/ConstantVariables.dart';
-import '../../Utility/Logger.dart';
-import '../../constants/Constants.dart';
+import '../../../CodeReusable/CommonWidgets.dart';
+import '../../../../../constants/ConstantVariables.dart';
+import '../../../Utility/Logger.dart';
+import '../../../constants/Constants.dart';
 
 
 class MapScreen extends ConsumerStatefulWidget {

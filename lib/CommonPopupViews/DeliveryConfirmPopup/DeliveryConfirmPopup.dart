@@ -2,9 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import '../Constants/ConstantVariables.dart';
-import 'PreferencesManager.dart';
-import 'ScheduleDeliveryPopup.dart';
+import '../../Constants/ConstantVariables.dart';
+import '../../Utility/PreferencesManager.dart';
+import '../ScheduleDeliveryPopup/ScheduleDeliveryPopup.dart';
 
 class DeliveryConfirmPopup extends StatelessWidget {
   final DateTime selectedDate;

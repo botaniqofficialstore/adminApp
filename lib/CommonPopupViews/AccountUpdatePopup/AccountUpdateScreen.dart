@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../CodeReusable/CodeReusability.dart';
 import '../../Screens/Authentication/AccountRegisterScreen/AccountRegisterModel.dart';
 import '../../Screens/Authentication/AccountRegisterScreen/AccountRegisterScreenState.dart';
-import '../NetworkImageLoader.dart';
+import '../../Utility/NetworkImageLoader.dart';
 import 'AccountUpdateScreenState.dart';
 
 class AccountUpdateScreen extends ConsumerStatefulWidget {

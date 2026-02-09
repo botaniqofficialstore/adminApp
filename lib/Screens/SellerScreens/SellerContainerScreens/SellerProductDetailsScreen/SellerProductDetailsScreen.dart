@@ -1,5 +1,5 @@
 import 'package:botaniq_admin/CodeReusable/CodeReusability.dart';
-import 'package:botaniq_admin/Utility/ProductImageUploadPopup.dart';
+import 'package:botaniq_admin/CommonPopupViews/ProductImageUploadPopup/ProductImageUploadPopup.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/NetworkImageLoader.dart';
-import '../../../../Utility/ModernBenefitPopup.dart';
+import '../../../../CommonPopupViews/ModernBenefitPopup/ModernBenefitPopup.dart';
 import '../../../../constants/ConstantVariables.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductDetailsScreenState.dart';

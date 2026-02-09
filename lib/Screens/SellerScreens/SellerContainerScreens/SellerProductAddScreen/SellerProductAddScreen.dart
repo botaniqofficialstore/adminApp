@@ -8,7 +8,7 @@ import 'package:im_stepper/stepper.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
-import '../../../../Utility/ConfirmClosePopup.dart';
+import '../../../../CommonPopupViews/ConfirmClosePopup/ConfirmClosePopup.dart';
 import '../../../../Utility/NetworkImageLoader.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'SellerProductAddScreenState.dart';
@@ -51,7 +51,6 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
       onTap: () => CodeReusability.hideKeyboard(context),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Column(
             children: [
@@ -83,9 +82,13 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
                   ],
                 ),
               ),
+
+
+              ///Hide this view when keyboard appear
+              if (MediaQuery.of(context).viewInsets.bottom == 0)
               _buildBottomBar(state, notifier),
 
-              SizedBox(height: 20.dp,)
+              SizedBox(height: 5.dp,)
             ],
           ),
         ),

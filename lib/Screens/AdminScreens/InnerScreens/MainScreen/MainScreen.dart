@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
 import '../../../../Utility/PreferencesManager.dart';
-import '../../../../Utility/SideMenu.dart';
+import '../../../../CommonViews/SideMenu.dart';
 import 'MainScreenState.dart';
 
 final GlobalKey<ScaffoldState> mainScaffoldKey = GlobalKey<ScaffoldState>();
