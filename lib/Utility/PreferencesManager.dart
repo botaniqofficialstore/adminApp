@@ -66,6 +66,7 @@ class PreferenceKeys {
   static String adminLastName = 'adminLastName';
   static String adminEmailID = 'adminEmailID';
   static String adminMobileNumber = 'adminMobileNumber';
+  static String userAddress = 'userAddress';
 
   //count
   static String wishListCount = 'wishListCount';

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:im_stepper/stepper.dart';
 import '../../../../CodeReusable/CodeReusability.dart';
 import '../../../../Constants/ConstantVariables.dart';
 import '../../../../Constants/Constants.dart';
@@ -21,9 +20,10 @@ class SellerProductAddScreen extends ConsumerStatefulWidget {
   SellerProductAddScreenState createState() => SellerProductAddScreenState();
 }
 
-class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen>  {
+class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> with WidgetsBindingObserver {
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
+  bool _isKeyboardVisible = false;
 
   final List<String> productType = [
     'Fresh',
@@ -39,7 +39,22 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
     Future.microtask((){
     ref.read(sellerProductAddScreenStateProvider.notifier).addNewBenefitSet(context);
     });
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = View.of(context).viewInsets.bottom;
+    setState(() {
+      _isKeyboardVisible = bottomInset > 0;
+    });
   }
 
   @override
@@ -47,53 +62,89 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
     final state = ref.watch(sellerProductAddScreenStateProvider);
     final notifier = ref.read(sellerProductAddScreenStateProvider.notifier);
 
-    return GestureDetector(
-      onTap: () => CodeReusability.hideKeyboard(context),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              SizedBox(height: 5.dp,),
-              objCommonWidgets.customText(context, 'Complete all the requirements.', 12, Colors.black, objConstantFonts.montserratMedium),
-              SizedBox(height: 5.dp,),
-              _buildStepper(state),
+    return PopScope(
+      canPop: false, // 🔥 We fully control back navigation
+      onPopInvokedWithResult: (didPop, dynamic) {
+        if (didPop) return;
+        if (!context.mounted) return;
+        backAction();
+      },
+      child: GestureDetector(
+        onTap: () => CodeReusability.hideKeyboard(context),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context),
+                SizedBox(height: 5.dp,),
+                objCommonWidgets.customText(context, 'Complete all the requirements.', 12, Colors.black, objConstantFonts.montserratMedium),
+                SizedBox(height: 5.dp,),
+                _buildStepper(state),
 
 
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  pageSnapping: false,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _stepWrapper(0, "Product Basic Details", "Provide the essential information that identifies your product. Add a clear and accurate product name and select the appropriate product type to help customers easily find and understand your organic offering.",
-                        _buildStepOne(notifier)),
-                    _stepWrapper(1, "Pricing Strategy", "Set transparent and competitive pricing for your product. Enter the actual price and the selling price to clearly highlight savings and build customer trust.",
-                        _buildStepTwo(state, notifier)),
-                    _stepWrapper(2, "Visual Showcase", "Showcase your product with high-quality images. Upload a main product image along with additional photos from different angles to give customers a complete and confident view of your organic product.",
-                        _buildStepThree()),
-                    _stepWrapper(3, "Health Benefits", "Highlight the nutritional value of your product. Add details about vitamins and their benefits to help customers understand how your product supports a healthy lifestyle.",
-                        _buildStepFour()),
-                    _stepWrapper(4, "Inventory", "Manage availability efficiently. Enter the current stock quantity to ensure accurate inventory tracking and avoid overselling.",
-                        _buildStepFive(notifier)),
-                    _stepWrapper(5, "Delivery Timeline", "Specify how many days it will take for the order to reach the customer. Clear delivery timelines improve trust and reduce order-related queries.",
-                        _buildStepSix(notifier)),
-                  ],
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    pageSnapping: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _stepWrapper(0, "Product Basic Details", "Provide the essential information that identifies your product. Add a clear and accurate product name and select the appropriate product type to help customers easily find and understand your organic offering.",
+                          _buildStepOne(notifier)),
+                      _stepWrapper(1, "Pricing Strategy", "Set transparent and competitive pricing for your product. Enter the actual price and the selling price to clearly highlight savings and build customer trust.",
+                          _buildStepTwo(state, notifier)),
+                      _stepWrapper(2, "Visual Showcase", "Showcase your product with high-quality images. Upload a main product image along with additional photos from different angles to give customers a complete and confident view of your organic product.",
+                          _buildStepThree()),
+                      _stepWrapper(3, "Health Benefits", "Highlight the nutritional value of your product. Add details about vitamins and their benefits to help customers understand how your product supports a healthy lifestyle.",
+                          _buildStepFour()),
+                      _stepWrapper(4, "Inventory", "Manage availability efficiently. Enter the current stock quantity to ensure accurate inventory tracking and avoid overselling.",
+                          _buildStepFive(notifier)),
+                      _stepWrapper(5, "Delivery Timeline", "Specify how many days it will take for the order to reach the customer. Clear delivery timelines improve trust and reduce order-related queries.",
+                          _buildStepSix(notifier)),
+                    ],
+                  ),
                 ),
-              ),
 
 
-              ///Hide this view when keyboard appear
-              if (MediaQuery.of(context).viewInsets.bottom == 0)
-              _buildBottomBar(state, notifier),
+                ///Hide this view when keyboard appear
+                if (!_isKeyboardVisible)
+                _buildBottomBar(state, notifier),
 
-              SizedBox(height: 5.dp,)
-            ],
+                SizedBox(height: 5.dp,)
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> backAction() async {
+    final state = ref.watch(sellerProductAddScreenStateProvider);
+    final notifier = ref.read(sellerProductAddScreenStateProvider.notifier);
+    final bool filledFields = notifier.canMoveToNext(state.currentStep);
+
+    if (state.currentStep > 0) {
+      //Previous page
+      _pageController.previousPage(
+        duration: 300.ms,
+        curve: Curves.easeInOut,
+      );
+      notifier.setStep(state.currentStep - 1);
+    } else if (state.currentStep == 0 && filledFields) {
+
+      final bool shouldPop = await ConfirmClosePopup.show(context, title: "You're in the middle of adding a new organic product. If you go back now, the details you've entered won’t be saved.",
+          description: "Would you like to continue adding the product or exit for now?") ?? false;
+
+      if (shouldPop && context.mounted) {
+        ref.read(SellerMainScreenGlobalStateProvider.notifier).callNavigation(ScreenName.products);
+      }
+
+    } else {
+      //Back to Login Screen
+      ref.read(SellerMainScreenGlobalStateProvider.notifier).callNavigation(ScreenName.products);
+    }
   }
 
   // --- UI COMPONENTS ---
@@ -105,14 +156,8 @@ class SellerProductAddScreenState extends ConsumerState<SellerProductAddScreen> 
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CupertinoButton(
-            onPressed: () async {
-              final bool shouldPop = await ConfirmClosePopup.show(context, title: "You're in the middle of adding a new organic product. If you go back now, the details you've entered won’t be saved.",
-              description: "Would you like to continue adding the product or exit for now?") ?? false;
-
-              if (shouldPop && context.mounted) {
-                ref.read(SellerMainScreenGlobalStateProvider.notifier)
-                    .callNavigation(ScreenName.products);
-              }
+            onPressed: () {
+              backAction();
             },
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,

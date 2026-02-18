@@ -42,45 +42,46 @@ class SellerLocationScreenStateUI extends ConsumerState<SellerLocationScreen> {
 
             if (state.selectedLocation != null)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 20.dp),
+                padding: EdgeInsets.only(left: 15.dp, right: 15.dp, top: 25.dp),
                 child: Container(
-                  padding: EdgeInsets.all(14.dp),
+                  padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 10.dp),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14.dp),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha(15),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withAlpha(35),
+                        blurRadius: 5,
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(5.dp),
-                        decoration: BoxDecoration(
-                          color: Colors.deepOrange.withAlpha(20),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.location_on,
-                          color: Colors.deepOrange,
-                          size: 20.dp,
-                        ),
-                      ),
-                      SizedBox(width: 10.dp),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            objCommonWidgets.customText(context, 'Selected location', 10, Colors.black, objConstantFonts.montserratRegular),
-                            SizedBox(height: 4.dp),
-                            objCommonWidgets.customText(context, state.selectPickupAddress, 12, Colors.black, objConstantFonts.montserratMedium),
-                          ],
-                        ),
+                      objCommonWidgets.customText(context, 'Selected Location', 12,
+                          Colors.black.withAlpha(150), objConstantFonts.montserratMedium),
+
+                      SizedBox(height: 5.dp),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 3.dp),
+                            child: Image.asset(objConstantAssest.locFour, width: 18.dp),
+                          ),
+                          SizedBox(width: 5.dp),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              objCommonWidgets.customText(context, state.selectPickupAddress.split(',').first, 15,
+                                  Colors.black, objConstantFonts.montserratBold),
+                              objCommonWidgets.customText(context, state.selectPickupAddress, 12,
+                                  Colors.black, objConstantFonts.montserratRegular),
+                            ],
+                          )
+                        ],
                       ),
                     ],
                   ),
@@ -88,7 +89,8 @@ class SellerLocationScreenStateUI extends ConsumerState<SellerLocationScreen> {
               ),
 
 
-            Spacer(),
+            const Spacer(),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 20.dp),
               child: CupertinoButton(

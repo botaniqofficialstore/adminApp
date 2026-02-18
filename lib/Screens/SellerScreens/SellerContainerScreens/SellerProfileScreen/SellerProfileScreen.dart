@@ -25,7 +25,7 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
         title: "My Profile",
         subtitle: "Personal details",
         icon: CupertinoIcons.person_crop_circle_fill,
-        color: const Color(0xFF539701),
+        color: Color(0xFF050505),
         showCount: false,
         count: 0
     ),
@@ -73,7 +73,7 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
         title: "Business Hours",
         subtitle: "Set open & close timings",
         icon: Icons.schedule,
-        color: const Color(0xFFE12404),
+        color: const Color(0xFF4E036C),
         showCount: false,
         count: 0
     ),
@@ -127,7 +127,6 @@ class SellerProfileScreenState extends ConsumerState<SellerProfileScreen> with S
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        top: false,
         child: RawScrollbar(
           thumbColor: objConstantColor.black.withAlpha(45),
           radius: const Radius.circular(20),

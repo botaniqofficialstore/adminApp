@@ -87,22 +87,12 @@ class AccountRegisterScreenState extends ConsumerState<AccountRegisterScreen>  {
           description: 'Would you like to continue registration or exit for now?') ?? false;
 
       if (shouldPop && context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
+        Navigator.pop(context);
       }
 
     } else {
       //Back to Login Screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
+      Navigator.pop(context);
     }
   }
 

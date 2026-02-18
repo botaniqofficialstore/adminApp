@@ -64,9 +64,9 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                       padding: EdgeInsets.zero,
                       minimumSize: Size.zero,
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                             builder: (context) =>
                             const AccountRegisterScreen(),
                           ),
@@ -87,7 +87,6 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
             ),
 
             body: LayoutBuilder(
-
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),

@@ -45,6 +45,8 @@ class ConstantAssests{
    String verifiedIcon = '${commonIconsAssets}verified.png';
    String sampleProduct = '${commonIconsAssets}radhishPink_Micro.png';
 
+   String locFour = '${commonIconsAssets}your-location.png';
+
    //Dashboard
    String newOrder = '${commonIconsAssets}new.png';
    String confirmedOrder = '${commonIconsAssets}confirmed.png';

@@ -19,40 +19,42 @@ class OrderDetailsPopupView extends ConsumerWidget {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F4F4),
-        body: Column(
-          children: [
-            _buildPremiumHeader(context, notifier),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    _buildOrderHeroSection(context),
-                    Column(
-                      children: [
-                        SizedBox(height: 15.dp),
-                        _buildSectionTitle(context, "Order Details"),
-                        SizedBox(height: 5.dp),
-                        orderDetails(context),
-
-                        SizedBox(height: 15.dp),
-                        _buildSectionTitle(context, "Logistics & Contact"),
-                        SizedBox(height: 5.dp),
-                        _buildContactCard(context),
-
-                        SizedBox(height: 15.dp),
-                        _buildSectionTitle(context, "Purchased Items"),
-                        SizedBox(height: 5.dp),
-                        _buildProductList(context, state),
-
-                        SizedBox(height: 20.dp),
-                      ],
-                    ),
-                  ],
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildPremiumHeader(context, notifier),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _buildOrderHeroSection(context),
+                      Column(
+                        children: [
+                          SizedBox(height: 15.dp),
+                          _buildSectionTitle(context, "Order Details"),
+                          SizedBox(height: 5.dp),
+                          orderDetails(context),
+          
+                          SizedBox(height: 15.dp),
+                          _buildSectionTitle(context, "Logistics & Contact"),
+                          SizedBox(height: 5.dp),
+                          _buildContactCard(context),
+          
+                          SizedBox(height: 15.dp),
+                          _buildSectionTitle(context, "Purchased Items"),
+                          SizedBox(height: 5.dp),
+                          _buildProductList(context, state),
+          
+                          SizedBox(height: 20.dp),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

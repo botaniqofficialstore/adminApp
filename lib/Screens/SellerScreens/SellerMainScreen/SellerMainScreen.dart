@@ -61,7 +61,6 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
               key: mainSellerScaffoldKey,
               extendBody: true,
               backgroundColor: const Color(0xFFF4F4F4),
-        
               /// SIDE MENU
               drawer: SideMenu(
                 onMenuClick: (module) {
@@ -144,10 +143,12 @@ class SellerMainScreenState extends ConsumerState<SellerMainScreen> {
     }
 
     /// 6️⃣ Custom back navigation
-    notifier.callBackNavigation(
-    context,
-      state.currentModule,
-    );
+    if (state.currentModule != ScreenName.addProduct){
+      notifier.callBackNavigation(
+        context,
+        state.currentModule,
+      );
+    }
   }
 }
 
