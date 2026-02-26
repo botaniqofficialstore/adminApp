@@ -1,4 +1,10 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../CommonPopupViews/CalendarFilterPopup/CalendarFilterPopup.dart';
 
 class SellerCompletedDeliveryScreenState {
   final List<Map<String, dynamic>> productList;
@@ -37,7 +43,7 @@ class SellerCompletedDeliveryScreenStateNotifier
         'quantity': '250 gm',
         'count': 2,
         'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
-        'date' : '05:23 PM, 17/02/2026'
+        'date': 'Feb 02, 05:23 PM'
       },
       {
         'id': 2,
@@ -46,7 +52,7 @@ class SellerCompletedDeliveryScreenStateNotifier
         'quantity': '100 gm',
         'count': 1,
         'image': 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/betroot_Micro.png',
-        'date' : '12:30 PM, 13/02/2026'
+        'date': 'Feb 07, 12:30 PM'
       },
       {
         'id': 3,
@@ -55,7 +61,7 @@ class SellerCompletedDeliveryScreenStateNotifier
         'quantity': '200 ml',
         'count': 1,
         'image': 'https://drive.google.com/uc?export=view&id=1yRv8IO_7AOrpmiVI37YzF88bpDPlV1Pd',
-        'date' : '09:13 AM, 10/02/2026'
+        'date': 'Feb 09, 09:13 AM'
       },
     ];
   }
@@ -71,6 +77,32 @@ class SellerCompletedDeliveryScreenStateNotifier
       }).toList();
       state = state.copyWith(productList: filteredList);
     }
+  }
+
+  void showCalendarFilterPopup(BuildContext context) async {
+    await showGeneralDialog<Map<String, dynamic>>(
+      context: context,
+      barrierColor: Colors.black.withAlpha(180),
+      barrierDismissible: false,
+      barrierLabel: 'calendar',
+      transitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (_, __, ___) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: const CalendarFilterPopup(isCustomRange: true),
+      ),
+      transitionBuilder: (_, anim, __, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: anim,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        );
+      },
+    );
   }
 }
 

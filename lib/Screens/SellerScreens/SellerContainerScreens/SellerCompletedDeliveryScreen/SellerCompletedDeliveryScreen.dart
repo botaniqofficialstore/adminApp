@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonPopupViews/OrderDetailsPopupView/OrderDetailsPopupView.dart';
@@ -30,35 +31,102 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
     final state = ref.watch(sellerCompletedDeliveryScreenStateProvider);
     final notifier = ref.read(sellerCompletedDeliveryScreenStateProvider.notifier);
 
-    return GestureDetector(
-      onTap: () => CodeReusability.hideKeyboard(context),
-      child: Scaffold(
-        backgroundColor: Colors.transparent, // Professional light grey background
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 5.dp),
-              // Header & Search Section (Sticky)
-              buildHeader(context),
+    return RefreshIndicator(
+      color: Colors.black,
+      backgroundColor: Colors.white,
+      onRefresh: () async {
+        // Add your refresh logic here if needed
+      },
+      child: GestureDetector(
+        onTap: () => CodeReusability.hideKeyboard(context),
+        child: Scaffold(
+          backgroundColor: Colors.transparent, // Subtle grey for better card contrast
+          body: SafeArea(
+            child: AnimationLimiter(
+              child: Column(
+                children: [
+                  // 1. Animated Header
+                  AnimationConfiguration.staggeredList(
+                    position: 0,
+                    duration: const Duration(milliseconds: 500),
+                    child: SlideAnimation(
+                      verticalOffset: -20.0,
+                      child: FadeInAnimation(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 5.dp),
+                            buildHeader(context),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
-              SizedBox(height: 15.dp),
-              buildSearchBar(notifier),
+                  // 2. Animated Search Bar
+                  AnimationConfiguration.staggeredList(
+                    position: 1,
+                    duration: const Duration(milliseconds: 500),
+                    child: SlideAnimation(
+                      verticalOffset: -10.0,
+                      child: FadeInAnimation(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 8.dp),
+                            buildSearchBar(notifier),
+                            SizedBox(height: 10.dp),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
-              // Orders List
-              Expanded(
-                child: state.productList.isEmpty
-                    ? Center(child: objCommonWidgets.customText(context, "No orders found", 14, Colors.grey, objConstantFonts.montserratMedium))
-                    : ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.all(15.dp),
-                  itemCount: state.productList.length,
-                  itemBuilder: (context, index) {
-                    final item = state.productList[index];
-                    return buildOrderCard(context, item);
-                  },
-                ),
+                  // 3. Animated Orders List
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (state.productList.isEmpty) {
+                          return SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                            child: Container(
+                              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                              alignment: Alignment.center,
+                              child: objCommonWidgets.customText(
+                                context,
+                                "No orders found",
+                                14,
+                                Colors.grey,
+                                objConstantFonts.montserratMedium,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.fromLTRB(15.dp, 5.dp, 15.dp, 15.dp),
+                          itemCount: state.productList.length,
+                          itemBuilder: (context, index) {
+                            final item = state.productList[index];
+
+                            // Staggered card animation
+                            return AnimationConfiguration.staggeredList(
+                              position: index + 2, // Start after header and search bar
+                              duration: const Duration(milliseconds: 600),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: buildOrderCard(context, item),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -71,17 +139,26 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
       child: Row(
         children: [
           CupertinoButton(
-              minimumSize: Size.zero,
-              padding: EdgeInsets.zero,
-              child: SizedBox(width: 20.dp, child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.black)),
-              onPressed: () {
-                var userScreenNotifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
-                userScreenNotifier.callHomeNavigation();
-              }),
+            minimumSize: Size.zero,
+            padding: EdgeInsets.zero,
+            child: SizedBox(
+              width: 20.dp,
+              child: Image.asset(objConstantAssest.backIcon, color: objConstantColor.black),
+            ),
+            onPressed: () {
+              var userScreenNotifier = ref.read(SellerMainScreenGlobalStateProvider.notifier);
+              userScreenNotifier.callHomeNavigation();
+            },
+          ),
           SizedBox(width: 2.5.dp),
-          objCommonWidgets.customText(context, "Completed Orders", 14, objConstantColor.black, objConstantFonts.montserratSemiBold),
+          objCommonWidgets.customText(
+            context,
+            "Completed Orders",
+            14,
+            objConstantColor.black,
+            objConstantFonts.montserratSemiBold,
+          ),
           const Spacer(),
-
         ],
       ),
     );
@@ -90,29 +167,71 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
   Widget buildSearchBar(SellerCompletedDeliveryScreenStateNotifier notifier) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.dp),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.dp),
-        ),
-        child: TextField(
-          controller: _searchController,
-          onChanged: (value) => notifier.filterOrders(value),
-          decoration: InputDecoration(
-            hintText: "Search by product name or ID...",
-            hintStyle: TextStyle(fontSize: 14.dp, color: Colors.grey),
-            prefixIcon: const Icon(Icons.search, color: Colors.grey),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(vertical: 12.dp),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.dp),
-              borderSide: BorderSide(
-                color: Colors.black.withAlpha(80), // border color when not focused
-                width: 1,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 2.dp),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.dp),
+                border: Border.all(color: Colors.black.withAlpha(30)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                cursorColor: Colors.black,
+                onChanged: (value) => notifier.filterOrders(value),
+                style: TextStyle(fontSize: 13.dp),
+                decoration: InputDecoration(
+                  hintText: "Search by product name or ID...",
+                  hintStyle: TextStyle(fontSize: 13.dp, color: Colors.grey),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(left: 8.dp, right: 4.dp),
+                    child: Icon(
+                      Icons.search,
+                      size: 16.dp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  prefixIconConstraints: BoxConstraints(
+                    minWidth: 30.dp,
+                    minHeight: 30.dp,
+                  ),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 8.dp,
+                    horizontal: 0,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.dp),
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.dp),
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          
+          SizedBox(width: 10.dp),
+          
+          CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              child: Image.asset(objConstantAssest.filterIcon, width: 20.dp), onPressed: () async {
+            ref.read(sellerCompletedDeliveryScreenStateProvider.notifier).showCalendarFilterPopup(context);
+          }),
+          SizedBox(width: 5.dp),
+        ],
       ),
     );
   }
@@ -138,7 +257,6 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product Image
                 SizedBox(
                   width: 70.dp,
                   height: 70.dp,
@@ -153,19 +271,20 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
                   ),
                 ),
                 SizedBox(width: 12.dp),
-                // Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Adjusting name width to ensure it doesn't collide with the badge
                       objCommonWidgets.customText(context, item['name'], 13,
                           objConstantColor.black, objConstantFonts.montserratSemiBold),
                       objCommonWidgets.customText(context, "ID: #OR48882${item['id']}",
                           10, Colors.black, objConstantFonts.montserratRegular),
-                      objCommonWidgets.customText(context, "Qty: ${item['quantity']}", 10, Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
-                      objCommonWidgets.customText(context, "Items: ${item['count']}", 10, Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
-                      objCommonWidgets.customText(context, "Delivery Date: ${item['date']}", 10, Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
+                      objCommonWidgets.customText(context, "Qty: ${item['quantity']}", 10,
+                          Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
+                      objCommonWidgets.customText(context, "Items: ${item['count']}", 10,
+                          Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
+                      objCommonWidgets.customText(context, "Delivery Date: ${item['date']}",
+                          10, Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
                     ],
                   ),
                 ),
@@ -181,8 +300,10 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    objCommonWidgets.customText(context, "Total Amount", 10, Colors.grey[600]!, objConstantFonts.montserratMedium),
-                    objCommonWidgets.customText(context, "₹${item['price']}", 17, objConstantColor.black, objConstantFonts.montserratBold),
+                    objCommonWidgets.customText(context, "Total Amount", 10,
+                        Colors.black.withAlpha(180), objConstantFonts.montserratMedium),
+                    objCommonWidgets.customText(context, "₹${item['price']}", 17,
+                        objConstantColor.black, objConstantFonts.montserratBold),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -212,7 +333,8 @@ class SellerDashboardScreenState extends ConsumerState<SellerCompletedDeliverySc
                       ),
                     );
                   },
-                  child: objCommonWidgets.customText(context, "View Details", 10, objConstantColor.white, objConstantFonts.montserratSemiBold),
+                  child: objCommonWidgets.customText(context, "View Details", 10,
+                      objConstantColor.white, objConstantFonts.montserratSemiBold),
                 )
               ],
             ),

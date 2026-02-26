@@ -93,12 +93,12 @@ class CommonSuccessPopup extends StatelessWidget {
           if (subTitle != null) ...[
             SizedBox(height: 8.dp),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 35.dp),
+              padding: EdgeInsets.symmetric(horizontal: 10.dp),
               child: objCommonWidgets.customText(
                   context,
                   subTitle!,
-                  11.5,
-                  Colors.grey.shade600,
+                  11,
+                  Colors.black.withAlpha(150),
                   objConstantFonts.montserratMedium,
                   textAlign: TextAlign.center
               ),
@@ -106,7 +106,7 @@ class CommonSuccessPopup extends StatelessWidget {
 
           ],
 
-          SizedBox(height: 22.dp),
+          SizedBox(height: 30.dp),
 
 
           /// CLOSE BUTTON

@@ -8,7 +8,6 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../../../../CommonViews/CommonWidget.dart';
 import '../../../../../../Constants/ConstantVariables.dart';
-import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonPopupViews/CalendarFilterPopup/CalendarFilterPopup.dart';
 import '../../../../../Utility/PreferencesManager.dart';
 import '../../../../Utility/NetworkImageLoader.dart';

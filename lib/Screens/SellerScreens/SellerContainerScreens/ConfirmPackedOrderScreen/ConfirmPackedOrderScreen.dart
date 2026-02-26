@@ -9,6 +9,7 @@ import '../../../../../Constants/Constants.dart';
 import '../../../../../CodeReusable/CodeReusability.dart';
 import '../../../../CommonViews/CommonWidget.dart';
 import '../../../../CommonPopupViews/CommonSuccessPopup/CommonSuccessPopup.dart';
+import '../../../../Utility/NetworkImageLoader.dart';
 import '../../../../Utility/PreferencesManager.dart';
 import '../../SellerMainScreen/SellerMainScreenState.dart';
 import 'ConfirmPackedOrderScreenState.dart';
@@ -164,7 +165,7 @@ class _ConfirmPackedOrderScreenState extends ConsumerState<ConfirmPackedOrderScr
             borderRadius: BorderRadius.circular(22.dp),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF06AC0B).withOpacity(0.3),
+                color: Colors.black.withAlpha(15),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               )
@@ -180,27 +181,16 @@ class _ConfirmPackedOrderScreenState extends ConsumerState<ConfirmPackedOrderScr
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 14.dp),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF06AC0B), Color(0xFF048508)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: Colors.green,
                 borderRadius: BorderRadius.circular(22.dp),
               ),
               child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.check_circle_outline, color: Colors.white),
-                    SizedBox(width: 8.dp),
-                    objCommonWidgets.customText(
-                      context,
-                      'Order Packed',
-                      14,
-                      Colors.white,
-                      objConstantFonts.montserratSemiBold,
-                    ),
-                  ],
+                child: objCommonWidgets.customText(
+                  context,
+                  'Order Packed',
+                  14,
+                  Colors.white,
+                  objConstantFonts.montserratSemiBold,
                 ),
               ),
             ),
@@ -432,7 +422,7 @@ class _ConfirmPackedOrderScreenState extends ConsumerState<ConfirmPackedOrderScr
       onTap: () => ref.read(ConfirmPackedOrderScreenStateProvider.notifier).togglePacked(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: EdgeInsets.all(12.dp),
+        padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 8.dp),
         decoration: BoxDecoration(
           color: isPacked ? Colors.green.withOpacity(0.08) : Colors.grey.withOpacity(0.08),
           borderRadius: BorderRadius.circular(16.dp),
@@ -440,10 +430,21 @@ class _ConfirmPackedOrderScreenState extends ConsumerState<ConfirmPackedOrderScr
         ),
         child: Row(
           children: [
+
             ClipRRect(
               borderRadius: BorderRadius.circular(10.dp),
-              child: Image.network('https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png', width: 60.dp, height: 60.dp, fit: BoxFit.cover),
+              child: SizedBox(
+                width: 70.dp,
+                height: 70.dp,
+                child: NetworkImageLoader(
+                  imageUrl: 'https://botaniqofficialstore.github.io/botaniqofficialstore/assets/microgreens/radhishPink_Micro.png',
+                  placeHolder: objConstantAssest.placeholderImage,
+                  size: 70.dp,
+                  imageSize: double.infinity,
+                ),
+              ),
             ),
+
             SizedBox(width: 12.dp),
             Expanded(
               child: Column(
